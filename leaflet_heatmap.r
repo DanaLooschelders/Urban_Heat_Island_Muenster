@@ -10,6 +10,7 @@ setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
 coords=read.table("Lat_Lon_Logger.csv", sep=";", dec=",", header=T)
 str(coords)
 coords=coords[,-4] #drop last empty column
+coords=coords[,-4] #drop last empty column
 str(coords)
 names(coords)=c("ID", "Lat", "Lon")
 
@@ -51,10 +52,25 @@ coords
 for (i in coords$ID){
   mapdata$lat[mapdata$ID==i]=coords$Lat[coords$ID==i]
   mapdata$lon[mapdata$ID==i]=coords$Lon[coords$ID==i]
-  if()
+}
+for(i in mapdata$ID) {
   dummy.data.frame=list_iButton_agg_mean[[i]]
   dummy.value=dummy.data.frame[1,2]
- mapdata$temp[mapdata$ID==i]=dummy.value
+  mapdata$temp[mapdata$ID==i]=dummy.value
 }
-str(coords)
-coords$ID
+
+mapdata=mapdata %>% drop_na() #drop columns with NAs
+
+# create magnitude range to define the type as follows 
+range(mapdata$temp)
+mapdata$magrange = cut(mapdata$temp, 
+                       breaks = c(18, 20, 22, 24), right=FALSE)
+
+# Define a color pallete corresponding to the magnitude ranges
+pal = colorFactor(palette = c("yellow", "orange", "red"), domain=mapdata$magrange)
+
+#plot heatmap first try
+leaflet(data=mapdata) %>%
+  addTiles() %>%
+  addCircles(lng = ~lon, lat = ~lat, color=~pal(magrange))%>%
+  addLegend(pal = pal, values=mapdata$magrange)
