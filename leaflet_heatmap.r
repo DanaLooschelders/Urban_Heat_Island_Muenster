@@ -91,4 +91,9 @@ ggmap(ggmap = map, extent="device")+
 #heatmap with leaflet
 leaflet(data=mapdata) %>%
   addTiles() %>%
-  addHeatm
+  addHeatmap(lng = ~lon, lat = ~lat, 
+             intensity = ~temp, radius = 12, 
+             cellSize = 7, blur = 40) %>%
+  addLegend()
+
+#add layer with water temperatures
