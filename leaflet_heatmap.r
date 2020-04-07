@@ -4,7 +4,9 @@ library(leaflet)
 library(sp)
 library(tidyverse)
 library(rlist)
-
+library(maptools)
+library(KernSmooth) #for kernel density estimate?
+library(leaflet.extras)
 setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
 #read in coordiante data
 coords=read.table("Lat_Lon_Logger.csv", sep=";", dec=",", header=T)
@@ -64,13 +66,29 @@ mapdata=mapdata %>% drop_na() #drop columns with NAs
 # create magnitude range to define the type as follows 
 range(mapdata$temp)
 mapdata$magrange = cut(mapdata$temp, 
-                       breaks = c(18, 20, 22, 24), right=FALSE)
+                       breaks = c(18, 19, 20,21, 22, 23, 24), right=FALSE)
 
 # Define a color pallete corresponding to the magnitude ranges
-pal = colorFactor(palette = c("yellow", "orange", "red"), domain=mapdata$magrange)
+pal = colorFactor(palette = c("yellow","orange", "darkorange" ,"red", "purple", "brown"), domain=mapdata$magrange)
 
-#plot heatmap first try
+#plot pointmap first try
 leaflet(data=mapdata) %>%
   addTiles() %>%
-  addCircles(lng = ~lon, lat = ~lat, color=~pal(magrange))%>%
+  addCircles(lng = ~lon, lat = ~lat, color=~pal(magrange), radius = 60)%>%
   addLegend(pal = pal, values=mapdata$magrange)
+
+#for heat map: use kernal density 
+?bkde2D
+
+#try heat map with stat summery
+get_map(location = c(lon= 7.670,lat= 51.925))
+#nececessary to register for google
+
+ggmap(ggmap = map, extent="device")+
+  stat_summary_2d(data=mapdata, aes(x=lon, y=lat, z=temp), fun=mean, alpha=0.6, bins=10)+
+  scale_fill_gradient(name="Temperature", low="green", high="red")
+
+#heatmap with leaflet
+leaflet(data=mapdata) %>%
+  addTiles() %>%
+  addHeatm
