@@ -16,6 +16,8 @@
 # 2019/07/24: Calculation of offset for each iButton, adding extra column to statistics table, export of statistics table
 # 2019/07/25: Plotting of offsets, 
 
+#2020/04/07: split data in day/night and clear temperature spikes
+
 
 # --------------------------------------------------------------------------------------------------------------------------------
 #### Global options ####

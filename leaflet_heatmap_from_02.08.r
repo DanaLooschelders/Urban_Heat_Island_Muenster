@@ -67,28 +67,64 @@ mapdata=mapdata %>% drop_na() #drop columns with NAs
 # create magnitude range to define the type as follows 
 range(mapdata$temp)
 mapdata$magrange = cut(mapdata$temp, 
-                       breaks = c(18, 19, 20,21, 22, 23, 24,25), right=FALSE)
+                       breaks = c(17,18, 19, 20,21, 22, 23, 24,25), right=FALSE)
 
 # Define a color pallete corresponding to the magnitude ranges
-pal = colorFactor(palette = c("yellow","orange", "darkorange" ,"red", "darkred", "purple", "brown"), domain=mapdata$magrange)
+pal = colorFactor(palette = c("blue", "green","yellow", "darkorange" ,"red", "darkred", "purple", "brown"), domain=mapdata$magrange)
 pal2=colorNumeric(domain = mapdata$temp, palette="7-class YlOrRd")
 pal2
+pal3=colorFactor(palette=heat.colors(7, rev = T), domain = mapdata$magrange)
 #plot pointmap first try
 leaflet(data=mapdata) %>%
   addTiles() %>%
-  addCircles(lng = ~lon, lat = ~lat, color=~pal(magrange), radius = 60)%>%
-  addLegend(pal = pal, values=mapdata$magrange)
+  addCircles(lng = ~lon, lat = ~lat, color=~pal3(magrange), 
+             radius = 100, stroke = F, opacity = 50, fillOpacity = 0.5)%>%
+  addLegend(pal = pal3, values=mapdata$magrange)
 
 #heatmap with leaflet
 
 display.brewer.pal(6, "YlOrRd")
 
+#the heatmap somehow doesnt display the values correctly
 leaflet(data=mapdata) %>%
   addTiles() %>%
   addHeatmap(lng = ~lon, lat = ~lat, 
              intensity = ~temp, radius = 12, 
-             cellSize = 10, blur = 25)
+             cellSize = 15, blur = 25, minOpacity = 20, max = 30, gradient = terrain.colors(mapdata$temp)) %>%
+  addCircles(lng = ~lon, lat = ~lat, color=~pal(magrange), radius = 50) %>%
+  addLegend(pal = pal, values=mapdata$magrange)
 #add a legend
-#add layer with water temperatures
+?addHeatmap
+#try with dummy values
+dummy=rnorm(30, mean = 50, sd=50)
+str(mapdata)
+mapdata$dummy=dummy
+
+leaflet(data=mapdata) %>%
+  addTiles() %>%
+  addHeatmap(lng = ~lon, lat = ~lat, 
+             intensity = ~dummy, radius = 12, 
+             cellSize = 10, blur = 25)
+
+#test with quake data
+leaflet(quakes) %>%
+  addProviderTiles(providers$CartoDB.DarkMatter) %>%
+  setView( 178, -20, 5 ) %>%
+  addHeatmap(
+    lng = ~long, lat = ~lat, intensity = ~mag,
+    blur = 20, max = 0.05, radius = 15
+  )
+
 
 #heatmap with one layer for vegetation and one for sealed areas
+#try as filled contour plot
+#sort coordinates in ascending order
+mapdata_ordered=mapdata[,1:4]
+mapdata_ordered=mapdata_ordered[order(mapdata_ordered$lat, mapdata_ordered$lon),]
+
+?filled.contour()
+filled.contour(x=mapdata_ordered$lat, y = mapdata_ordered$lon, z=mapdata_ordered$temp, color=terrain.colors)
+#data isn't ordered correctly?
+
+#try again with kernel density and contour
+bkde2D()
