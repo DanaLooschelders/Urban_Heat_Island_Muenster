@@ -100,11 +100,11 @@ d_iButton_single = read.csv(text=paste0(head(readLines("0D000000519CE121_190814.
 colnames(d_iButton_single) <- iButton_header
 
 #---> check data
-str(d_iButton_single)
+#str(d_iButton_single)
 # Transform date time column from text to POSIXct format
 #outcommented ---> d_iButton_single$Datetime = as.POSIXct(d_iButton_single$Datetime, format = "%d-%m-%Y %H:%M")
 #---> shouldn't it be: "%Y-%m-%d %H:%M"? changed in next line
-d_iButton_single$Datetime = as.POSIXct(d_iButton_single$Datetime, format = "%Y-%m-%d %H:%M")
+#d_iButton_single$Datetime = as.POSIXct(d_iButton_single$Datetime, format = "%Y-%m-%d %H:%M")
 
 ###
 # 2. Read in several files into separate dataframes
@@ -199,7 +199,7 @@ end_time=strptime("2019-08-13 00:00:00", "%Y-%m-%d %H:%M:%S")
 # Apply the time index on the single data table
 # ---> outcommented d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_Labtest & Datetime <= end_Labtest)
 #---> changed for own time span
-d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_time & Datetime <= end_time)
+#d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_time & Datetime <= end_time)
 
 # Apply the time index on each data table in the list "list_iButton"
 # So for each data table the same time period is selected
