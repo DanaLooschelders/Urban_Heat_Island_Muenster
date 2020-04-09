@@ -1,4 +1,5 @@
 #iButtons tidy up - tidy up temperature spikes 
+#for 02.08.2019
 list_iButton_corr #used from iButtons-check script (check that date corresponds)
 
 #iterate through all dataframes on list
@@ -13,7 +14,6 @@ test$diff[1:1439]=diff(test$Temperature_C)*-1 #get positive temperatur differenc
 test$diff[test$diff>=10]=NA
 
 #test with list
-list_iButton_corr[[32]]=NULL #delete weird column
 list_iButton_corr_tidy=list_iButton_corr #create new, tidy list
 
 report.na=rep(NA, length(list_iButton_corr_tidy))
