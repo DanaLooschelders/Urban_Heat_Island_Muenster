@@ -22,7 +22,8 @@ for (i in 1:length(list_iButton_corr_tidy)) {
   name_save=names(list_iButton_corr_tidy)
   test=list_iButton_corr_tidy[[i]]
   test$diff=rep(NA)
-  test$diff[1:1583]=diff(test$Temperature_C)*-1 #get positive temperatur difference from one value to next
+  test$diff[1:length(test$Temperature_C)-1]=diff(test$Temperature_C)
+  test$Temperature_C[test$diff<= -5]=NA
   test$Temperature_C[test$diff>=5]=NA
   list_iButton_corr_tidy[[i]]=test
   names(list_iButton_corr_tidy)=name_save
