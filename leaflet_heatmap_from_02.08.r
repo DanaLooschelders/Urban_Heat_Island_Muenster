@@ -58,7 +58,7 @@ for (i in coords$ID){
 }
 for(i in mapdata$ID) {
   dummy.data.frame=list_iButton_agg_mean[[i]]
-  dummy.value=dummy.data.frame[10,2]
+  dummy.value=dummy.data.frame[3,2]
   mapdata$temp[mapdata$ID==i]=dummy.value
 }
 
