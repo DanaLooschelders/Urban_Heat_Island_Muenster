@@ -61,7 +61,7 @@ usePackage("tidyverse")
 # Set Working directory (wd)
 # setwd(choose.dir()) # Uncomment if necessary, but only works for Windows operating system
 #setwd("V:/klima/Projekte/2019_Urban_Heat_Island/Data/Data_raw/Calibration_test_20190704-20190708")
-setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit/UHI_Muenster_Data/dat_02.08")
+setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit/UHI_Muenster_Data/dat_29.08bzw01.09/")
 #################
 # Data iButtons #
 #################
@@ -84,7 +84,7 @@ iButton_header = c("Datetime", "Temperature_C")
 # Create vector containing ID #
 # We only need the ID # without the first (empty) column, so we set the first column to NULL in colClasses
 #--> changed name (to second file from raw data - UHI timeframe)
-iButton_ID=read.table("0800000051698721_190820.csv", sep = ",", dec = ".", header = F, skip = 4,
+iButton_ID=read.table("0800000051698721_190927.csv", sep = ",", dec = ".", header = F, skip = 4,
                       nrows = 1, as.is = T, colClasses=c("NULL", NA)) 
 
 
@@ -94,18 +94,19 @@ iButton_ID=read.table("0800000051698721_190820.csv", sep = ",", dec = ".", heade
 # The last row contains an end character. This causes trouble while reading in, therefore we skip the last line of each file.
 # We also skip the first 8 lines, which only contain meta data on the specific iButton. The customized header is added 
 # afterwards with colnames().
-d_iButton_single = read.csv(text=paste0(head(readLines("0D000000519CE121_190814.csv"), -1)), dec = ".", skip = 8, header = F, 
-                            na.strings = c("<NA>", "NAN"), stringsAsFactors = FALSE, encoding = 'UTF-8')
+
+#d_iButton_single = read.csv(text=paste0(head(readLines("0D000000519CE121_190814.csv"), -1)), dec = ".", skip = 8, header = F, 
+ #                           na.strings = c("<NA>", "NAN"), stringsAsFactors = FALSE, encoding = 'UTF-8')
 
 # Add correct column names to dataframe
-colnames(d_iButton_single) <- iButton_header
+#colnames(d_iButton_single) <- iButton_header
 
 #---> check data
-str(d_iButton_single)
+#str(d_iButton_single)
 # Transform date time column from text to POSIXct format
 #outcommented ---> d_iButton_single$Datetime = as.POSIXct(d_iButton_single$Datetime, format = "%d-%m-%Y %H:%M")
 #---> shouldn't it be: "%Y-%m-%d %H:%M"? changed in next line
-d_iButton_single$Datetime = as.POSIXct(d_iButton_single$Datetime, format = "%Y-%m-%d %H:%M")
+#d_iButton_single$Datetime = as.POSIXct(d_iButton_single$Datetime, format = "%Y-%m-%d %H:%M")
 
 ###
 # 2. Read in several files into separate dataframes
@@ -194,13 +195,13 @@ list_iButton <- mapply(cbind, list_iButton, "Datetime"=list_iButton_datetime, SI
 
 #---> chose own time period
 range(list_iButton_datetime[[1]])
-start_time=strptime("2019-08-03 00:00:00", "%Y-%m-%d %H:%M:%S")
-end_time=strptime("2019-08-13 00:00:00", "%Y-%m-%d %H:%M:%S")
+start_time=strptime("2019-09-02 00:00:00", "%Y-%m-%d %H:%M:%S")
+end_time=strptime("2019-09-13 00:00:00", "%Y-%m-%d %H:%M:%S")
 
 # Apply the time index on the single data table
 # ---> outcommented d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_Labtest & Datetime <= end_Labtest)
 #---> changed for own time span
-d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_time & Datetime <= end_time)
+#d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_time & Datetime <= end_time)
 
 # Apply the time index on each data table in the list "list_iButton"
 # So for each data table the same time period is selected
