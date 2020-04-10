@@ -7,13 +7,7 @@ list_iButton_corr #used from iButtons-check script (check that date corresponds)
 #set threshold value corresponding to literature regarding spikes
 #if difference between two values is larger then threshold -> set to NA
 
-#test with one dataframe
-test=list_iButton_corr[[15]]
-test$diff=rep(NA)
-test$diff[1:1439]=diff(test$Temperature_C)*-1 #get positive temperatur difference from one value to next
-test$diff[test$diff>=10]=NA
 
-#test with list
 list_iButton_corr_tidy=list_iButton_corr #create new, tidy list
 
 report.na=rep(NA, length(list_iButton_corr_tidy))
