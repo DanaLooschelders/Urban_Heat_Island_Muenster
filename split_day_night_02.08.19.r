@@ -1,5 +1,15 @@
 library(ggplot2)
 #filter temperature data into day/night
+
+#create column with only date in temperature
+# select first column and write into seperate list
+list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy, `[`, 1)
+# Transform datetime to only date
+list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy_col, function(x) as.Date(x$Datetime,format = "%Y-%m-%d"))
+# add Date as additional column
+list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list_iButton_corr_tidy_col, SIMPLIFY=F)
+
+
 #read in sunrise/sunset data
 setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
 sun=read.table("Sunrise_sunset_times.csv", sep=";", dec=",", header=T, stringsAsFactors = F)
@@ -12,20 +22,16 @@ sun2$sunset=as.POSIXct(paste(sun$ï..Datum, sun$Sonnenuntergang))
 sun2$date=sun$ï..Datum
 str(sun2)
 
-#-> create new column for sunrise/sunset data with time corrected for dawn
-sun2$sunrise_wDawn=sun2$sunrise+0.5*60*60 #add 30 min dawn
-sun2$sunset_wDawn=sun2$sunset-0.5*60*60 #substract 30min dawn
-
 #use start_time and end_time to subset sun2 data to correct length
 sun2=sun2[sun2$date>=start_time&sun2$date<=end_time,]
 
-#create column with only date in temperature
-# select first column and write into seperate list
-list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy, `[`, 1)
-# Transform datetime to only date
-list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy_col, function(x) as.Date(x$Datetime,format = "%Y-%m-%d"))
-# add Date as additional column
-list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list_iButton_corr_tidy_col, SIMPLIFY=F)
+
+#****************************************************************
+#subset for day
+#*****************************************************************
+#-> create new column for sunrise/sunset data with time corrected for dawn
+sun2$sunrise_wDawn=sun2$sunrise+0.5*60*60 #add 30 min dawn
+sun2$sunset_wDawn=sun2$sunset-0.5*60*60 #substract 30min dawn
 
 #match days in sunrise and temperature data
 #filter temp data for range between sunrise (+ 30 min) and sunset (-30 min)  to include dawn
@@ -47,7 +53,6 @@ plot(test$Datetime.1, test$Temperature_C)
 abline(v=sun2$sunrise_wDawn, col="blue")
 abline(v=sun2$sunset_wDawn, col="red")
 
-#****************************************************************
 #subset the dataframes of the list and create new list with only values for the day
 list_iButton_corr_tidy_date_day=list()
 
@@ -72,15 +77,25 @@ abline(v=sun2$sunset_wDawn, col="red")
 
 #*******************************************************************
 #do the same for the night
-test=list_iButton_corr_tidy_date[[2]]
+#*******************************************************************
+#-> create new column for sunrise/sunset data with time corrected for dawn
+sun2$sunrise_wDawn=sun2$sunrise-0.5*60*60 #substract 30 min dawn
+sun2$sunset_wDawn=sun2$sunset+0.5*60*60 #add 30min dawn
+
+test=list_iButton_corr_tidy_date[[1]]
 str(test)
+
 for(i in 1:length(sun2$date)){
   sun=sun2$date[i]
   test_day=test[test$Date==sun2$date[i],] #subset the day that matches i from sun from dataframe
   test=test[test$Date!=sun2$date[i],] 
-  test_day=test_day[test_day$Datetime.1>=sun2$sunrise_wDawn[sun2$date==sun]&test_day$Datetime.1<=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
+  test_day=test_day[test_day$Datetime.1<=sun2$sunrise_wDawn[sun2$date==sun]|test_day$Datetime.1>=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
   test=rbind(test, test_day) 
 }
+par(new=F)
+plot(test$Datetime.1, test$Temperature_C)
+abline(v=sun2$sunrise_wDawn, col="blue")
+abline(v=sun2$sunset_wDawn, col="red")
 
 #subset the dataframes of the list and create new list with only values for the day
 list_iButton_corr_tidy_date_night=list()
@@ -91,7 +106,7 @@ for(x in 1:length(list_iButton_corr_tidy_date)){
     sun=sun2$date[i]
     dat_night=dat[dat$Date==sun2$date[i],] #subset the day that matches i from sun from dataframe
     dat=dat[dat$Date!=sun2$date[i],] 
-    dat_night=dat_night[dat_night$Datetime.1<=sun2$sunrise_wDawn[sun2$date==sun]&dat_night$Datetime.1>=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
+    dat_night=dat_night[dat_night$Datetime.1<=sun2$sunrise_wDawn[sun2$date==sun]|dat_night$Datetime.1>=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
     dat=rbind(dat, dat_night) 
   }
   list_iButton_corr_tidy_date_night[[x]]=dat
@@ -103,5 +118,3 @@ par(new=F)
 plot(test2$Datetime.1, test2$Temperature_C)
 abline(v=sun2$sunrise_wDawn, col="blue")
 abline(v=sun2$sunset_wDawn, col="red")
-
-#new try: 
