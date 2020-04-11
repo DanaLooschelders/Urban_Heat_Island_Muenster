@@ -31,36 +31,15 @@ list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list
 
 #test with one dataframe
 
+#try: write date rows to new file, delete original columns, drop values outside day, rbind subset to file
+
 test=list_iButton_corr_tidy_date[[1]]
 str(test)
 
-test_day=test[test$Date==sun2$date[1],]
-test_day=test_day[test_day$Datetime.1>=sun2$sunrise_wDawn[sun2$date=="2019-08-03 BST"]&test_day$Datetime.1<=sun2$sunset_wDawn[sun2$date=="2019-08-03 BST"],]
-test[test$Date==sun2$date[1],]=subset(test_day, Datetime.1>=sun2$sunrise_wDawn[sun2$date=="2019-08-03 BST"]&Datetime.1<=sun2$sunset_wDawn[sun2$date=="2019-08-03 BST"])
-sub=subset(test_day, Datetime.1>=sun2$sunrise_wDawn[sun2$date=="2019-08-03 BST"]&Datetime.1<=sun2$sunset_wDawn[sun2$date=="2019-08-03 BST"])
-
-test=test[test$Date==sun2$date[1]&test$Datetime.1>=sun2$sunrise_wDawn[sun2$date=="2019-08-03 BST"]&test$Datetime.1<=sun2$sunset_wDawn[sun2$date=="2019-08-03 BST"],]
-#str
-                                    
-#test[test$Date==sun2$date[1],]=paste(test_day, rep(NA, length(test$Temperature_C[test$Date==sun2$date[1]])-length(test_day$Temperature_C)))
-#str(test_day)
-#dim(test[test$Date==sun2$date[1],])
-#dim(test_day)
-
-for(i in sun2$date)
-test_day=test[test$Date==i,] #subset the day that matches i from sun from dataframe
-test_day=test_day[test_day$] #subset the day with sunrise and sunset value from sun for i
-test[test$Date==i,]=test_day #replace orinigal day with shortend day and fill with NAs
-test_day=test$Temperature_C[test$Date==sun2$date[5]]
-
-
-
-for (i in 1:length(test_day)) {
-  name_save=names(test_day)
-  test=list_iButton_corr_tidy[[i]]
-  
-  
-  list_iButton_corr_tidy[[i]]=test
-  names(list_iButton_corr_tidy)=name_save
- 
+for(i in 1:length(sun2$date)){
+sun=sun2$date[i]
+test_day=test[test$Date==sun2$date[i],] #subset the day that matches i from sun from dataframe
+test=test[test$Date!=sun2$date[i],] 
+test_day=test_day[test_day$Datetime.1>=sun2$sunrise_wDawn[sun2$date==sun]&test_day$Datetime.1<=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
+test=rbind(test, test_day) 
 }
