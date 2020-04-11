@@ -1,3 +1,4 @@
+library(ggplot2)
 #filter temperature data into day/night
 #read in sunrise/sunset data
 setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
@@ -43,3 +44,9 @@ test=test[test$Date!=sun2$date[i],]
 test_day=test_day[test_day$Datetime.1>=sun2$sunrise_wDawn[sun2$date==sun]&test_day$Datetime.1<=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
 test=rbind(test, test_day) 
 }
+
+#check of it work by plotting temperature values with sundown values  
+par(new=F)
+plot(test$Datetime.1, test$Temperature_C)
+abline(v=sun2$sunrise_wDawn, col="blue")
+abline(v=sun2$sunset_wDawn, col="red")
