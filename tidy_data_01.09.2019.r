@@ -25,4 +25,4 @@ for (i in 1:length(list_iButton_corr_tidy)) {
 
 report.na #check how many NAs were in data
 
-sum(is.na(list_iButton_corr_tidy[[1]]))
+
