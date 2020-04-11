@@ -34,7 +34,7 @@ list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list
 
 #try: write date rows to new file, delete original columns, drop values outside day, rbind subset to file
 
-test=list_iButton_corr_tidy_date[[1]]
+test=list_iButton_corr_tidy_date[[2]]
 str(test)
 
 for(i in 1:length(sun2$date)){
@@ -50,3 +50,24 @@ par(new=F)
 plot(test$Datetime.1, test$Temperature_C)
 abline(v=sun2$sunrise_wDawn, col="blue")
 abline(v=sun2$sunset_wDawn, col="red")
+
+#test for whole list
+for(x in 1:length(list_iButton_corr_tidy_date)){
+  dat=list_iButton_corr_tidy_date[[x]]
+for(i in 1:length(sun2$date)){
+  sun=sun2$date[i]
+  dat_day=dat[dat$Date==sun2$date[i],] #subset the day that matches i from sun from dataframe
+  dat=test[dat$Date!=sun2$date[i],] 
+  dat_day=dat_day[dat_day$Datetime.1>=sun2$sunrise_wDawn[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
+  dat=rbind(dat, dat_day) 
+}
+  list_iButton_corr_tidy_date_new[[x]]=dat
+}
+
+test2=list_iButton_corr_tidy_date[[6]]
+#check
+par(new=F)
+plot(test2$Datetime.1, test2$Temperature_C)
+abline(v=sun2$sunrise_wDawn, col="blue")
+abline(v=sun2$sunset_wDawn, col="red")
+
