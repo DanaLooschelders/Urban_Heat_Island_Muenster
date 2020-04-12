@@ -1,5 +1,5 @@
-library(ggplot2)
 #filter temperature data into day/night
+#works for all datasets (if the check_iButton and tidy_data scripts were run before)
 
 #create column with only date in temperature
 # select first column and write into seperate list
