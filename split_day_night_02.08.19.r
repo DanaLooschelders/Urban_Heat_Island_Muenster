@@ -56,6 +56,8 @@ abline(v=sun2$sunset_wDawn, col="red")
 #subset the dataframes of the list and create new list with only values for the day
 list_iButton_corr_tidy_date_day=list()
 
+save.names=names(list_iButton_corr_tidy_date) #save the names in a vector
+
 for(x in 1:length(list_iButton_corr_tidy_date)){
   dat=list_iButton_corr_tidy_date[[x]]
 for(i in 1:length(sun2$date)){
@@ -67,6 +69,8 @@ for(i in 1:length(sun2$date)){
 }
   list_iButton_corr_tidy_date_day[[x]]=dat
 }
+
+names(list_iButton_corr_tidy_date_day)=save.names #add names to list
 #check if it worked
 test2=list_iButton_corr_tidy_date_day[[6]]
 #plot it
@@ -111,10 +115,20 @@ for(x in 1:length(list_iButton_corr_tidy_date)){
   }
   list_iButton_corr_tidy_date_night[[x]]=dat
 }
+
+names(list_iButton_corr_tidy_date_night)=save.names #add the names to the list
 #check if it worked
-test2=list_iButton_corr_tidy_date_night[[6]]
+test3=list_iButton_corr_tidy_date_night[[6]]
+
+#******************************************************************************
 #plot it
-par(new=F)
-plot(test2$Datetime.1, test2$Temperature_C)
-abline(v=sun2$sunrise_wDawn, col="blue")
-abline(v=sun2$sunset_wDawn, col="red")
+plot.new()
+par(new=F, xpd=F)
+plot(test2$Datetime.1, test2$Temperature_C, col="lightblue")
+points(test3$Datetime.1, test3$Temperature_C, col="darkblue")
+abline(v=sun2$sunrise, col="orange")
+abline(v=sun2$sunset, col="red")
+legend("topright", 
+       legend=c("Day data", "Night data", "Sunrise", "Sunset"), 
+       fill=c("lightblue", "darkblue", "orange", "red"), cex=0.7)
+         
