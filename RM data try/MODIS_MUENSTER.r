@@ -23,7 +23,7 @@ mt_bands(product = "MOD11") #why doesn't it work?
 shape_muenster=readOGR(dsn ="stadtgebiet.shp")
 shape_de=readOGR(dsn="gadm36_DEU_0.shp")
 
-#döööööööööööööööööööööööööööö
+#dÃ¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶Ã¶
 test3=raster("MOD11A1.A2019213.mosaic.006.2020046194822.psmcrpgs_000501417357.LST_Day_1km-LST_Day_1km.tif")
 test2=raster("MOD11A1.A2019213.mosaic.006.2020046194822.psmcrpgs_000501417357.LST_Day_1km-LST_Day_1km.tif")
 testa="MOD11A1.A2019213.mosaic.006.2020046194822.psmcrpgs_000501417357.LST_Day_1km-LST_Day_1km.tif"

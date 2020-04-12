@@ -65,7 +65,7 @@ plot(shape_ms_modis, add=T)
 
 #crop to just shape of MS
 testcrop_exact=mask(testcrop, shape_ms_modis)
-plot(testcrop_exact, main="LST Temperature [°C] in Aug in Muenster", xlab="MODIS x coordinates", ylab="MODIS y coordniates")
+plot(testcrop_exact, main="LST Temperature [Â°C] in Aug in Muenster", xlab="MODIS x coordinates", ylab="MODIS y coordniates")
 plot(shape_ms_modis, add=T)
 #create data.frame
 coords=coordinates(testcrop)
