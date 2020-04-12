@@ -140,7 +140,6 @@ for(i in files_iButtons) {
 # To check if all iButtons we want are read in, we sort ID # ascending and then display all ID # that occur
 iButton_ID_sort = sort(iButton_ID_multi$V2)
 iButton_ID_sort
-#--> some IDs are double?
 
 # Create new names for the data files out of ID, serial number (SR) and date of data collection
 # First get rid of the file ending .csv in the file name
