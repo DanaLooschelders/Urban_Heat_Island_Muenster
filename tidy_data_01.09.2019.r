@@ -1,6 +1,6 @@
 #iButtons tidy up - tidy up temperature spikes 
-#for 02.08.2019
-list_iButton_corr #used from iButtons-check script (check that date corresponds)
+#for 01.09.2019
+str(list_iButton_corr) #used from iButtons-check script (check that date corresponds)
 
 #iterate through all dataframes on list
 #iterate trough all temperature values 
