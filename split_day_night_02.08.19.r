@@ -121,7 +121,7 @@ names(list_iButton_corr_tidy_date_night)=save.names #add the names to the list
 test3=list_iButton_corr_tidy_date_night[[6]]
 
 #******************************************************************************
-#plot it
+#plot it for both
 plot.new()
 par(new=F, xpd=F)
 plot(test2$Datetime.1, test2$Temperature_C, col="lightblue")
