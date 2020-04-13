@@ -213,12 +213,12 @@ list_iButton_corr = lapply(list_iButton, function(x) {subset(x, x[,1] >= start_t
 
 ###
 # Mean of single iButton file
-mean_iButton_single = mean(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
-mean_iButton_single
+#mean_iButton_single = mean(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
+#mean_iButton_single
 
 # sd of single iButton file
-sd_iButton_single = sd(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
-sd_iButton_single
+#sd_iButton_single = sd(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
+#sd_iButton_single
 
 
 ###
