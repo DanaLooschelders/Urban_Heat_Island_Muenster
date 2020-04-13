@@ -1,6 +1,16 @@
-#iButtons tidy up - tidy up temperature spikes 
+#iButtons tidy up - correct offset and tidy up temperature spikes 
 #for 02.08.2019
+setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
+
 str(list_iButton_corr) #used from iButtons-check script (check that date corresponds)
+
+#read in offset values
+offset_stats=read.table("iButton_Statistics.csv", sep=",", dec=".", header=T)
+str(offset_stats)
+name=names(list_iButton_corr)
+name
+offset_stats$Name_iButton
+#use for loop to assign offset to name?
 
 #iterate through all dataframes on list
 #iterate trough all temperature values 
