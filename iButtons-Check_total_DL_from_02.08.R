@@ -145,8 +145,8 @@ iButton_ID_sort
 iButton_SR_date = sapply(strsplit(files_iButtons, "\\."), "[", 1)
 
 # Paste the ID vector with the names derived from the files_iButton list
-list_header <- paste(iButton_ID_multi$V2, iButton_SR_date, sep = "_")
-
+#list_header <- paste(iButton_ID_multi$V2, iButton_SR_date, sep = "_")
+list_header <- paste(iButton_ID_multi$V2)
 
 # Select all csv-files and put them in one list
 # By having all dataframes in the same list, you can apply changes to all files simultanuously, e.g. renaming.
@@ -293,7 +293,7 @@ list_iButton_ID_51 <- list_iButton[1]
 
 # Set Working directory (wd)
 # setwd(choose.dir()) # Uncomment if necessary, but only works for Windows operating system
-setwd("V:/klima/Projekte/2019_Urban_Heat_Island/Data/Data_converted/Reference_thermometers")
+#setwd("V:/klima/Projekte/2019_Urban_Heat_Island/Data/Data_converted/Reference_thermometers")
 
 # Two different ways of reading in data:
 # 1. Read in a single file: If you only need to control a single file etc. use this code
