@@ -1,5 +1,6 @@
 #iButtons tidy up - correct offset and tidy up temperature spikes 
 #for 02.08.2019
+#and for 01.09.2019
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
 
 str(list_iButton_corr) #used from iButtons-check script (check that date corresponds)
@@ -61,6 +62,7 @@ for (i in 1:length(list_iButton_corr_tidy)) {
 }
 report.na #check how many NAs were in data
 
+#for the 02.08.2019
 list_iButton_corr_tidy[["33"]] #somehow the offset for this one is missing
 
 
