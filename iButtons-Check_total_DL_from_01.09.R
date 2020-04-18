@@ -146,7 +146,7 @@ iButton_ID_sort
 iButton_SR_date = sapply(strsplit(files_iButtons, "\\."), "[", 1)
 
 # Paste the ID vector with the names derived from the files_iButton list
-list_header <- paste(iButton_ID_multi$V2, iButton_SR_date, sep = "_")
+list_header <- paste(iButton_ID_multi$V2)
 
 
 # Select all csv-files and put them in one list
