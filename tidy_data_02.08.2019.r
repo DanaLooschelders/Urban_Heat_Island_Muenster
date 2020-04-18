@@ -1,6 +1,6 @@
 #iButtons tidy up - correct offset and tidy up temperature spikes 
 #for 02.08.2019
-setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
 
 str(list_iButton_corr) #used from iButtons-check script (check that date corresponds)
 #create temporary list
@@ -35,26 +35,32 @@ list_iButton_corr_tidy=list_iButton_corr #create new, tidy list
 str(list_iButton_corr)
 report.na=rep(NA, length(list_iButton_corr_tidy))
 #replace all temperature spikes (rise in >5°C in 10 mins) by NAs and report missing values
+#for (i in 1:length(list_iButton_corr_tidy)) {
+  #name_save=names(list_iButton_corr_tidy[])
+ # test=list_iButton_corr_tidy[[i]]
+  #test$diff=rep(NA)
+  #test$diff[1:length(test$Temperature_C_w_off)-1]=diff(test$Temperature_C_w_off)
+  #test$Temperature_C_w_off[test$diff>=5]=NA
+  #test$Temperature_C_w_off[test$diff<= -5]=NA
+  #list_iButton_corr_tidy[[i]]=test
+  #names(list_iButton_corr_tidy[])=name_save
+  #report.na[i]=sum(is.na(test$Temperature_C_miss_off))
+#}
+
+#-> use the second loop as one dataframe has values that are not corrected for the offset
 for (i in 1:length(list_iButton_corr_tidy)) {
   #name_save=names(list_iButton_corr_tidy[])
   test=list_iButton_corr_tidy[[i]]
   test$diff=rep(NA)
-  test$diff[1:length(test$Temperature_C_w_off)-1]=diff(test$Temperature_C_w_off)
-  test$Temperature_C_w_off[test$diff>=5]=NA
-  test$Temperature_C_w_off[test$diff<= -5]=NA
+  test$diff[1:length(test[,4])-1]=diff(test[,4])
+  test[,4][test$diff>=5]=NA
+  test[,4][test$diff<= -5]=NA
   list_iButton_corr_tidy[[i]]=test
   #names(list_iButton_corr_tidy[])=name_save
-  report.na[i]=sum(is.na(test$Temperature_C_miss_off))
+  report.na[i]=sum(is.na(test[,4]))
 }
-
 report.na #check how many NAs were in data
 
-test=list_iButton_corr_tidy[["33"]] #somehow the offset for this one is missing
-diff(test$Temperature_C_miss_off)
+list_iButton_corr_tidy[["33"]] #somehow the offset for this one is missing
 
-test=list_iButton_corr_tidy[[14]]
-test$diff=rep(NA)
-test$diff[1:length(test$Temperature_C_w_off)-1]=diff(test$Temperature_C_w_off)
-test$Temperature_C_w_off[test$diff>=5]=NA
-test$Temperature_C_w_off[test$diff<= -5]=NA
-list_iButton_corr_tidy[[i]]=test
+
