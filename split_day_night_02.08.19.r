@@ -11,7 +11,7 @@ list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list
 
 
 #read in sunrise/sunset data
-setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
 sun=read.table("Sunrise_sunset_times.csv", sep=";", dec=",", header=T, stringsAsFactors = F)
 sun$ï..Datum=strptime(sun$ï..Datum, "%d.%m.%Y")
 str(sun)
@@ -49,7 +49,7 @@ test=rbind(test, test_day)
 
 #check of it work by plotting temperature values with sundown values  
 par(new=F)
-plot(test$Datetime.1, test$Temperature_C)
+plot(test$Datetime.1, test[,4])
 abline(v=sun2$sunrise_wDawn, col="blue")
 abline(v=sun2$sunset_wDawn, col="red")
 
@@ -75,7 +75,7 @@ names(list_iButton_corr_tidy_date_day)=save.names #add names to list
 test2=list_iButton_corr_tidy_date_day[[6]]
 #plot it
 par(new=F)
-plot(test2$Datetime.1, test2$Temperature_C)
+plot(test2$Datetime.1, test2[,4])
 abline(v=sun2$sunrise_wDawn, col="blue")
 abline(v=sun2$sunset_wDawn, col="red")
 
@@ -97,7 +97,7 @@ for(i in 1:length(sun2$date)){
   test=rbind(test, test_day) 
 }
 par(new=F)
-plot(test$Datetime.1, test$Temperature_C)
+plot(test$Datetime.1, test[,4])
 abline(v=sun2$sunrise_wDawn, col="blue")
 abline(v=sun2$sunset_wDawn, col="red")
 
@@ -124,8 +124,8 @@ test3=list_iButton_corr_tidy_date_night[[6]]
 #plot it for both
 plot.new()
 par(new=F, xpd=F)
-plot(test2$Datetime.1, test2$Temperature_C, col="lightblue")
-points(test3$Datetime.1, test3$Temperature_C, col="darkblue")
+plot(test2$Datetime.1, test2[,4], col="lightblue")
+points(test3$Datetime.1, test3[,4], col="darkblue")
 abline(v=sun2$sunrise, col="orange")
 abline(v=sun2$sunset, col="red")
 legend("topright", 
