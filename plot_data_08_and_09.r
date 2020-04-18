@@ -1,3 +1,16 @@
+
+#assign description for plots
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+#read in csv with lat lon and description of places
+des=read.table("Lat_Lon_Logger.csv", sep=";", dec=",", header=T)
+str(des)
+des$ï..Logger.ID=as.character(des$ï..Logger.ID)
+str(list_iButton_corr_tidy_date_day[[1]])
+names(list_iButton_corr_tidy_date_day[1])
+names(list_iButton_corr_tidy_date_day)
+#test with one
+name=names(list_iButton_corr_tidy_date_day[5])
+des[des$ï..Logger.ID==name,]
 #plot all the plots for cleared and split data
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_01.08/")
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_02.09/")
