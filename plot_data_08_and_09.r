@@ -23,11 +23,15 @@ for(i in 1:length(list_iButton_corr_tidy_date_day)){
     place.name=des$Place_name[des$ï..Logger.ID==dataname]
     place.number=des$Place_number[des$ï..Logger.ID==dataname]
     place.type=des$Place_type[des$ï..Logger.ID==dataname]
-    subtitle=paste("Logger was placed in", place.name, place.number, "in", place.type)
+    description=des$Description[des$ï..Logger.ID==dataname]
+    subtitle=paste("Logger was placed in", place.name, place.number, "in", place.type,
+                   description)
   data=list_iButton_corr_tidy_date_day[[i]] #retrieve dataframe from list
   jpeg(filename = name)
   plot(data$Datetime.1, data[,4], main=title, 
-       sub=subtitle, ylab="Temperature [°C]", xlab="Date")
+       sub=paste("Logger was placed in", place.name, place.number, "in", place.type, "\n",
+                 description),
+       ylab="Temperature [°C]", xlab=" ")
   abline(v=sun2$sunrise, col="blue")
   abline(v=sun2$sunset, col="red")
   legend("topright", 
@@ -46,11 +50,13 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
   place.name=des$Place_name[des$ï..Logger.ID==dataname]
   place.number=des$Place_number[des$ï..Logger.ID==dataname]
   place.type=des$Place_type[des$ï..Logger.ID==dataname]
-  subtitle=paste("Logger was placed in", place.name, place.number, "in", place.type)
+  description=des$Description[des$ï..Logger.ID==dataname]
   data=list_iButton_corr_tidy_date_night[[i]]
   jpeg(filename = name)
   plot(data$Datetime.1, data[,4], main=title,
-       sub=subtitle, ylab="Temperature [°C]", xlab="Date")
+       sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
+                 description),
+       ylab="Temperature [°C]", xlab=" ")
   abline(v=sun2$sunrise, col="blue")
   abline(v=sun2$sunset, col="red")
   legend("topright", 
