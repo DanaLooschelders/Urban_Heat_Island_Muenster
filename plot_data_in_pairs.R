@@ -14,12 +14,22 @@ ID=unique(des$place_ID)
 #create a metadata table for logger
 metadata=data.frame("ID"=as.integer(names(list_iButton_corr_tidy_date)))
 metadata$PlaceID=rep(NA)
+metadata$type=rep(NA)
 for(i in metadata$ID){
   if(any(des$ï..Logger.ID==i)) {
   metadata$PlaceID[metadata$ID==i]=des$place_ID[des$ï..Logger.ID==i]
+  metadata$type[metadata$ID==i]=as.character(des$Place_type[des$ï..Logger.ID==i])
   }else{}
 }
-metadata$PlaceID[metadata$ID==96]=des$place_ID[des$ï..Logger.ID==96]
+
+#write seperate lists for each place_ID (with for loop?)
+#then plot pairs depending on number of dataframes in list
+#add color depending on type of place 
+
+#test
+for (i in unique(metadata$PlaceID)){
+    i=list(rep(NA))
+}
 #test
 Logger=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date)==des$ï..Logger.ID[des$place_ID=="Aasee_1"]]
 Logger2=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date)==des$ï..Logger.ID[des$place_ID=="ULB_1"]]
