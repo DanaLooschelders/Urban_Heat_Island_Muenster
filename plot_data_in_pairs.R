@@ -40,7 +40,7 @@ metadata$color[metadata$type=="Vegetation"]="green"
 
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_02.09/")
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_20.08/")
-
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_14.08/")
 
 for (i in unique(metadata$PlaceID)){
   dataname=i #save logger ID 
