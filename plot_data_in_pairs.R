@@ -21,15 +21,46 @@ for(i in metadata$ID){
   metadata$type[metadata$ID==i]=as.character(des$Place_type[des$ï..Logger.ID==i])
   }else{}
 }
-
+metadata[is.na(metadata$PlaceID),2:3]="unknown"
 #write seperate lists for each place_ID (with for loop?)
 #then plot pairs depending on number of dataframes in list
 #add color depending on type of place 
 
 #test
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots")
 for (i in unique(metadata$PlaceID)){
-    i=list(rep(NA))
+  dataname=names(metadata$placeID==i) #save logger ID 
+  name=paste("day","paired_plot",dataname,".jpg")
+  Loggers=metadata$ID[metadata$PlaceID==i]
+    if(length(Loggers)==3){
+      jpeg(filename=name)
+    dat_logger1=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date_day)==Loggers[1]]
+    dat_logger2=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date_day)==Loggers[2]]
+    dat_logger3=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date_day)==Loggers[3]]
+    plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4])
+    lines(dat_logger2$Datetime.1[[1]], dat_logger2[[1]][,4])
+    lines(dat_logger3$Datetime.1[[1]], dat_logger3[[1]][,4])
+    dev.off()
+    }
+    else if(length(Loggers)==2){
+      jpeg(filename=name)
+      dat_logger1=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date_day)==Loggers[1]]
+      dat_logger2=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date_day)==Loggers[2]]
+      plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4])
+      lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,4])
+      dev.off()
+    }
+  else{}
 }
+
+metadata=na.omit(metadata)
+
+placeIID=unique(metadata$PlaceID)
+test=metadata$ID[metadata$PlaceID==placeIID[1]]
+test
+dat_logger1=list_iButton_corr_tidy_date_day[[test[1]]]
+dat_logger1=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date_day)==test[1]]
+
 #test
 Logger=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date)==des$ï..Logger.ID[des$place_ID=="Aasee_1"]]
 Logger2=list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date)==des$ï..Logger.ID[des$place_ID=="ULB_1"]]
