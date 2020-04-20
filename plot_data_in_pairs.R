@@ -1,4 +1,8 @@
 #plot in logger pairs
+#set ylim 
+  #for 01 August: ylim=c(10,35)
+  #for September: ylim=c(5,30)
+  #for 20 August: ylim=c(10,40)
 
 #assign description for plots
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
@@ -13,6 +17,7 @@ ID=unique(des$place_ID)
 
 #create a metadata table for logger
 metadata=data.frame("ID"=as.integer(names(list_iButton_corr_tidy)))
+metadata=na.omit(metadata)
 metadata$PlaceID=rep(NA)
 metadata$type=rep(NA)
 for(i in metadata$ID){
@@ -33,7 +38,10 @@ metadata$color[metadata$type=="Vegetation"]="green"
 #then plot pairs depending on number of dataframes in list
 #add color depending on type of place 
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_02.09/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_20.08/")
+
+
 for (i in unique(metadata$PlaceID)){
   dataname=i #save logger ID 
   name=paste("day","paired_plot",dataname,".jpg")
@@ -44,7 +52,7 @@ for (i in unique(metadata$PlaceID)){
     dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
     dat_logger3=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[3]]
     plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4], 
-         type="l", ylim=c(10,35), ylab="Temperature [°C]", xlab="Date",
+         type="l", ylim=c(10,40), ylab="Temperature [°C]", xlab="Date",
          col=metadata$color[metadata$ID==Loggers[1]])
     lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,4],
           col=metadata$color[metadata$ID==Loggers[2]])
@@ -64,7 +72,7 @@ for (i in unique(metadata$PlaceID)){
       dat_logger1=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[1]]
       dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
       plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4], 
-           type="l", ylim=c(10,35), ylab="Temperature [°C]", xlab="Date",
+           type="l", ylim=c(10,40), ylab="Temperature [°C]", xlab="Date",
            col=metadata$color[metadata$ID==Loggers[1]])
       lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,4],
             col=metadata$color[metadata$ID==Loggers[2]])
@@ -72,6 +80,7 @@ for (i in unique(metadata$PlaceID)){
       dev.off()
     }
   else{}
+  
 }
 Loggers=metadata$ID[metadata$PlaceID=="Aasee_2"]
 col1=metadata$color[metadata$ID==Loggers[1]]
@@ -80,10 +89,11 @@ label1=metadata$type[metadata$ID==Loggers[1]]
 label2=metadata$type[metadata$ID==Loggers[2]]
 dat_logger1=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[1]]
 dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
-plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4], 
+plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4],
      type="l", ylim=c(10,35), ylab="Temperature [°C]", xlab="Date",
      col=metadata$color[metadata$ID==Loggers[1]])
 lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,4],
       col=metadata$color[metadata$ID==Loggers[2]])
 legend("topright", legend=c(label1, label2), col=c(col1, col2))
 Loggers
+col1
