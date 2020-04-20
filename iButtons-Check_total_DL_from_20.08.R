@@ -61,7 +61,7 @@ usePackage("tidyverse")
 # Set Working directory (wd)
 # setwd(choose.dir()) # Uncomment if necessary, but only works for Windows operating system
 #setwd("V:/klima/Projekte/2019_Urban_Heat_Island/Data/Data_raw/Calibration_test_20190704-20190708")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/UHI_Muenster_Data/dat_29.08bzw01.09/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/UHI_Muenster_Data/dat_20.08//")
 #################
 # Data iButtons #
 #################
@@ -84,7 +84,7 @@ iButton_header = c("Datetime", "Temperature_C")
 # Create vector containing ID #
 # We only need the ID # without the first (empty) column, so we set the first column to NULL in colClasses
 #--> changed name (to second file from raw data - UHI timeframe)
-iButton_ID=read.table("0800000051698721_190927.csv", sep = ",", dec = ".", header = F, skip = 4,
+iButton_ID=read.table("0800000051698721_190901.csv", sep = ",", dec = ".", header = F, skip = 4,
                       nrows = 1, as.is = T, colClasses=c("NULL", NA)) 
 
 
@@ -194,8 +194,8 @@ list_iButton <- mapply(cbind, list_iButton, "Datetime"=list_iButton_datetime, SI
 
 #---> chose own time period
 range(list_iButton_datetime[[1]])
-start_time=strptime("2019-09-02 00:00:00", "%Y-%m-%d %H:%M:%S")
-end_time=strptime("2019-09-13 00:00:00", "%Y-%m-%d %H:%M:%S")
+start_time=strptime("2019-08-21 00:00:00", "%Y-%m-%d %H:%M:%S")
+end_time=strptime("2019-09-01 00:00:00", "%Y-%m-%d %H:%M:%S")
 
 # Apply the time index on the single data table
 # ---> outcommented d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_Labtest & Datetime <= end_Labtest)
