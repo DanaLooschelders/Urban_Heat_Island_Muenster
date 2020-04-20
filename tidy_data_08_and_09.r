@@ -10,7 +10,8 @@ list_iButton_corr_temp=list_iButton_corr
 offset_stats=read.table("iButton_Statistics.csv", sep=",", dec=".", header=T)
 str(offset_stats)
 
-list_iButton_corr[[1]]=NULL #remove data without ID
+#************only for August?
+#list_iButton_corr[[1]]=NULL #remove data without ID
 
 for (i in names(list_iButton_corr)){
   if(any(offset_stats$ID_iButton==i)){
