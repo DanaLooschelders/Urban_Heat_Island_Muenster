@@ -31,7 +31,7 @@ metadata$color=rep(NA)
 
 #set column with color for plots
 metadata$color[metadata$type=="Water"]="blue"
-metadata$color[metadata$type=="Settlement"]="darkgrey"
+metadata$color[metadata$type=="Sealed_area"]="darkgrey"
 metadata$color[metadata$type=="Vegetation"]="green"
 
 #write seperate lists for each place_ID (with for loop?)
@@ -52,14 +52,14 @@ for (i in unique(metadata$PlaceID)){
     dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
     dat_logger3=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[3]]
     plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4], 
-         type="l", ylim=c(10,40), ylab="Temperature [°C]", xlab="Date",
+         type="l", ylim=c(10,35), ylab="Temperature [°C]", xlab="Date",
          col=metadata$color[metadata$ID==Loggers[1]],
          main=paste("Plot", i))
     lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,4],
           col=metadata$color[metadata$ID==Loggers[2]])
     lines(dat_logger3[[1]]$Datetime.1, dat_logger3[[1]][,4], 
           col=metadata$color[metadata$ID==Loggers[3]])
-    legend("topright", legend=c("Settlement", "Vegetation", "Water"), 
+    legend("topright", legend=c("Sealed_area", "Vegetation", "Water"), 
            fill = c("darkgrey", "green", "blue"))
     dev.off()
     }
@@ -73,7 +73,7 @@ for (i in unique(metadata$PlaceID)){
       dat_logger1=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[1]]
       dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
       plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,4], 
-           type="l", ylim=c(10,40), ylab="Temperature [°C]", xlab="Date",
+           type="l", ylim=c(10,35), ylab="Temperature [°C]", xlab="Date",
            col=metadata$color[metadata$ID==Loggers[1]],
            main=paste("Plot", i))
       lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,4],
