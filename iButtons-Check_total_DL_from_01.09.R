@@ -147,8 +147,8 @@ iButton_SR_date = sapply(strsplit(files_iButtons, "\\."), "[", 1)
 
 # Paste the ID vector with the names derived from the files_iButton list
 list_header <- paste(iButton_ID_multi$V2)
-
-
+list_header[list_header=="NA"]="92" #set NA logger to 92 (doublecheck, but filnemae corresponds)
+list_header
 # Select all csv-files and put them in one list
 # By having all dataframes in the same list, you can apply changes to all files simultanuously, e.g. renaming.
 list_iButton <- mget(ls(pattern =  ".csv"))
