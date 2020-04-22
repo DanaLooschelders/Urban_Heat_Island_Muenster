@@ -31,7 +31,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_day)){
   plot(data$Datetime.1, data[,4], main=title, 
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type, "\n",
                  description),
-       ylab="Temperature [°C]", xlab=" ")
+       ylab="Temperature [°C]", xlab=" ",pch=20, cex=2)
   abline(v=sun2$sunrise, col="blue")
   abline(v=sun2$sunset, col="red")
   legend("topright", 
@@ -56,12 +56,65 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
   plot(data$Datetime.1, data[,4], main=title,
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
                  description),
-       ylab="Temperature [°C]", xlab=" ")
+       ylab="Temperature [°C]", xlab=" ", pch=20, cex=2)
   abline(v=sun2$sunrise, col="blue")
   abline(v=sun2$sunset, col="red")
   legend("topright", 
          legend=c("Night Temperature", "Sunrise", "Sunset"), 
          fill=c("black", "orange", "red"), cex=0.7)
+  dev.off()
+}
+
+
+#plot both day and night together
+
+for(i in 1:length(list_iButton_corr_tidy_date_night)){
+  dataname=names(list_iButton_corr_tidy_date_night)[i]
+  name=paste("both","plot",dataname,".jpg")
+  title=paste("Temperature",dataname)
+  #get parameters for subtitle
+  place.name=des$Place_name[des$ï..Logger.ID==dataname]
+  place.number=des$Place_number[des$ï..Logger.ID==dataname]
+  place.type=des$Place_type[des$ï..Logger.ID==dataname]
+  description=des$Description[des$ï..Logger.ID==dataname]
+  data.day=list_iButton_corr_tidy_date_day[[i]]
+  data.night=list_iButton_corr_tidy_date_night[[i]]
+  jpeg(filename = name)
+  plot(data.day$Datetime.1, data.day[,4], main=title,
+       sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
+                 description),
+       ylab="Temperature [°C]", xlab=" ", col="darkgreen", pch=20, cex=2)
+  points(data.night$Datetime.1, data.night[,4], col="darkblue", pch=20, cex=2)
+  abline(v=sun2$sunrise, col="orange")
+  abline(v=sun2$sunset, col="red")
+  legend("topright", 
+         legend=c("Day Temperature", "Night Temperature", "Sunrise", "Sunset"), 
+         fill=c("darkgreen", "darkblue", "orange", "red"), cex=0.7)
+  dev.off()
+}
+
+#plot as line graph
+
+for(i in 1:length(list_iButton_corr_tidy)){
+  dataname=names(list_iButton_corr_tidy)[i]
+  name=paste("line","plot",dataname,".jpg")
+  title=paste("Temperature",dataname)
+  #get parameters for subtitle
+  place.name=des$Place_name[des$ï..Logger.ID==dataname]
+  place.number=des$Place_number[des$ï..Logger.ID==dataname]
+  place.type=des$Place_type[des$ï..Logger.ID==dataname]
+  description=des$Description[des$ï..Logger.ID==dataname]
+  data=list_iButton_corr_tidy[[i]]
+  jpeg(filename = name)
+  plot(data$Datetime.1, data[,4], main=title,
+       sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
+                 description),
+       ylab="Temperature [°C]", xlab=" ", col="darkblue", type="l")
+  abline(v=sun2$sunrise, col="orange")
+  abline(v=sun2$sunset, col="red")
+  legend("topright", 
+         legend=c("Temperature",  "Sunrise", "Sunset"), 
+         fill=c("darkblue", "orange", "red"), cex=0.7)
   dev.off()
 }
 
