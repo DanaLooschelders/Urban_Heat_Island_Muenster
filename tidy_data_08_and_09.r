@@ -24,6 +24,9 @@ for (i in names(list_iButton_corr)){
 }
 
 
+#for the 02.08.2019
+#list_iButton_corr_tidy[["33"]] #somehow the offset for this one is missing
+
 #iterate through all dataframes on list
 #iterate trough all temperature values 
 #set threshold value corresponding to literature regarding spikes
@@ -63,42 +66,10 @@ metadata$color[metadata$type=="Water"]="blue"
 metadata$color[metadata$type=="Sealed_area"]="darkgrey"
 metadata$color[metadata$type=="Vegetation"]="green"
 
-#-> use the second loop as one dataframe has values that are not corrected for the offset
+#loop through data and correct temperature spikes
 for (i in 1:length(list_iButton_corr_tidy)) {
-  #name_save=names(list_iButton_corr_tidy[])
-  test=list_iButton_corr_tidy[[i]]
-  test$diff=rep(NA)
-  test$diff[1:length(test[,4])-1]=diff(test[,4])
-  test[,4][test$diff>=5]=NA
-  test[,4][test$diff<= -5]=NA
-  list_iButton_corr_tidy[[i]]=test
-  #names(list_iButton_corr_tidy[])=name_save
-  report.na[i]=sum(is.na(test[,4]))
-}
-report.na #check how many NAs were in data
-
-#for the 02.08.2019
-list_iButton_corr_tidy[["33"]] #somehow the offset for this one is missing
-
-#try new loop with longer removal and if loop
-
-for (i in 1:length(list_iButton_corr_tidy)) {
-  #name_save=names(list_iButton_corr_tidy[])
-  test=list_iButton_corr_tidy[[i]]
-  test$diff=rep(NA)
-  test$diff[1:length(test[,4])-1]=diff(test[,4])
-  spike=which(test$diff>=5)
-  for (x in spike) {
-    test[x:(x+18),4]=NA
-  }
-  test[,4][test$diff<= -5]=NA
-  list_iButton_corr_tidy[[i]]=test
-  #names(list_iButton_corr_tidy[])=name_save
-  report.na[i]=sum(is.na(test[,4]))
-}
-
-for (i in 1:length(list_iButton_corr_tidy)) {
-if (metadata$type[metadata$ID==i]=="Water") {
+  name=names(list_iButton_corr_tidy[i])
+if (metadata$type[metadata$ID==name]=="Water") {
 test=list_iButton_corr_tidy[[i]]
 test$diff=rep(NA)
 test$diff[1:length(test[,4])-1]=diff(test[,4])
@@ -124,3 +95,5 @@ report.na[i]=sum(is.na(test[,4]))
   report.na[i]=sum(is.na(test[,4]))
 }
 }
+
+report.na #check how many NAs were in data
