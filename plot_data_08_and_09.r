@@ -13,6 +13,7 @@ str(list_iButton_corr_tidy_date_day[[1]])
 #plot all the plots for cleared and split data
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_01.08/")
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_02.09/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_20.08/")
 #plot and save day data
 
 for(i in 1:length(list_iButton_corr_tidy_date_day)){
