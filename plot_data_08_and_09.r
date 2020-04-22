@@ -17,7 +17,7 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_02.09/")
 
 for(i in 1:length(list_iButton_corr_tidy_date_day)){
   dataname=names(list_iButton_corr_tidy_date_day)[i] #save logger ID 
-  name=paste("day","plot",dataname,".jpg") #set filename
+  name=paste("day","plot",dataname,".pdf") #set filename
   title=paste("Day Temperature",dataname) #set title for plot
   #get parameters for subtitle
     place.name=des$Place_name[des$ï..Logger.ID==dataname]
@@ -27,7 +27,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_day)){
     subtitle=paste("Logger was placed in", place.name, place.number, "in", place.type,
                    description)
   data=list_iButton_corr_tidy_date_day[[i]] #retrieve dataframe from list
-  jpeg(filename = name)
+  pdf(file = name, width=14, height=7, paper="a4r")
   plot(data$Datetime.1, data[,4], main=title, 
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type, "\n",
                  description),
@@ -44,7 +44,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_day)){
 
 for(i in 1:length(list_iButton_corr_tidy_date_night)){
   dataname=names(list_iButton_corr_tidy_date_night)[i]
-  name=paste("night","plot",dataname,".jpg")
+  name=paste("night","plot",dataname,".pdf")
   title=paste("Night Temperature",dataname)
   #get parameters for subtitle
   place.name=des$Place_name[des$ï..Logger.ID==dataname]
@@ -52,7 +52,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
   place.type=des$Place_type[des$ï..Logger.ID==dataname]
   description=des$Description[des$ï..Logger.ID==dataname]
   data=list_iButton_corr_tidy_date_night[[i]]
-  jpeg(filename = name)
+  pdf(file = name, width=14, height=7, paper="a4r")
   plot(data$Datetime.1, data[,4], main=title,
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
                  description),
@@ -70,7 +70,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
 
 for(i in 1:length(list_iButton_corr_tidy_date_night)){
   dataname=names(list_iButton_corr_tidy_date_night)[i]
-  name=paste("both","plot",dataname,".jpg")
+  name=paste("both","plot",dataname,".pdf")
   title=paste("Temperature",dataname)
   #get parameters for subtitle
   place.name=des$Place_name[des$ï..Logger.ID==dataname]
@@ -79,7 +79,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
   description=des$Description[des$ï..Logger.ID==dataname]
   data.day=list_iButton_corr_tidy_date_day[[i]]
   data.night=list_iButton_corr_tidy_date_night[[i]]
-  jpeg(filename = name)
+  pdf(file = name, width=14, height=7, paper="a4r")
   plot(data.day$Datetime.1, data.day[,4], main=title,
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
                  description),
@@ -97,7 +97,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
 
 for(i in 1:length(list_iButton_corr_tidy)){
   dataname=names(list_iButton_corr_tidy)[i]
-  name=paste("line","plot",dataname,".jpg")
+  name=paste("line","plot",dataname,".pdf")
   title=paste("Temperature",dataname)
   #get parameters for subtitle
   place.name=des$Place_name[des$ï..Logger.ID==dataname]
@@ -105,7 +105,7 @@ for(i in 1:length(list_iButton_corr_tidy)){
   place.type=des$Place_type[des$ï..Logger.ID==dataname]
   description=des$Description[des$ï..Logger.ID==dataname]
   data=list_iButton_corr_tidy[[i]]
-  jpeg(filename = name)
+  pdf(file = name, width=14, height=7, paper="a4r")
   plot(data$Datetime.1, data[,4], main=title,
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
                  description),
