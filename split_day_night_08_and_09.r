@@ -124,11 +124,11 @@ test3=list_iButton_corr_tidy_date_night[[6]]
 #plot it for both
 plot.new()
 par(new=F, xpd=F)
-plot(test2$Datetime.1, test2[,4], col="lightblue")
-points(test3$Datetime.1, test3[,4], col="darkblue")
+plot(test2$Datetime.1, test2[,4], col="darkgreen", cex=0.2)
+points(test3$Datetime.1, test3[,4], col="darkblue", cex=0.2)
 abline(v=sun2$sunrise, col="orange")
 abline(v=sun2$sunset, col="red")
 legend("topright", 
        legend=c("Day data", "Night data", "Sunrise", "Sunset"), 
-       fill=c("lightblue", "darkblue", "orange", "red"), cex=0.7)
+       fill=c("darkgreen", "darkblue", "orange", "red"), cex=0.7)
          
