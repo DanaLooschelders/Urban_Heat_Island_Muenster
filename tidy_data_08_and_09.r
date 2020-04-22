@@ -97,3 +97,4 @@ report.na[i]=sum(is.na(test[,4]))
 }
 
 report.na #check how many NAs were in data
+
