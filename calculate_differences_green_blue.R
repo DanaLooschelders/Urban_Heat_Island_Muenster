@@ -18,9 +18,9 @@ for (i in unique(metadata$PlaceID)){
     sealed=Loggers[Loggers==metadata$ID[metadata$PlaceID==i&metadata$type=="Sealed_area"]] #get ID of logger in sealed area
     dat_logger_veg=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==vegetation]] #get veg logger data
     dat_logger_sealed=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==sealed]] #get sealed logger data
-    diff_temp=dat_logger_sealed[[1]][,4] - dat_logger_veg[[1]][,4] #calculate difference between grey and green infrastructure
+    diff_temp=dat_logger_sealed[[1]][,3] - dat_logger_veg[[1]][,3] #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
-    plot(dat_logger_veg[[1]][,3], diff_temp, #plot difference
+    plot(dat_logger_veg[[1]][,2], diff_temp, #plot difference
          type="l", ylab="Temperature difference [°C]", xlab="Date",
          main=paste("Temperature Difference between \ngrey and green Infrastructure in", i))
     dev.off()
