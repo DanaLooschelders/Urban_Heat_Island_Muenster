@@ -195,7 +195,7 @@ list_iButton <- mapply(cbind, list_iButton, "Datetime"=list_iButton_datetime, SI
 #---> chose own time period
 range(list_iButton_datetime[[1]])
 start_time=strptime("2019-09-02 00:00:00", "%Y-%m-%d %H:%M:%S")
-end_time=strptime("2019-09-13 00:00:00", "%Y-%m-%d %H:%M:%S")
+end_time=strptime("2019-09-12 23:59:00", "%Y-%m-%d %H:%M:%S")
 
 # Apply the time index on the single data table
 # ---> outcommented d_iButton_single_corr <- subset(d_iButton_single, Datetime >= start_Labtest & Datetime <= end_Labtest)
