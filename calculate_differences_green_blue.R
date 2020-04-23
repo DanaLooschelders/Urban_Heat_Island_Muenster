@@ -1,6 +1,8 @@
 #plot the differences between sealed areas and vegetation
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_14.08")
-
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_01.08/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_14.08/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_20.08/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_02.09/")
 #create dataframe to save difference data
 Temp_diff_data_frame=matrix(data=NA,ncol=length(unique(metadata$PlaceID)), nrow=length(list_iButton_corr_tidy[[1]][,1]))
 Temp_diff_data_frame=as.data.frame(Temp_diff_data_frame)
@@ -32,3 +34,4 @@ str(Temp_diff_data_frame)
 Temp_diff_data_frame=Temp_diff_data_frame[,colSums(is.na(Temp_diff_data_frame))<nrow(Temp_diff_data_frame)]
 #write data to file
 write.table(Temp_diff_data_frame, file="Temp_diff_data.csv", sep = ";", dec=".")
+
