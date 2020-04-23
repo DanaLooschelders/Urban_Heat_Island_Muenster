@@ -214,12 +214,12 @@ list_iButton_corr = lapply(list_iButton, function(x) {subset(x, x[,1] >= start_t
 
 ###
 # Mean of single iButton file
-mean_iButton_single = mean(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
-mean_iButton_single
+#mean_iButton_single = mean(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
+#mean_iButton_single
 
 # sd of single iButton file
-sd_iButton_single = sd(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
-sd_iButton_single
+#sd_iButton_single = sd(d_iButton_single_corr$Temperature_C, na.rm = TRUE)
+#sd_iButton_single
 
 
 ###
@@ -283,10 +283,10 @@ summary(d_iButton_stat)
 
 # Dataframe iButton ID 51
 # Change the number in the brackets to the position of the desired iButton in the list "list_iButton"
-d_iButton_ID_51 <- list_iButton[[1]]
+#d_iButton_ID_51 <- list_iButton[[1]]
 
 # List iButton ID 51
-list_iButton_ID_51 <- list_iButton[1]
+#list_iButton_ID_51 <- list_iButton[1]
 
 
 # --------------------------------------------------------------------------------------------------------------------------------
