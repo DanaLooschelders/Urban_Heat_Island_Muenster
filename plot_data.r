@@ -31,7 +31,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_day)){
                    description)
   data=list_iButton_corr_tidy_date_day[[i]] #retrieve dataframe from list
   pdf(file = name, width=14, height=7, paper="a4r")
-  plot(data$Datetime.1, data[,4], main=title, 
+  plot(data$Datetime.1, data[,3], main=title, 
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type, "\n",
                  description),
        ylab="Temperature [°C]", xlab=" ",pch=20, cex=2)
@@ -56,7 +56,7 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
   description=des$Description[des$ï..Logger.ID==dataname]
   data=list_iButton_corr_tidy_date_night[[i]]
   pdf(file = name, width=14, height=7, paper="a4r")
-  plot(data$Datetime.1, data[,4], main=title,
+  plot(data$Datetime.1, data[,3], main=title,
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
                  description),
        ylab="Temperature [°C]", xlab=" ", pch=20, cex=2)
@@ -83,11 +83,11 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
   data.day=list_iButton_corr_tidy_date_day[[i]]
   data.night=list_iButton_corr_tidy_date_night[[i]]
   pdf(file = name, width=14, height=7, paper="a4r")
-  plot(data.day$Datetime.1, data.day[,4], main=title,
+  plot(data.day$Datetime.1, data.day[,3], main=title,
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
                  description),
        ylab="Temperature [°C]", xlab=" ", col="darkgreen", pch=20, cex=2)
-  points(data.night$Datetime.1, data.night[,4], col="darkblue", pch=20, cex=2)
+  points(data.night$Datetime.1, data.night[,3], col="darkblue", pch=20, cex=2)
   abline(v=sun2$sunrise, col="orange")
   abline(v=sun2$sunset, col="red")
   legend("topright", 
@@ -109,7 +109,7 @@ for(i in 1:length(list_iButton_corr_tidy)){
   description=des$Description[des$ï..Logger.ID==dataname]
   data=list_iButton_corr_tidy[[i]]
   pdf(file = name, width=14, height=7, paper="a4r")
-  plot(data$Datetime.1, data[,4], main=title,
+  plot(data$Datetime.1, data[,3], main=title,
        sub=paste("Logger was placed in", place.name, place.number, "in", place.type,"\n",
                  description),
        ylab="Temperature [°C]", xlab=" ", col="darkblue", type="l")
