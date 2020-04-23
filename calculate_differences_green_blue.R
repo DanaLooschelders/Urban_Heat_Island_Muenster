@@ -1,5 +1,4 @@
 #plot the differences between sealed areas and vegetation
-i="Kanonengraben_1"
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_14.08")
 
 for (i in unique(metadata$PlaceID)){
@@ -7,19 +6,17 @@ for (i in unique(metadata$PlaceID)){
   name=paste("difference","plot",dataname,".pdf")
   Loggers=metadata$ID[metadata$PlaceID==i] #save ID of Loggers belonging to place
   #check if place has logger in grey and green infrastructure
-  if(any(metadata$type[metadata$PlaceID==i]=="Vegetation")&any(metadata$type[metadata$PlaceID=="Kanonengraben_1"]=="Sealed_area")){ 
+  if(any(metadata$type[metadata$PlaceID==i]=="Vegetation")&any(metadata$type[metadata$PlaceID==i]=="Sealed_area")){ 
     vegetation=Loggers[Loggers==metadata$ID[metadata$PlaceID==i&metadata$type=="Vegetation"]] #get ID of logger in veg
     sealed=Loggers[Loggers==metadata$ID[metadata$PlaceID==i&metadata$type=="Sealed_area"]] #get ID of logger in sealed area
-    dat_logger_veg=data.frame(list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==vegetation]]) #get veg logger data
-    dat_logger_sealed=data.frame(list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==sealed]]) #get sealed logger data
-    diff_temp=dat_logger_sealed[,4]-dat_logger_veg[,4] #calculate difference between grey and green infrastructure
+    dat_logger_veg=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==vegetation]] #get veg logger data
+    dat_logger_sealed=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==sealed]] #get sealed logger data
+    diff_temp=dat_logger_sealed[[1]][,4] - dat_logger_veg[[1]][,4] #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
-    plot(dat_logger_veg[,3], diff_temp, #plot difference
+    plot(dat_logger_veg[[1]][,3], diff_temp, #plot difference
          type="l", ylab="Temperature difference [°C]", xlab="Date",
-         main=paste("Temperature Difference between grey and green Infrastructure in", i))
+         main=paste("Temperature Difference between \ngrey and green Infrastructure in", i))
     dev.off()
   }else{}
 }
 
-    str(dat_logger_sealed)
-str(dat_logger_veg)
