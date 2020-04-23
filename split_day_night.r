@@ -3,7 +3,7 @@
 
 #create column with only date in temperature
 # select first column and write into seperate list
-list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy, `[`, 1)
+list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy, `[`, 2)
 # Transform datetime to only date
 list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy_col, function(x) as.Date(x$Datetime,format = "%Y-%m-%d"))
 # add Date as additional column
@@ -124,8 +124,8 @@ test3=list_iButton_corr_tidy_date_night[[6]]
 #plot it for both
 plot.new()
 par(new=F, xpd=F)
-plot(test2$Datetime.1, test2[,4], col="darkgreen", cex=0.2)
-points(test3$Datetime.1, test3[,4], col="darkblue", cex=0.2)
+plot(test2$Datetime.1, test2[,3], col="darkgreen", cex=0.2)
+points(test3$Datetime.1, test3[,3], col="darkblue", cex=0.2)
 abline(v=sun2$sunrise, col="orange")
 abline(v=sun2$sunset, col="red")
 legend("topright", 
