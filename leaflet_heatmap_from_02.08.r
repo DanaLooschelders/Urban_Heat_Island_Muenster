@@ -8,9 +8,9 @@ library(maptools)
 library(KernSmooth) #for kernel density estimate?
 library(RColorBrewer)
 library(leaflet.extras)
-setwd("C:/00 Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
 #read in coordiante data
-coords=read.table("Lat_Lon_Logger.csv", sep=";", dec=",", header=T)
+coords=read.table("Lat_Lon_Logger.csv", sep=";", dec=".", header=T)
 str(coords)
 coords=coords[,-4] #drop last empty column
 coords=coords[,-4] #drop last empty column
@@ -44,12 +44,12 @@ for (i in dat) {
   list_iButton_agg_mean[[i]]=aggregate(dummy$Temperature_C, by=list(date=dummy$Date), FUN=mean)
 }
 list.save(list_iButton_agg_mean, "list_agg.rdata") #save list as Rdata object
-names(list_iButton_agg_mean)=iButton_ID_multi$V2
+names(list_iButton_agg_mean)=names(list_iButton_corr)[-1]
 
 #write for loop to create dataframe with mean temperatures for one day for all IDs
 #create dataframe to fill in for loop
 list_iButton_agg_mean[[1]]=NULL #drop first list element as logger is missing its ID)
-mapdata=data.frame(ID=names(list_iButton_agg_mean), lat=rep(NA,32), lon=rep(NA,32), temp=rep(NA,32))
+mapdata=data.frame(ID=names(list_iButton_agg_mean), lat=rep(NA, length(list_iButton_agg_mean)), lon=rep(NA, length(list_iButton_agg_mean)), temp=rep(NA, length(list_iButton_agg_mean)))
 coords=coords %>% drop_na() #drops rows that contains NA values (as some coordinates have no logger ID)
 coords
 for (i in coords$ID){
