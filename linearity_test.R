@@ -53,3 +53,6 @@ for (i in 1:length(list_iButton_corr)){
   dev.off()
 }else{}
 }
+savehistory()
+save()
+save.image()

@@ -1,5 +1,6 @@
 require(zoo)
 require(xts)
+?na.approx
 #interpolate the data to minute intervalls to set all loggers to the same starting point
 #create empty vector of minute data for the same timeframe as temp data
 #assume linearity and approximate values 
@@ -39,3 +40,4 @@ for(i in 1:length(list_iButton_corr)){
 }
 #eventuell if Schleife einbauen, 
 #falls nicht zwangsläufig der letzte Wert ersetzt werden muss
+
