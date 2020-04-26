@@ -40,9 +40,10 @@ report.na=rep(NA, length(list_iButton_corr_tidy))
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
 #read in csv with lat lon and description of places
 des=read.table("Lat_Lon_Logger.csv", sep=";", dec=",", header=T)
+names(des)[1]="Logger_ID"
 des=des[,1:7] #drop column with water depth (for now)
 des=na.omit(des) #drop rows with NA
-des$ï..Logger.ID=as.character(des$ï..Logger.ID) #set logger ID as character to match names
+des$Logger_ID=as.character(des$Logger_ID) #set logger ID as character to match names
 des$place_ID=paste(des$Place_name,des$Place_number, sep="_")
 str(des)
 ID=unique(des$place_ID)
@@ -53,9 +54,9 @@ metadata=na.omit(metadata)
 metadata$PlaceID=rep(NA)
 metadata$type=rep(NA)
 for(i in metadata$ID){
-  if(any(des$ï..Logger.ID==i)) {
-    metadata$PlaceID[metadata$ID==i]=des$place_ID[des$ï..Logger.ID==i]
-    metadata$type[metadata$ID==i]=as.character(des$Place_type[des$ï..Logger.ID==i])
+  if(any(des$Logger_ID==i)) {
+    metadata$PlaceID[metadata$ID==i]=des$place_ID[des$Logger_ID==i]
+    metadata$type[metadata$ID==i]=as.character(des$Place_type[des$Logger_ID==i])
   }else{}
 }
 metadata[is.na(metadata$PlaceID),2:3]="unknown"
