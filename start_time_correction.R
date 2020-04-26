@@ -10,7 +10,6 @@ head(list_iButton_corr)
 date_time_complete <- seq.POSIXt(from=start_time,
                                  to=end_time,by="min") 
 str(date_time_complete)
-str(test)
 
 test=xts(list_iButton_corr[[1]][,2],list_iButton_corr[[1]][,3])
 

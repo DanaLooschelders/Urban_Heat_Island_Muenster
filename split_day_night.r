@@ -13,13 +13,14 @@ list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list
 #read in sunrise/sunset data
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
 sun=read.table("Sunrise_sunset_times.csv", sep=";", dec=",", header=T, stringsAsFactors = F)
-sun$ï..Datum=strptime(sun$ï..Datum, "%d.%m.%Y")
+names(sun)[1]="Datum"
+sun$Datum=strptime(sun$Datum, "%d.%m.%Y")
 str(sun)
 
 #restructure dataframe to paste the date onto the times and convert to POSIXct
-sun2=data.frame("sunrise"= as.POSIXct(paste(sun$ï..Datum, sun$Sonnenaufgang)))
-sun2$sunset=as.POSIXct(paste(sun$ï..Datum, sun$Sonnenuntergang))
-sun2$date=sun$ï..Datum
+sun2=data.frame("sunrise"= as.POSIXct(paste(sun$Datum, sun$Sonnenaufgang)))
+sun2$sunset=as.POSIXct(paste(sun$Datum, sun$Sonnenuntergang))
+sun2$date=sun$Datum
 str(sun2)
 
 #use start_time and end_time to subset sun2 data to correct length
