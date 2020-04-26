@@ -12,16 +12,15 @@ str(des)
 str(list_iButton_corr_tidy_date_day[[1]])
 
 #plot all the plots for cleared and split data
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_01.08/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_02.09/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_20.08/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night_14.08/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night/")
 
 #plot and save day data
 
 for(i in 1:length(list_iButton_corr_tidy_date_day)){
   dataname=names(list_iButton_corr_tidy_date_day)[i] #save logger ID 
-  name=paste("day","plot",dataname,".pdf") #set filename
+  date=as.character(list_iButton_corr_tidy_date_day[[1]][1,2])
+  date=substr(date, 1,10)
+   name=paste(date,"day","plot",dataname,".pdf") #set filename
   title=paste("Day Temperature",dataname) #set title for plot
   #get parameters for subtitle
     place.name=des$Place_name[des$Logger_ID==dataname]
@@ -48,7 +47,9 @@ for(i in 1:length(list_iButton_corr_tidy_date_day)){
 
 for(i in 1:length(list_iButton_corr_tidy_date_night)){
   dataname=names(list_iButton_corr_tidy_date_night)[i]
-  name=paste("night","plot",dataname,".pdf")
+  date=as.character(list_iButton_corr_tidy_date_night[[1]][1,2])
+  date=substr(date, 1,10)
+  name=paste(date,"night","plot",dataname,".pdf")
   title=paste("Night Temperature",dataname)
   #get parameters for subtitle
   place.name=des$Place_name[des$Logger_ID==dataname]
@@ -74,7 +75,9 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
 
 for(i in 1:length(list_iButton_corr_tidy_date_night)){
   dataname=names(list_iButton_corr_tidy_date_night)[i]
-  name=paste("both","plot",dataname,".pdf")
+  date=as.character(list_iButton_corr_tidy_date_night[[1]][1,2])
+  date=substr(date, 1,10)
+  name=paste(date,"both","plot",dataname,".pdf")
   title=paste("Temperature",dataname)
   #get parameters for subtitle
   place.name=des$Place_name[des$Logger_ID==dataname]
@@ -101,8 +104,10 @@ for(i in 1:length(list_iButton_corr_tidy_date_night)){
 
 for(i in 1:length(list_iButton_corr_tidy)){
   dataname=names(list_iButton_corr_tidy)[i]
-  name=paste("line","plot",dataname,".pdf")
-  title=paste("Temperature",dataname)
+  date=as.character(list_iButton_corr_tidy[[1]][1,2])
+  date=substr(date, 1,10)
+  name=paste(date,"line","plot",dataname,".pdf")
+  title=paste(date,"Temperature",dataname)
   #get parameters for subtitle
   place.name=des$Place_name[des$Logger_ID==dataname]
   place.number=des$Place_number[des$Logger_ID==dataname]

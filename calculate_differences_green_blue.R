@@ -1,16 +1,15 @@
 #plot the differences between sealed areas and vegetation
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_01.08/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_14.08/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_20.08/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots_02.09/")
-#create dataframe to save difference data
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots/")
+
 Temp_diff_data_frame=matrix(data=NA,ncol=length(unique(metadata$PlaceID)), nrow=length(list_iButton_corr_tidy[[1]][,1]))
 Temp_diff_data_frame=as.data.frame(Temp_diff_data_frame)
 colnames(Temp_diff_data_frame)=unique(metadata$PlaceID)
 
 for (i in unique(metadata$PlaceID)){
   dataname=i #save place ID 
-  name=paste("difference","plot",dataname,".pdf")
+  date=as.character(list_iButton_corr_tidy[[1]][1,2])
+  date=substr(date, 1,10)
+   name=paste(date,"difference","plot",dataname,".pdf")
   Loggers=metadata$ID[metadata$PlaceID==i] #save ID of Loggers belonging to place
   #check if place has logger in grey and green infrastructure
   if(any(metadata$type[metadata$PlaceID==i]=="Vegetation")&any(metadata$type[metadata$PlaceID==i]=="Sealed_area")){ 
@@ -33,5 +32,7 @@ str(Temp_diff_data_frame)
 #remove empty columns
 Temp_diff_data_frame=Temp_diff_data_frame[,colSums(is.na(Temp_diff_data_frame))<nrow(Temp_diff_data_frame)]
 #write data to file
-write.table(Temp_diff_data_frame, file="Temp_diff_data.csv", sep = ";", dec=".")
+date=as.character(list_iButton_corr_tidy[[1]][1,2])
+date=substr(date, 1,10)
+write.table(Temp_diff_data_frame, file=paste(date,"Temp_diff_data.csv"), sep = ";", dec=".")
 

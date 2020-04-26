@@ -9,14 +9,13 @@
 #write seperate lists for each place_ID (with for loop?)
 #then plot pairs depending on number of dataframes in list
 #add color depending on type of place 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_01.08/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_02.09/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_20.08/")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots_14.08/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/paired_plots/")
 
 for (i in unique(metadata$PlaceID)){
   dataname=i #save logger ID 
-  name=paste("day","paired_plot",dataname,".pdf")
+  date=as.character(list_iButton_corr_tidy[[1]][1,2])
+  date=substr(date, 1,10)
+  name=paste(date,"day","paired_plot",dataname,".pdf")
   Loggers=metadata$ID[metadata$PlaceID==i]
     if(length(Loggers)==3){
       pdf(file=name, paper = "a4r", height=7, width=14)
@@ -24,7 +23,7 @@ for (i in unique(metadata$PlaceID)){
     dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
     dat_logger3=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[3]]
     plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,3], 
-         type="l", ylim=c(10,45), ylab="Temperature [°C]", xlab="Date",
+         type="l", ylim=c(5,45), ylab="Temperature [°C]", xlab="Date",
          col=metadata$color[metadata$ID==Loggers[1]],
          main=paste("Plot", i))
     lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,3],
@@ -45,7 +44,7 @@ for (i in unique(metadata$PlaceID)){
       dat_logger1=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[1]]
       dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
       plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,3], 
-           type="l", ylim=c(10,45), ylab="Temperature [°C]", xlab="Date",
+           type="l", ylim=c(5,45), ylab="Temperature [°C]", xlab="Date",
            col=metadata$color[metadata$ID==Loggers[1]],
            main=paste("Plot", i))
       lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,3],
