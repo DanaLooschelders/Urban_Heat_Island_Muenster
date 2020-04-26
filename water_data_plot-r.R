@@ -17,5 +17,13 @@ names(list_iButton_corr_tidy_water)=paste(desc, " (",names, ")", sep="")
 names(list_iButton_corr_tidy_water) #check
 #plot all values as test
 ggplot(bind_rows(list_iButton_corr_tidy_water, .id="df"), aes(Datetime.1, Temperature_C_w_off, colour=df)) +
-  geom_line()+theme_bw()
-  
+  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Waterloggers') 
+
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/overview_plots")
+#save plot
+date=as.character(list_iButton_corr_tidy_water[[1]][1,2])
+date=substr(date, 1,10)
+name=paste("water_logger", date,".pdf", sep="_")
+ggsave(filename=name, width = 14, height=7, units = "in")
+
+
