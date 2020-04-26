@@ -1,0 +1,21 @@
+#plot all water logger
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+water=read.table("Water_logger_lat_lon.csv", sep=";", dec=".", header=T)
+
+str(water)
+str(list_iButton_corr_tidy)
+
+#get index of all water loggers in dataset
+waterlogger=intersect(water$ï..Logger.ID, names(list_iButton_corr_tidy))
+list_iButton_corr_tidy_water=list() #create empty list with water logger
+#fill list with water logger data
+list_iButton_corr_tidy_water=list_iButton_corr_tidy[names(list_iButton_corr_tidy)%in%waterlogger] 
+#rename list
+names=names(list_iButton_corr_tidy_water)
+desc=water$Location_ID[water$ï..Logger.ID%in%names(list_iButton_corr_tidy_water)]
+names(list_iButton_corr_tidy_water)=paste(desc, " (",names, ")", sep="")
+names(list_iButton_corr_tidy_water) #check
+#plot all values as test
+ggplot(bind_rows(list_iButton_corr_tidy_water, .id="df"), aes(Datetime.1, Temperature_C_w_off, colour=df)) +
+  geom_line()+theme_bw()
+  
