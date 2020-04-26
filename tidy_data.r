@@ -73,7 +73,7 @@ if (metadata$type[metadata$ID==name]=="Water") {
 test=list_iButton_corr_tidy[[i]]
 test$diff=rep(NA)
 test$diff[1:length(test[,3])-1]=diff(test[,3])
-spike=which(test$diff>=3) #3°C/10min as threshold after spike
+spike=which(test$diff>=2.5) #3°C/10min as threshold after spike
 for (x in spike) {
   test[x:(x+18),3]=NA #two hours of data after spike is removed
 }
