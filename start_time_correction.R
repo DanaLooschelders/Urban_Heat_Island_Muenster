@@ -1,6 +1,6 @@
 require(zoo)
 require(xts)
-?na.approx
+
 #interpolate the data to minute intervalls to set all loggers to the same starting point
 #create empty vector of minute data for the same timeframe as temp data
 #assume linearity and approximate values 
