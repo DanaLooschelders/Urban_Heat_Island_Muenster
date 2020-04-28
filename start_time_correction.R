@@ -1,6 +1,6 @@
 require(zoo)
 require(xts)
-
+require(splines)
 #interpolate the data to minute intervalls to set all loggers to the same starting point
 #create empty vector of minute data for the same timeframe as temp data
 #assume linearity and approximate values 
@@ -40,3 +40,28 @@ for(i in 1:length(list_iButton_corr)){
 #eventuell if Schleife einbauen, 
 #falls nicht zwangsläufig der letzte Wert ersetzt werden muss
 
+#test spline interpolation
+test=xts(list_iButton_corr[[1]][,2],list_iButton_corr[[1]][,3])
+test2 = merge(test,date_time_complete)
+test_spline=na.spline(test2)
+str(test_spline)
+test_linear=na.approx(test2)
+str(test_linear)
+
+test_spline=as.data.frame(test_spline)
+test_spline$Datetime.1=rownames(test_spline)
+rownames(test_spline)=NULL
+test_spline$Datetime.1=strptime(x = test_spline$Datetime.1, format="%Y-%m-%d %H:%M:%S")
+test_spline=test_spline[1:length(test_linear),]
+
+test_linear=as.data.frame(test_linear)
+test_linear$Datetime.1=rownames(test_linear)
+rownames(test_linear)=NULL
+test_linear$Datetime.1=strptime(x = test_linear$Datetime.1, format="%Y-%m-%d %H:%M:%S")
+
+plot(test_linear$Datetime.1, test_linear$test, type="l")
+lines(test_spline$Datetime.1, test_spline$test)
+diff=test_linear$test-test_spline$test
+str(test_linear)
+str(test_spline)
+plot(diff, type="l")
