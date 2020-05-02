@@ -42,7 +42,7 @@ for(i in 1:length(list_iButton_corr)){
 #falls nicht zwangsläufig der letzte Wert ersetzt werden muss
 
 #test spline interpolation
-test=xts(list_iButton_corr[[1]][,2],list_iButton_corr[[1]][,3])
+test=xts(list_iButton_corr[[5]][,2],list_iButton_corr[[5]][,3])
 test2 = merge(test,date_time_complete)
 test_spline=na.spline(test2)
 str(test_spline)
@@ -66,5 +66,8 @@ diff=test_linear$test-test_spline$test
 str(test_linear)
 str(test_spline)
 plot(diff, type="l")
+
+qqnorm(test_linear$test)
+qqline(test_linear$test)
 
 wilcox.test(test_linear$test, test_spline$test)
