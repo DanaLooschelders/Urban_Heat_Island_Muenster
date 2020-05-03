@@ -52,6 +52,8 @@ metadata_table$id=row.names(metadata_table)
 row.names(metadata_table)=NULL
 write.table(metadata_table, "metadata_netatmo.csv", sep=";", dec=",", row.names = F)
 
+#*****************************************************************
+#use alternative package
 detach("package:RJSONIO", unload=TRUE)
 library(rjson)
 library(jsonlite)
@@ -59,55 +61,51 @@ library(jsonlite)
 metadata2=fromJSON("data_for_metadata.json", flatten=TRUE)
 ids=metadata2[["body"]][1]
 
+#******************************************************************
+#spatial subset to select netatmo stations within Muenster
 library(leaflet)
 library(sp)
 library(rgdal)
 library(raster)
 library(sf)
+#read in shapefile of Muenster
 setwd("F:/satellite_data_Muenster/MODIS_neu")
 MS_shape=readOGR("stadtgebiet.shp")
-plot(MS_shape)
-crs(MS_shape)
+plot(MS_shape) #plot
+crs(MS_shape) #get crs
 #transform coordinates to lat lon
 MS_shape=spTransform(x = MS_shape, CRSobj = "+proj=longlat +datum=WGS84")
-crs(MS_shape)
+crs(MS_shape) #check
 plot(MS_shape)
-#plot coords of netatmo stations
-coords=metadata_table[,6:8]
-names(coords)=c("Lon", "Lat","ID")
-coords_test=SpatialPoints(coords = coords[,1:2], proj4string=CRS("+proj=longlat +datum=WGS84"))
-
-plot(coords_test)
-attributes(coords_test)=as.list(coords[,3])
-#MS_shape = spTransform(MS_shape, "+init=epsg:4326")
+#plot points of netatmo stations
+points=metadata_table[,6:8] #get lat lon data from points
+names(points)=c("Lon", "Lat","ID")
+#transform coordiantes to lat lon and create spatial points
+points_test=SpatialPoints(coords = points[,1:2], proj4string=CRS("+proj=longlat +datum=WGS84"))
+#add ID as attribute to and create spatial points dataframe
+points_dataframe=SpatialPointsDataFrame(data = points, proj4string = CRS("+proj=longlat +datum=WGS84"), coords = points_test)
+plot(points_dataframe) #plot points
 plot(MS_shape)
 
-#test plotting coordiantes
+#test: plotting points in shapefile
 leaflet(MS_shape) %>%
   addPolygons() %>%
   addTiles() %>%
-  addMarkers(data=coords, lng = ~Lon, lat = ~Lat)
+  addMarkers(data=points, lng = ~Lon, lat = ~Lat)
+#subset points by shapefile -> get only points within Muenster
+subset <- points_dataframe[MS_shape, ]
+plot(subset) #plot
 
-subset <- coords_test[MS_shape, ]
-plot(subset)
-ID_in_MS=coords$ID[intersect(coords[,1], subset@coords[,1])]
-test.subset=intersect(coords[,1], subset@coords[,1])
-
-test.subset2=intersect(coords[,1], subset@coords[,1])
-ID=data.frame("IDs"=rep(NA, length(test.subset)), "Lon"=test.subset, "Lat"=rep(NA, length(test.subset)))
-for(i in test.subset){
-  ID$IDs[ID$Lon==i]=coords$ID[coords$Lat==i]
-  ID$Lat[ID$Lon==i]=coords$Lat[coords$Lat==i]
-}
+ID_in_MS=subset@data$ID #get vector with netatmo IDs in MS
 
 write.table(ID_in_MS, "netatmo_ids.csv", sep=";", dec=".")
 
 #get unix time to download data
-start.date=as.numeric(as.POSIXct("2019-08-01", format="%Y-%m-%d"))
-end.time=as.numeric(as.POSIXct("2019-08-30", format="%Y-%m-%d"))
+start.date=as.numeric(as.POSIXct("2020-04-01 00:00:00", format="%Y-%m-%d %H:%M:%S"))
+end.date=as.numeric(as.POSIXct("2020-04-30 00:00:00", format="%Y-%m-%d %H:%M:%S"))
 
 #try to download data from first station
-#70:ee:50:13:29:da
+#70:ee:50:00:eb:6e
 #timelapse 30 min
 #1378418400
 #temperature
