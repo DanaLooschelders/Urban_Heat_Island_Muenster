@@ -1,7 +1,7 @@
 #iButtons tidy up - correct offset and tidy up temperature spikes 
 #for 02.08.2019
 #and for 01.09.2019
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data")
 
 str(list_iButton_corr_set) #the start-time corrected data (check that date corresponds)
 #create temporary list
@@ -37,7 +37,7 @@ list_iButton_corr_tidy=list_iButton_corr_set #create new, tidy list
 str(list_iButton_corr)
 report.na=rep(NA, length(list_iButton_corr_tidy))
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 #read in csv with lat lon and description of places
 des=read.table("Lat_Lon_Logger.csv", sep=";", dec=",", header=T)
 names(des)[1]="Logger_ID"

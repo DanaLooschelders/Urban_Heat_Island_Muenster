@@ -1,6 +1,6 @@
 #overview plot
 #plot all vegetation and sealed loggers
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 des=read.table("Lat_Lon_Logger.csv", sep=";", dec=".", header=T)
 des=des[,1:7] #drop column with water depth (for now)
 names(des)[1]="Logger_ID"
@@ -23,7 +23,7 @@ names(list_iButton_corr_tidy_vegetation) #check
 ggplot(bind_rows(list_iButton_corr_tidy_vegetation, .id="df"), aes(Datetime.1, Temperature_C_w_off, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Logger in Vegetation') 
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/overview_plots")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/overview_plots")
 #save plot
 date=as.character(list_iButton_corr_tidy_vegetation[[1]][1,2])
 date=substr(date, 1,10)
@@ -46,7 +46,7 @@ names(list_iButton_corr_tidy_sealed) #check
 ggplot(bind_rows(list_iButton_corr_tidy_sealed, .id="df"), aes(Datetime.1, Temperature_C_w_off, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Logger in sealed area') 
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/overview_plots")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/overview_plots")
 #save plot
 date=as.character(list_iButton_corr_tidy_sealed[[1]][1,2])
 date=substr(date, 1,10)

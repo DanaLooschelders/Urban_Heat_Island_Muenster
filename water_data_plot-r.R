@@ -1,5 +1,5 @@
 #plot all water logger
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 water=read.table("Water_logger_lat_lon.csv", sep=";", dec=".", header=T)
 names(water)[1]="Logger_ID"
 str(water)
@@ -19,7 +19,7 @@ names(list_iButton_corr_tidy_water) #check
 ggplot(bind_rows(list_iButton_corr_tidy_water, .id="df"), aes(Datetime.1, Temperature_C_w_off, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Waterloggers') 
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/overview_plots")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/overview_plots")
 #save plot
 date=as.character(list_iButton_corr_tidy_water[[1]][1,2])
 date=substr(date, 1,10)

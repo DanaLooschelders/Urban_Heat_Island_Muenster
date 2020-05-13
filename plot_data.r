@@ -1,6 +1,6 @@
 
 #assign description for plots
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 #read in csv with lat lon and description of places
 des=read.table("Lat_Lon_Logger.csv", sep=";", dec=",", header=T)
 names(des)[1]="Logger_ID"
@@ -12,7 +12,7 @@ str(des)
 str(list_iButton_corr_tidy_date_day[[1]])
 
 #plot all the plots for cleared and split data
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/plots_day_night/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/plots_day_night/")
 
 #plot and save day data
 

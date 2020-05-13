@@ -11,7 +11,7 @@ list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list
 
 
 #read in sunrise/sunset data
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 sun=read.table("Sunrise_sunset_times.csv", sep=";", dec=",", header=T, stringsAsFactors = F)
 names(sun)[1]="Datum"
 sun$Datum=strptime(sun$Datum, "%d.%m.%Y")
