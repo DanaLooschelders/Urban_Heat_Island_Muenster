@@ -61,7 +61,7 @@ usePackage("tidyverse")
 # Set Working directory (wd)
 # setwd(choose.dir()) # Uncomment if necessary, but only works for Windows operating system
 #setwd("V:/klima/Projekte/2019_Urban_Heat_Island/Data/Data_raw/Calibration_test_20190704-20190708")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/UHI_Muenster_Data/dat_29.08bzw01.09/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data/UHI_Muenster_Data/dat_29.08bzw01.09/")
 #################
 # Data iButtons #
 #################

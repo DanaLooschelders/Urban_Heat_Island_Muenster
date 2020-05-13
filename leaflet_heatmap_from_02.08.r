@@ -8,7 +8,7 @@ library(maptools)
 library(KernSmooth) #for kernel density estimate?
 library(RColorBrewer)
 library(leaflet.extras)
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 #read in coordiante data
 coords=read.table("Lat_Lon_Logger.csv", sep=";", dec=".", header=T)
 str(coords)
@@ -22,7 +22,7 @@ plot(coords_test)
 #test plotting coordiantes
 leaflet(data=coords) %>%
 addTiles() %>%
-addMarkers(lng = ~Lon, lat = ~Lat)
+addCircles(color="red", opacity = 1)
 
 #read in temperature data with iButtons_Check script
 #subset from 03.08.2019 to 14.08.2019

@@ -6,7 +6,7 @@
 library(RJSONIO)
 #library(curl)
 
-setwd("C:/Users/danan/Desktop")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 metadata=fromJSON("data_for_metadata.json", flatten=TRUE)
 
 #extract station id from metadata 
@@ -97,13 +97,16 @@ subset <- points_dataframe[MS_shape, ]
 plot(subset) #plot
 
 ID_in_MS=subset@data$ID #get vector with netatmo IDs in MS
-
+netatmo_in_MS=subset@data
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 write.table(ID_in_MS, "netatmo_ids.csv", sep=";", dec=".")
-
+write.table(netatmo_in_MS, "netatmo_coords_id.csv", sep=";", dec=".")
 #get unix time to download data
 start.date=as.numeric(as.POSIXct("2020-04-01 00:00:00", format="%Y-%m-%d %H:%M:%S"))
 end.date=as.numeric(as.POSIXct("2020-04-30 00:00:00", format="%Y-%m-%d %H:%M:%S"))
 
+client_ID=5ebbc836069acb6e1e7f7a4e
+client_secret=GZDQSz0KjqxdbrMdu3GLSYsz35
 #try to download data from first station
 #70:ee:50:00:eb:6e
 #timelapse 30 min

@@ -1,5 +1,5 @@
 #plot the differences between sealed areas and vegetation
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/difference_plots/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots/")
 
 Temp_diff_data_frame=matrix(data=NA,ncol=length(unique(metadata$PlaceID)), nrow=length(list_iButton_corr_tidy[[1]][,1]))
 Temp_diff_data_frame=as.data.frame(Temp_diff_data_frame)
