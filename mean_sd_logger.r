@@ -53,23 +53,29 @@ write.csv2(d_iButton_overall_stats, file = paste("overall_stats", substring(list
 time_factor=rep(NA, length(list_iButton_corr_tidy_date))
 list_iButton_corr_tidy_date_factor=mapply(cbind, list_iButton_corr_tidy_date, "Time_factor"=time_factor, SIMPLIFY=F)
 
-dates=unique(list_iButton_corr_tidy_date[[1]][,5])
+#create times for sunriseplusdawn, sunriseminusdawn etx
+sun2$sunrise_plusDawn=sun2$sunrise+0.5*60*60 #add 30 min dawn
+sun2$sunset_minusDusk=sun2$sunset-0.5*60*60 #substract 30min dawn
+sun2$sunrise_minusDawn=sun2$sunrise-0.5*60*60 #substract 30 min dawn
+sun2$sunset_plusDusk=sun2$sunset+0.5*60*60 #add 30min dawn
 
 #for loop to go through loggers 
 #use sunrise/sunset data
-#if if else cond to add day/night/dawn as factor to list
+#add day/night/dawn/dusk as factor to list
 for(x in 1:length(list_iButton_corr_tidy_date_factor)){
-  dat=list_iButton_corr_tidy_date_factor[[i]]
+  dat=list_iButton_corr_tidy_date_factor[[x]]
   for(i in 1:length(sun2$date)){
     sun=sun2$date[i] #get date 
-    which(is.na(dat$Date))
     dat_day=dat[dat$Date==sun,] #subset the day that matches i from sun from dataframe
     #add factor "day" to time from sunrise to sunset (without dawn)
-    dat_day$Time_factor[dat_day$Datetime.1>=sun2$sunrise_wDawn[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunset_wDawn[sun2$date==sun]]="day" 
+    dat_day$Time_factor[dat_day$Datetime.1>=sun2$sunrise_plusDawn[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunset_minusDusk[sun2$date==sun]]="day" 
     #add factor "night" to time from sunset to sunrise (without dawn)
-    dat_day$Time_factor[dat_day$Datetime.1<=sun2$sunrise_wDawn[sun2$date==sun]|dat_day$Datetime.1>=sun2$sunset_wDawn[sun2$date==sun]]="night" 
-    #add factor "dawn" to replace any remaining NAs 
-    dat_day$Time_factor[is.na(dat_day$Time_factor)]="dawn"
+    dat_day$Time_factor[dat_day$Datetime.1<=sun2$sunrise_minusDawn[sun2$date==sun]|dat_day$Datetime.1>=sun2$sunset_plusDusk[sun2$date==sun]]="night" 
+    #add factor "dawn" to the hour of sunrise
+    dat_day$Time_factor[dat_day$Datetime.1>=sun2$sunrise_minusDawn[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunrise_plusDawn[sun2$date==sun]]="dawn"
+    #add factor "dusk" to hour of sunset
+    dat_day$Time_factor[dat_day$Datetime.1>=sun2$sunset_minusDusk[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunset_plusDusk[sun2$date==sun]]="dusk"
+    #replace ????
     dat[dat$Date==sun2$date[i],]=dat_day 
   }
   list_iButton_corr_tidy_date_factor[[x]]=dat
