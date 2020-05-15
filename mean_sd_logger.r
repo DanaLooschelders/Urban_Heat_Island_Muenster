@@ -80,3 +80,55 @@ for(x in 1:length(list_iButton_corr_tidy_date_factor)){
   }
   list_iButton_corr_tidy_date_factor[[x]]=dat
 }
+#****************************************************************
+#get 24h mean, median and standard deviation
+#****************************************************************
+
+#create list with dataframes for every iButton 
+#containing date, mean, meadian, sd 
+list_iButton_24h_mms=list() #create output list
+#create temporary dataframe to use in list
+temp.data=data.frame("date"=unique(list_iButton_corr_tidy_date_factor[[1]][,5]),"mean"=rep(NA), "median"=rep(NA), "sd"=rep(NA))
+for (i in 1:length(list_iButton_corr_tidy_date_factor)){
+  data=list_iButton_corr_tidy_date_factor[[i]] #loop through every iButton on list
+  for (x in unique(data$Date)){ #loop through every day for iButton
+    temp.data$mean[temp.data$date==x]=mean(data[,3][data$Date==x]) #calculate mean for every day
+    temp.data$median[temp.data$date==x]=median(data[,3][data$Date==x]) #calculate median for every day
+    temp.data$sd[temp.data$date==x]=sd(data[,3][data$Date==x]) #calculate standard deviation for every day
+}
+list_iButton_24h_mms[[i]]=temp.data
+}
+#set logger IDs as names of dataframes
+names(list_iButton_24h_mms)=names(list_iButton_corr_tidy_date_factor)
+
+#**************************************************************
+#get day/night mean, median and standard deviation
+#**************************************************************
+list_iButton_day_mms=list()
+list_iButton_night_mms=list()
+temp.data.day=data.frame("date"=unique(list_iButton_corr_tidy_date_factor[[1]][,5]),"mean"=rep(NA), "median"=rep(NA), "sd"=rep(NA))
+temp.data.night=data.frame("date"=unique(list_iButton_corr_tidy_date_factor[[1]][,5]),"mean"=rep(NA), "median"=rep(NA), "sd"=rep(NA))
+
+for (i in 1:length(list_iButton_corr_tidy_date_factor)){
+  data=list_iButton_corr_tidy_date_factor[[i]] #loop through every iButton on list
+  for (x in unique(data$Date)){ #loop through every day for iButton
+    #calculate stats for daytime
+    data.day=data[data$Date==x&data$Time_factor=="day",]
+    temp.data.day$mean[temp.data$date==x]=mean(data.day[,3][data.day$Date==x]) #calculate mean for every day
+    temp.data.day$median[temp.data$date==x]=median(data.day[,3][data.day$Date==x]) #calculate median for every day
+    temp.data.day$sd[temp.data$date==x]=sd(data.day[,3][data.day$Date==x]) #calculate standard deviation for every day
+    #calculate stats for nighttime
+    data.night=data[data$Date==x&data$Time_factor=="night",]
+    temp.data.night$mean[temp.data$date==x]=mean(data.night[,3][data.night$Date==x]) #calculate mean for every day
+    temp.data.night$median[temp.data$date==x]=median(data.night[,3][data.night$Date==x]) #calculate median for every day
+    temp.data.night$sd[temp.data$date==x]=sd(data.night[,3][data.night$Date==x]) #calculate standard deviation for every day
+    }
+  list_iButton_day_mms[[i]]=temp.data.day
+  list_iButton_night_mms[[i]]=temp.data.night
+}
+
+#set logger IDs as names of dataframes
+names(list_iButton_day_mms)=names(list_iButton_corr_tidy_date_factor)
+names(list_iButton_night_mms)=names(list_iButton_corr_tidy_date_factor)
+
+
