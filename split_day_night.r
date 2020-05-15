@@ -37,23 +37,6 @@ sun2$sunset_wDawn=sun2$sunset-0.5*60*60 #substract 30min dawn
 #match days in sunrise and temperature data
 #filter temp data for range between sunrise (+ 30 min) and sunset (-30 min)  to include dawn
 
-#try: write date rows to new file, delete original columns, drop values outside day, rbind subset to file
-test=list_iButton_corr_tidy_date[[2]]
-str(test)
-for(i in 1:length(sun2$date)){
-sun=sun2$date[i]
-test_day=test[test$Date==sun2$date[i],] #subset the day that matches i from sun from dataframe
-test=test[test$Date!=sun2$date[i],] 
-test_day=test_day[test_day$Datetime.1>=sun2$sunrise_wDawn[sun2$date==sun]&test_day$Datetime.1<=sun2$sunset_wDawn[sun2$date==sun],] #subset the day with sunrise and sunset value from sun for i
-test=rbind(test, test_day) 
-}
-
-#check of it work by plotting temperature values with sundown values  
-par(new=F)
-plot(test$Datetime.1, test[,4])
-abline(v=sun2$sunrise_wDawn, col="blue")
-abline(v=sun2$sunset_wDawn, col="red")
-
 #subset the dataframes of the list and create new list with only values for the day
 list_iButton_corr_tidy_date_day=list()
 
