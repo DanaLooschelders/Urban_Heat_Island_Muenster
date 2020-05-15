@@ -5,10 +5,10 @@
 # select first column and write into seperate list
 list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy, `[`, 2)
 # Transform datetime to only date
-list_iButton_corr_tidy_col_trans <- lapply(list_iButton_corr_tidy_col, function(x) as.Date(x$Datetime.1, tz="Europe/Paris"))
+list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy_col, function(x) as.Date(x$Datetime.1, tz="Europe/Paris"))
 
 # add Date as additional column
-list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list_iButton_corr_tidy_col_trans, SIMPLIFY=F)
+list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list_iButton_corr_tidy_col, SIMPLIFY=F)
 
 
 #read in sunrise/sunset data

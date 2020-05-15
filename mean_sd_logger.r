@@ -131,4 +131,3 @@ for (i in 1:length(list_iButton_corr_tidy_date_factor)){
 names(list_iButton_day_mms)=names(list_iButton_corr_tidy_date_factor)
 names(list_iButton_night_mms)=names(list_iButton_corr_tidy_date_factor)
 
-
