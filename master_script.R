@@ -16,6 +16,7 @@ source("~/Urban_Heat_Island_Muenster/split_day_night.r")
 source("~/Urban_Heat_Island_Muenster/plot_data.r")
 
 #for stats (don't always execute)
+source("~/Urban_Heat_Island_Muenster/mean_sd_logger.r")
 source("~/Urban_Heat_Island_Muenster/stats_test_green_grey.R")
 source("~/Urban_Heat_Island_Muenster/tidy_for_linearity_test.R")
 source("~/Urban_Heat_Island_Muenster/linearity_test.R")
