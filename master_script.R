@@ -21,3 +21,15 @@ source("~/Urban_Heat_Island_Muenster/plot_statistics.R")
 source("~/Urban_Heat_Island_Muenster/stats_test_green_grey.R")
 source("~/Urban_Heat_Island_Muenster/tidy_for_linearity_test.R")
 source("~/Urban_Heat_Island_Muenster/linearity_test.R")
+
+#supplementary weather data
+source("~/Urban_Heat_Island_Muenster/DWD_data_wind.r")
+
+#netatmo data
+source("~/Urban_Heat_Island_Muenster/leaflet_netatmo.R")
+source("~/Urban_Heat_Island_Muenster/data_from_json.r")
+
+#for mapping
+source("~/Urban_Heat_Island_Muenster/leaflet_heatmap_from_02.08.r")
+source("~/Urban_Heat_Island_Muenster/Heatmap.r")
+source("~/Urban_Heat_Island_Muenster/spatial_interpolation_idw.r")
