@@ -42,6 +42,8 @@ for(x in 1:length(list_iButton_corr_tidy_date_factor)){
 
 #***************************************************************
 #get overall mean, median and sd per logger
+#********************************************************************
+
 #create temporary dataframe to use in list
 mms.overall=data.frame("logger"=as.character(names(list_iButton_corr_tidy_date_factor)),"mean"=rep(NA), "median"=rep(NA), "sd"=rep(NA))
 for (i in 1:length(list_iButton_corr_tidy_date_factor)){
