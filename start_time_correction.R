@@ -19,8 +19,8 @@ for(i in 1:length(list_iButton_corr)){
   test=xts(list_iButton_corr[[i]][,2],list_iButton_corr[[i]][,3]) 
   #merge logger time series with emtpy one minute time series
   test2=merge(test,date_time_complete)
-  #replace NA values (created by merging with higher res) with linear interpolated values
-  test2=na.approx(test2)
+  #replace NA values (created by merging with higher res) with spline interpolated values
+  test2=na.spline(test2)
   test2=data.frame("Temperature_corr"=test2) #name the new column
   test2$Datetime.1=rownames(test2) #use the newly set times to replace previous time data
   rownames(test2)=NULL #delete rownames
@@ -31,32 +31,32 @@ for(i in 1:length(list_iButton_corr)){
 
 
 #test spline interpolation
-test=xts(list_iButton_corr[[5]][,2],list_iButton_corr[[5]][,3])
-test2 = merge(test,date_time_complete)
-test_spline=na.spline(test2)
-str(test_spline)
-test_linear=na.approx(test2)
-str(test_linear)
+#test=xts(list_iButton_corr[[5]][,2],list_iButton_corr[[5]][,3])
+#test2 = merge(test,date_time_complete)
+#test_spline=na.spline(test2)
+#str(test_spline)
+#test_linear=na.approx(test2)
+#str(test_linear)
 
-test_spline=as.data.frame(test_spline)
-test_spline$Datetime.1=rownames(test_spline)
-rownames(test_spline)=NULL
-test_spline$Datetime.1=strptime(x = test_spline$Datetime.1, format="%Y-%m-%d %H:%M:%S")
-test_spline=test_spline[1:length(test_linear),]
+#test_spline=as.data.frame(test_spline)
+#test_spline$Datetime.1=rownames(test_spline)
+#rownames(test_spline)=NULL
+#test_spline$Datetime.1=strptime(x = test_spline$Datetime.1, format="%Y-%m-%d %H:%M:%S")
+#test_spline=test_spline[1:length(test_linear),]
 
-test_linear=as.data.frame(test_linear)
-test_linear$Datetime.1=rownames(test_linear)
-rownames(test_linear)=NULL
-test_linear$Datetime.1=strptime(x = test_linear$Datetime.1, format="%Y-%m-%d %H:%M:%S")
+#test_linear=as.data.frame(test_linear)
+#test_linear$Datetime.1=rownames(test_linear)
+#rownames(test_linear)=NULL
+#test_linear$Datetime.1=strptime(x = test_linear$Datetime.1, format="%Y-%m-%d %H:%M:%S")
 
-plot(test_linear$Datetime.1, test_linear$test, type="l", col="green")
-lines(test_spline$Datetime.1, test_spline$test, col="red")
-diff=test_linear$test-test_spline$test
-str(test_linear)
-str(test_spline)
-plot(diff, type="l")
+#plot(test_linear$Datetime.1, test_linear$test, type="l", col="green")
+#lines(test_spline$Datetime.1, test_spline$test, col="red")
+#diff=test_linear$test-test_spline$test
+#str(test_linear)
+#str(test_spline)
+#plot(diff, type="l")
 
-qqnorm(test_linear$test)
-qqline(test_linear$test)
+#qqnorm(test_linear$test)
+#qqline(test_linear$test)
 
-wilcox.test(test_linear$test, test_spline$test)
+#wilcox.test(test_linear$test, test_spline$test)
