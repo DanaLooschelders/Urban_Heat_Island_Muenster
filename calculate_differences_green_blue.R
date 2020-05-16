@@ -31,6 +31,8 @@ for (i in unique(metadata$PlaceID)){
 str(Temp_diff_data_frame)
 #remove empty columns
 Temp_diff_data_frame=Temp_diff_data_frame[,colSums(is.na(Temp_diff_data_frame))<nrow(Temp_diff_data_frame)]
+#add Date to Dataframe
+Temp_diff_data_frame$Date=list_iButton_corr_tidy[[1]][,2]
 #write data to file
 date=as.character(list_iButton_corr_tidy[[1]][1,2])
 date=substr(date, 1,10)
