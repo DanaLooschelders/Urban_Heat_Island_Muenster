@@ -54,4 +54,4 @@ list_netatmo <- mapply(cbind, list_netatmo, "Datetime"=list_netatmo_datetime, SI
 
 ggplot(bind_rows(list_netatmo, .id="df"), aes(Datetime, temperature, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS') 
-
+ggsave(filename = "overview_netatmo.pdf", width=14, height=7)
