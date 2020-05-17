@@ -8,8 +8,7 @@ colnames(water_veg_diff_data_frame)=unique(metadata$PlaceID)
 water_grey_diff_data_frame=matrix(data=NA,ncol=length(unique(metadata$PlaceID)), nrow=length(list_iButton_corr_tidy[[1]][,1]))
 water_grey_diff_data_frame=as.data.frame(water_grey_diff_data_frame)
 colnames(water_grey_diff_data_frame)=unique(metadata$PlaceID)
-str(metadata)
-i=unique(metadata$PlaceID)[1]
+
 for (i in unique(metadata$PlaceID)){
   dataname=i #save place ID 
   date=substring(as.character(list_iButton_corr_tidy[[1]][1,2]), 1,10)
@@ -22,11 +21,12 @@ for (i in unique(metadata$PlaceID)){
     water=Loggers[Loggers==metadata$ID[metadata$PlaceID==i&metadata$type=="Water"]] #get ID of logger in sealed area
     dat_logger_veg=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==vegetation]] #get veg logger data
     dat_logger_water=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==water]] #get sealed logger data
-    diff_temp=dat_logger_veg[[1]][,3] - dat_logger_water[[1]][,3] #calculate difference between grey and green infrastructure
+    diff_temp=dat_logger_water[[1]][,3] - dat_logger_veg[[1]][,3]  #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
     plot(dat_logger_veg[[1]][,2], diff_temp, #plot difference
          type="l", ylab="Temperature difference [°C]", xlab="Date",
-         main=paste("Temperature Difference between \nwater and air temperature (GI) in", i))
+         main=paste("Temperature Difference between \nwater and air temperature (GI) in", i),
+         sub="Diff > 0 : water temp was higher then air temp")
      abline(h=0, col="red")
      dev.off()
     #save in dataframe
@@ -37,22 +37,24 @@ for (i in unique(metadata$PlaceID)){
     water=Loggers[Loggers==metadata$ID[metadata$PlaceID==i&metadata$type=="Water"]] #get ID of logger in sealed area
     dat_logger_veg=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==vegetation1]] #get veg logger data
     dat_logger_water=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==water]] #get sealed logger data
-    diff_temp=dat_logger_veg[[1]][,3] - dat_logger_water[[1]][,3] #calculate difference between grey and green infrastructure
+    diff_temp= dat_logger_water[[1]][,3] - dat_logger_veg[[1]][,3]  #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
     plot(dat_logger_veg[[1]][,2], diff_temp, #plot difference
          type="l", ylab="Temperature difference [°C]", xlab="Date",
-         main=paste("Temperature Difference between \nwater and air temperature (GI) in", i, "(1)"))
+         main=paste("Temperature Difference between \nwater and air temperature (GI) in", i, "(1)"),
+         sub="Diff > 0 : water temp was higher then air temp")
     abline(h=0, col="red")
     dev.off()
     #same for second logger
     name=paste(date,"water air temp (GI) difference","plot",dataname, "(2)", ".pdf")
     vegetation2=vegetation[2]
     dat_logger_veg=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==vegetation2]] #get veg logger data
-    diff_temp=dat_logger_veg[[1]][,3] - dat_logger_water[[1]][,3] #calculate difference between grey and green infrastructure
+    diff_temp=dat_logger_water[[1]][,3] - dat_logger_veg[[1]][,3]  #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
     plot(dat_logger_veg[[1]][,2], diff_temp, #plot difference
          type="l", ylab="Temperature difference [°C]", xlab="Date",
-         main=paste("Temperature Difference between \nwater and air temperature (GI) in", i, "(2)"))
+         main=paste("Temperature Difference between \nwater and air temperature (GI) in", i, "(2)"),
+         sub="Diff > 0 : water temp was higher then air temp")
     abline(h=0, col="red")
     dev.off()}
     #save in dataframe
@@ -64,11 +66,12 @@ for (i in unique(metadata$PlaceID)){
     if(length(sealed)==1){
     dat_logger_water=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==water]] #get veg logger data
    dat_logger_sealed=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==sealed]] #get sealed logger data
-   diff_temp=dat_logger_sealed[[1]][,3] - dat_logger_water[[1]][,3] #calculate difference between grey and green infrastructure
+   diff_temp=dat_logger_water[[1]][,3] - dat_logger_sealed[[1]][,3]  #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
     plot(dat_logger_water[[1]][,2], diff_temp, #plot difference
         type="l", ylab="Temperature difference [°C]", xlab="Date",
-        main=paste("Temperature Difference between \nWater and air temperature (sealed area) in", i))
+        main=paste("Temperature Difference between \nWater and air temperature (sealed area) in", i),
+        sub="Diff > 0 : water temp was higher then air temp")
     abline(h=0, col="red")
     dev.off()
     }else{
@@ -77,22 +80,24 @@ for (i in unique(metadata$PlaceID)){
     water=Loggers[Loggers==metadata$ID[metadata$PlaceID==i&metadata$type=="Water"]] #get ID of logger in sealed area
     dat_logger_sealed=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==sealed1]] #get veg logger data
     dat_logger_water=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==water]] #get sealed logger data
-    diff_temp=dat_logger_sealed[[1]][,3] - dat_logger_water[[1]][,3] #calculate difference between grey and green infrastructure
+    diff_temp=dat_logger_water[[1]][,3] - dat_logger_sealed[[1]][,3]  #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
     plot(dat_logger_sealed[[1]][,2], diff_temp, #plot difference
          type="l", ylab="Temperature difference [°C]", xlab="Date",
-         main=paste("Temperature Difference between \nwater and air temperature (sealed) in", i, "(1)"))
+         main=paste("Temperature Difference between \nwater and air temperature (sealed) in", i, "(1)"),
+         sub="Diff > 0 : water temp was higher then air temp")
     abline(h=0, col="red")
     dev.off()
     #same for second logger
     name=paste(date,"water air temp (sealed) difference","plot",dataname, "(2)", ".pdf")
     sealed2=sealed[2]
     dat_logger_sealed=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==sealed2]] #get veg logger data
-    diff_temp=dat_logger_sealed[[1]][,3] - dat_logger_water[[1]][,3] #calculate difference between grey and green infrastructure
+    diff_temp=dat_logger_water[[1]][,3] - dat_logger_sealed[[1]][,3]  #calculate difference between grey and green infrastructure
     pdf(file=name, paper = "a4r", height=7, width=14) #create pdf
     plot(dat_logger_sealed[[1]][,2], diff_temp, #plot difference
          type="l", ylab="Temperature difference [°C]", xlab="Date",
-         main=paste("Temperature Difference between \nwater and air temperature (sealed) in", i, "(2)"))
+         main=paste("Temperature Difference between \nwater and air temperature (sealed) in", i, "(2)"),
+         sub="Diff > 0 : water temp was higher then air temp")
     abline(h=0, col="red")
     dev.off()}
 }
