@@ -12,6 +12,7 @@ source("~/Urban_Heat_Island_Muenster/plot_data_in_pairs.R")
 source("~/Urban_Heat_Island_Muenster/calculate_differences_green_blue.R")
 source("~/Urban_Heat_Island_Muenster/water_data_plot-r.R")
 source("~/Urban_Heat_Island_Muenster/veg_sealed_data_plot.r")
+source("~/Urban_Heat_Island_Muenster/water_air_temp_difference.r")
 source("~/Urban_Heat_Island_Muenster/split_day_night.r")
 source("~/Urban_Heat_Island_Muenster/plot_data.r")
 
@@ -24,6 +25,7 @@ source("~/Urban_Heat_Island_Muenster/linearity_test.R")
 
 #supplementary weather data
 source("~/Urban_Heat_Island_Muenster/DWD_data_wind.r")
+source("~/Urban_Heat_Island_Muenster/comp_wind_temp_diff.r")
 
 #netatmo data
 source("~/Urban_Heat_Island_Muenster/leaflet_netatmo.R")
