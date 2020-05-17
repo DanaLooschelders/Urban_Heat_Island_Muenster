@@ -12,7 +12,7 @@ range(Temp_diff_data_frame$Date)
 
 #plot for every place
 for (i in 2:length(Temp_diff_data_frame)-1){ #plot for every column except last column which contains date
-  png(filename = paste("wind_diff_correlation",substring(Temp_diff_data_frame[1,7], first=1, last=10),names(Temp_diff_data_frame)[i],".png"))
+  png(filename = paste("wind_diff_correlation",substring(Temp_diff_data_frame[1,length(Temp_diff_data_frame)], first=1, last=10),names(Temp_diff_data_frame)[i],".png"))
   plot(Temp_diff_data_frame$Date, Temp_diff_data_frame[,i], 
      type="l", 
      ylim=c(range(wind$wind_speed, Temp_diff_data_frame[,i], na.rm=T)))
