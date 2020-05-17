@@ -9,3 +9,9 @@ leaflet(data=netatmo) %>%
   addCircles() %>%
 addPolygons(data=MS_shape , color="black", fillOpacity = 0, weight = 1)
 
+#plot downloaded data distribution
+leaflet(data=stations_latlon) %>%
+  addTiles() %>%
+  addCircles() %>%
+  addPolygons(data=MS_shape , color="black", fillOpacity = 0, weight = 1)
+

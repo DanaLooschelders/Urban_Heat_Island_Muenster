@@ -28,8 +28,9 @@ source("~/Urban_Heat_Island_Muenster/DWD_data_wind.r")
 source("~/Urban_Heat_Island_Muenster/comp_wind_temp_diff.r")
 
 #netatmo data
-source("~/Urban_Heat_Island_Muenster/leaflet_netatmo.R")
-source("~/Urban_Heat_Island_Muenster/data_from_json.r")
+source("~/Urban_Heat_Island_Muenster/prep_plot_netatmo.R")
+#source("~/Urban_Heat_Island_Muenster/leaflet_netatmo.R")
+#source("~/Urban_Heat_Island_Muenster/data_from_json.r")
 
 #for mapping
 source("~/Urban_Heat_Island_Muenster/leaflet_heatmap_from_02.08.r")
