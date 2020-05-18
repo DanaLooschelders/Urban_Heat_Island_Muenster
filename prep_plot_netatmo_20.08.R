@@ -11,8 +11,8 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 data=read.csv("data_August_September/net_2019-08-20_to_2019-09-05.csv")
 str(data)
 stations=unique(data$device_id)
-stations_latlon=read.csv("data_August_September/stations.csv")
-str(stations_latlon)
+metadata_2=read.csv("data_August_September/stations.csv")
+str(metadata_2)
 
 #setwd("F:/satellite_data_Muenster/MODIS_neu")
 #MS_shape=readOGR("stadtgebiet.shp")
@@ -26,9 +26,9 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 #plot points of netatmo stations
 
 #transform coordiantes to lat lon and create spatial points
-points=SpatialPointsDataFrame(coords = stations_latlon[2:3], 
+points=SpatialPointsDataFrame(coords = metadata_2[2:3], 
                               proj4string=CRS("+proj=longlat +datum=WGS84"),
-                              data=stations_latlon)
+                              data=metadata_2)
 #test: plotting points in shapefile
 leaflet(MS_shape) %>%
   addPolygons() %>%
