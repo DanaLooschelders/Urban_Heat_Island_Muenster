@@ -40,3 +40,25 @@ ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colou
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
   theme(legend.position="none")
 ggsave(filename = "overview_netatmo_merge.pdf", width=14, height=7)
+
+#add column with date
+list_netatmo_merge_date <- lapply(list_netatmo_merge, `[`, 6)
+list_netatmo_merge_date=lapply(list_netatmo_merge_date, function(x) as.Date(x$Datetime))
+list_netatmo_merge <- mapply(cbind, list_netatmo_merge, "Date"=list_netatmo_merge_date, SIMPLIFY=F)
+
+#merge metadata
+str(metadata_1)
+str(metadata_2)
+str(metadata_3)
+
+metadata_merge=merge(metadata_1, metadata_2, by="device_id", all.x=T, all.y=F)
+metadata_merge=merge(metadata_merge, metadata_3, by="device_id", all.x=T, all.y=F)
+
+metadata_merge=rbind(metadata_1, metadata_2, metadata_3)
+metadata_merge=metadata_merge[!duplicated(metadata_merge$device_id),]
+length(unique(metadata_merge$device_id))
+
+#shorten metadatalist by excluding the IDs that had no data
+rownames(metadata_merge)=metadata_merge$device_id #set ID as rownames
+ids_to_keep=names(list_netatmo_merge) #get character vector of ids to keep
+metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
