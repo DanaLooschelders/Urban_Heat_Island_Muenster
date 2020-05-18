@@ -41,3 +41,5 @@ meta_station_ID_temp=read.table("Metadaten_Stationsname_01766.txt", sep=";", dec
 #read in data
 temp=read.table("produkt_tu_stunde_20181106_20200508_01766.txt", sep=";", dec=".", header=T)
 temp=temp[temp$MESS_DATUM>=2019080100,]
+temp$MESS_DATUM=strptime(temp$MESS_DATUM, format="%Y%m%d")
+str(temp)
