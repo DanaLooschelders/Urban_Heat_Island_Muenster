@@ -124,6 +124,7 @@ h=hexbin(x=mean.aug$mean_min_temp, y=mean.aug$mean_sd, xlab = "SD", ylab="temp" 
 h@count=h@count/sum(h@count, na.rm=T)
 length(mean.aug$ID)
 length(h@count)
+h@count
 plot(h)
 ?hexbin
 #Data Quality Level C - filter systematic/single radiative errors
