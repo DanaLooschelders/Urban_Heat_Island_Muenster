@@ -18,15 +18,18 @@ MS_shape=spTransform(x = MS_shape, CRSobj = "+proj=longlat +datum=WGS84")
 crs(MS_shape) #check
 plot(MS_shape)
 #plot points of netatmo stations
+metadata_1=read.csv("data_August/stations.csv")
+metadata_2=read.csv("data_August_September/stations.csv")
+metadata_3=read.csv("data_September/stations.csv")
+metadata_4=read.csv("data_September_2/stations.csv")
 
 prep_plot=function(datapath="data_August/net_2019-08-01_to_2019-08-20.csv",
-                     metadatapath="data_August/stations.csv",
+                     metadata=metadata_1,
                      startdate="01.08"){
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 data=read.csv(datapath)
 
 stations=unique(data$device_id)
-metadata_1=read.csv(metadatapath)
 
 #transform coordiantes to lat lon and create spatial points
 points=SpatialPointsDataFrame(coords = metadata_1[2:3], 
@@ -70,19 +73,3 @@ ggsave(filename = paste("overview_netatmo", startdate,".pdf"), width=14, height=
 return(list_netatmo)
 }
 
-#individually name lists to puzzle them together later
-list_netatmo_1=prep_plot(datapath="data_August/net_2019-08-01_to_2019-08-20.csv",
-                         metadatapath="data_August/stations.csv",
-                         startdate="01.08")
-
-list_netatmo_2=prep_plot(datapath="data_August_September/net_2019-08-20_to_2019-09-05.csv",
-                         metadatapath="data_August_September/stations.csv",
-                         startdate="20.08")
-
-list_netatmo_3=prep_plot(datapath="data_September/net_2019-09-05_to_2019-09-25.csv",
-                         metadatapath="data_September/stations.csv",
-                         startdate="05.09")
-
-list_netatmo_2=prep_plot(datapath="data_September_2/net_2019-09-25_to_2019-09-30.csv",
-                         metadatapath="data_September_2/stations.csv",
-                         startdate="25.09")
