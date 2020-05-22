@@ -27,9 +27,4 @@ ggplot(bind_rows(list_netatmo_merge_sep, .id="df"), aes(Datetime, temperature, c
 
 ggsave(filename = "overview_netatmo_September.pdf", width=14, height=7)
 
-#scatterplot mean temp vs SD
-mean=data.frame("ID"=names(list_netatmo_merge), 
-                "mean_temp"=sapply(list_netatmo_merge, function(x) mean(x$temperature)),
-                "sd"=sapply(list_netatmo_merge, function(x) sd(x$temperature)))
-plot(mean$mean_temp, mean$sd)
 

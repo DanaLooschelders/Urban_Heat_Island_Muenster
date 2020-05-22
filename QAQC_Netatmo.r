@@ -1,8 +1,14 @@
 #QAQC Netatmo (Meier, Fenner et al. 2017 - 
 #Crowdsourcing air temperature from citizen science 
 #weather stations for urban climate research)
+library(ggplot2)
+library(ggforce)
 
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo")
+#**************************************************************************
 #Data Quality Level A - inconsistent Metadata
+#*****************************************************************************
+
 #filter out stations with no lat/lon value
 any(is.na(metadata_merge$lon)) #FALSE
 any(is.na(metadata_merge$lat)) #FALSE
@@ -38,13 +44,16 @@ length(list_netatmo_merge) #still same as before (none were removed)
 #check how many NAs were added to data
 NAs=sapply(list_netatmo_merge, function(x) sum(is.na(x$temperature))) #none
 
+#****************************************************************************
 #Data Quality Level B - identify real outdoor measurements
+#****************************************************************************
+
 #five times the sd in TNref (arithmetic mean ofUCON and DWD stations)
 #and in SDref.
 #calculate daily min air temp and sd 
 list_netatmo_level_B=list_netatmo_merge #create output list
 #create output dataframe
-daily_min_table=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-05"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
+daily_min_table=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-25"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
 for (i in 1:length(list_netatmo_merge)){
   data=list_netatmo_merge[[i]]
   for (x in data$Date){
@@ -55,13 +64,50 @@ list_netatmo_level_B[[i]]=daily_min_table
   }
 
 str(temp) #DWD reference data
-daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-05"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
+daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-25"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
 
-x=daily_min_ref$date[1]
 for (x in daily_min_ref$date){
   daily_min_ref$daily_min[daily_min_ref$date==x]=min(temp$TT_TU[as.Date(temp$MESS_DATUM)==x], na.rm=T)
   daily_min_ref$SD[daily_min_ref$date==x]=sd(temp$TT_TU[as.Date(temp$MESS_DATUM)==x], na.rm=T)
-  }
+}
+
+level_B_1=function(month="August"){
+#scatterplot mean temp vs SD
+list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")==month))
+#list_netatmo_level_B_sep=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="September"))
+#caluculate monthly means for reference data
+mean_aug_temp_ref=mean(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month])
+mean_aug_sd_ref=mean(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month])
+
+sd_aug_temp_ref=sd(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month])
+sd_aug_sd_ref=sd(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month])
+
+#calculate monthly means for netatmo data
+mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
+                "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),
+                "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
+
+ggplot(data=mean.aug, aes(mean_min_temp, mean_sd))+
+  geom_point()+ #netatmo mean monthly daily min values
+  geom_point(aes(x=mean(mean.aug$mean_min_temp), y=mean(mean.aug$mean_sd, na.rm=T)), color="green", shape=15)+ #one point for netatmo mean and sd
+  #one point for reference data mean and sd point
+  geom_point(aes(x=mean_aug_temp_ref, y=mean_aug_sd_ref), color="red", shape=15)+
+  #ellipse for 5 times the sd for mean and sd of ref
+  geom_ellipse(aes(a=sd_aug_sd_ref*5, x0=mean_aug_temp_ref, b=sd_aug_temp_ref*5, y0=mean_aug_sd_ref, angle=0))
+}
+#execute function for August and September
+level_B_1("August")
+ggsave(filename = "Level_B_1_netatmo_August.pdf", width=14, height=7)
+
+level_B_1("September")
+ggsave(filename = "Level_B_1_netatmo_September.pdf", width=14, height=7)
+
+#how to: geom_ellipse
+  #x0 -> center coordinate on x axis
+  #y0 -> center coordinate on y axis
+  #a -> length of ellipse on y axis
+  #b -> length of ellipse on x axis
+  #angle 
 #check if data values are higher than five times the SD of ref
 #mit any() 
 #Data Quality Level C - filter systematic/single radiative errors
