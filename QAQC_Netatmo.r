@@ -4,10 +4,34 @@
 
 #Data Quality Level A - inconsistent Metadata
 #filter out stations with no lat/lon value
-#Check if stations have identical metadata (remove if >2)
 any(is.na(metadata_merge$lon)) #FALSE
 any(is.na(metadata_merge$lat)) #FALSE
+#Check if stations have identical metadata (remove if >2)
 any(duplicated(metadata_merge[2:9])) #FALSE
+#filter missing data 
+  #more then 10 NAs per day
+  #more than 20% per month
+
+#test the foor loop with artificially inserted NA values -> works
+#list_netatmo_merge[[3]]$temperature[20:35]=NA
+
+for (i in names(list_netatmo_merge)){
+  data=list_netatmo_merge[[i]]
+  for( x in data$Date){
+    nas=sum(is.na(data$temperature[data$Date==x]))
+    if( nas >= 10) {
+      data$temperature[data$Date==x]=NA
+    }else{}
+  }
+  nas=sum(is.na(data$temperature))
+  if(nas>=length(data$temperature)*0.2){
+    list_netatmo_merge[[i]]=NULL
+  }else{list_netatmo_merge[[i]]=data}
+}
+
+length(list_netatmo_merge) #still same as before (none were removed)
+#check how many NAs were added to data
+NAs=sapply(list_netatmo_merge, function(x) sum(is.na(x$temperature))) #none
 
 #Data Quality Level B - identify real outdoor measurements
 #five times the sd in TNref (arithmetic mean ofUCON and DWD stations)
@@ -42,6 +66,12 @@ geom_line(data=daily_min_ref, aes(x = daily_min_ref$date, y= daily_min_ref$daily
   geom_ribbon(data = daily_min_ref, aes(ymin=daily_min, ymax=daily_min+SD*3, colour="grey"),fill="grey")
 
 ggsave(filename = "overview_netatmo_daily_min.pdf", width=14, height=7)
+
+#scatterplot mean temp vs SD
+mean=data.frame("ID"=names(list_netatmo_merge), 
+                "mean_temp"=sapply(list_netatmo_merge, function(x) mean(x$temperature)),
+                "sd"=sapply(list_netatmo_merge, function(x) sd(x$temperature)))
+plot(mean$mean_temp, mean$sd)
 
 #check if data values are higher than five times the SD of ref
 #mit any() 
