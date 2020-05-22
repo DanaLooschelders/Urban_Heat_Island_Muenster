@@ -53,18 +53,18 @@ NAs=sapply(list_netatmo_merge, function(x) sum(is.na(x$temperature))) #none
 #calculate daily min air temp and sd 
 list_netatmo_level_B=list_netatmo_merge #create output list
 #create output dataframe
-daily_min_table=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-25"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
+daily_min_table=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-30"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
 for (i in 1:length(list_netatmo_merge)){
   data=list_netatmo_merge[[i]]
   for (x in data$Date){
-    daily_min_table$daily_min[daily_min_table$date==x]=min(data$temperature[data$Date==x])
-    daily_min_table$SD[daily_min_table$date==x]=sd(data$temperature[data$Date==x])
+    daily_min_table$daily_min[daily_min_table$date==x]=min(data$temperature[data$Date==x], na.rm=T)
+    daily_min_table$SD[daily_min_table$date==x]=sd(data$temperature[data$Date==x], na.rm=T)
     }
 list_netatmo_level_B[[i]]=daily_min_table
   }
 
-str(temp) #DWD reference data
-daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-25"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
+#temp -> DWD reference data
+daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-30"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
 
 for (x in daily_min_ref$date){
   daily_min_ref$daily_min[daily_min_ref$date==x]=min(temp$TT_TU[as.Date(temp$MESS_DATUM)==x], na.rm=T)
@@ -76,11 +76,11 @@ level_B_1=function(month="August"){
 list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")==month))
 #list_netatmo_level_B_sep=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="September"))
 #caluculate monthly means for reference data
-mean_aug_temp_ref=mean(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month])
-mean_aug_sd_ref=mean(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month])
+mean_aug_temp_ref=mean(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
+mean_aug_sd_ref=mean(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
 
-sd_aug_temp_ref=sd(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month])
-sd_aug_sd_ref=sd(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month])
+sd_aug_temp_ref=sd(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
+sd_aug_sd_ref=sd(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
 
 #calculate monthly means for netatmo data
 mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
@@ -120,7 +120,10 @@ mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug),
                     "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),
                     "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
 
-h=hexbin(x=mean.aug$mean_min_temp, y=mean.aug$mean_sd, xlab = "SD", ylab="temp" )
+h=hexbin(x=mean.aug$mean_min_temp, 
+         y=mean.aug$mean_sd, 
+         xlab = "SD", ylab="temp",
+          xbins=)
 plot(h)
 h@count=h@count/sum(h@count, na.rm=T)
 length(mean.aug$ID)
