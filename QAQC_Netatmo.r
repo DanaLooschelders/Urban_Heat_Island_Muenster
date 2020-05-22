@@ -3,7 +3,7 @@
 #weather stations for urban climate research)
 library(ggplot2)
 library(ggforce)
-
+library(hexbin)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo")
 #**************************************************************************
 #Data Quality Level A - inconsistent Metadata
@@ -108,8 +108,18 @@ ggsave(filename = "Level_B_1_netatmo_September.pdf", width=14, height=7)
   #a -> length of ellipse on y axis
   #b -> length of ellipse on x axis
   #angle 
-#check if data values are higher than five times the SD of ref
-#mit any() 
+
+#level B peart 2
+daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
+hist(daily_min_ref_aug$daily_min, breaks=10)
+?hist
+hist(daily_min_ref$SD, breaks=10)
+#2D Histogram
+h=hexbin(x=daily_min_ref_aug$daily_min, y=daily_min_ref_aug$SD, 
+         xbins = 10, xlab = "SD", ylab="temp" )
+h@count=h@count/sum(h@count, na.rm=T)
+plot(h)
+?hexbin
 #Data Quality Level C - filter systematic/single radiative errors
 
-#Data Quality Level D - remaining outliers
+#Data Quality Level D -  outliers
