@@ -112,7 +112,7 @@ ggsave(filename = "Level_B_1_netatmo_September.pdf", width=14, height=7)
 #level B peart 2
 daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
 hist(daily_min_ref_aug$daily_min, breaks=10)
-?hist
+
 hist(daily_min_ref$SD, breaks=10)
 #2D Histogram
 list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="August"))
@@ -121,6 +121,7 @@ mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug),
                     "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
 
 h=hexbin(x=mean.aug$mean_min_temp, y=mean.aug$mean_sd, xlab = "SD", ylab="temp" )
+plot(h)
 h@count=h@count/sum(h@count, na.rm=T)
 length(mean.aug$ID)
 length(h@count)

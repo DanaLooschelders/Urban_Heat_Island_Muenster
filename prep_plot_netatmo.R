@@ -32,9 +32,9 @@ data=read.csv(datapath)
 stations=unique(data$device_id)
 
 #transform coordiantes to lat lon and create spatial points
-points=SpatialPointsDataFrame(coords = metadata_1[2:3], 
+points=SpatialPointsDataFrame(coords = metadata[2:3], 
                               proj4string=CRS("+proj=longlat +datum=WGS84"),
-                              data=metadata_1)
+                              data=metadata)
 #test: plotting points in shapefile
 leaflet(MS_shape) %>%
   addPolygons() %>%
