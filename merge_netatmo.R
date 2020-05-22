@@ -62,3 +62,9 @@ length(unique(metadata_merge$device_id))
 rownames(metadata_merge)=metadata_merge$device_id #set ID as rownames
 ids_to_keep=names(list_netatmo_merge) #get character vector of ids to keep
 metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
+
+#add column with month index for August and September
+#add month index to dataframe
+list_netatmo_month <- lapply(list_netatmo_merge, `[`, 7)
+list_netatmo_month=lapply(list_netatmo_month, function(x) strftime(x$Date, "%B"))
+list_netatmo_merge <- mapply(cbind, list_netatmo_merge, "Month"=list_netatmo_month, SIMPLIFY=F)

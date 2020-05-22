@@ -8,27 +8,32 @@ any(is.na(metadata_merge$lon)) #FALSE
 any(is.na(metadata_merge$lat)) #FALSE
 #Check if stations have identical metadata (remove if >2)
 any(duplicated(metadata_merge[2:9])) #FALSE
-#filter missing data 
+#filter missing data seperately for August and September
   #more then 10 NAs per day
   #more than 20% per month
 
 #test the foor loop with artificially inserted NA values -> works
 #list_netatmo_merge[[3]]$temperature[20:35]=NA
 
+#For August
+NA_test=function(month="August"){
 for (i in names(list_netatmo_merge)){
-  data=list_netatmo_merge[[i]]
-  for( x in data$Date){
-    nas=sum(is.na(data$temperature[data$Date==x]))
-    if( nas >= 10) {
-      data$temperature[data$Date==x]=NA
-    }else{}
+  data=list_netatmo_merge[[i]] #use only one dataset
+  for( x in data$Date[data$Month==month]){ #subset for one day in specified month
+    nas=sum(is.na(data$temperature[data$Date==x&data$Month==month])) #count NAs in data
+    if( nas >= 10) { #if more than 10 NAs data from that day will be set NA
+      data$temperature[data$Date==x&data$Month==month]=NA
+    }else{} #otherwise keep data
   }
-  nas=sum(is.na(data$temperature))
-  if(nas>=length(data$temperature)*0.2){
-    list_netatmo_merge[[i]]=NULL
-  }else{list_netatmo_merge[[i]]=data}
+  nas=sum(is.na(data$temperature[data$Month==month])) #count monthly NA data
+  if(nas>=length(data$temperature[data$Month==month])*0.2){ #if more than 20% of monthly data is NA
+    data[data$Month==month,]=NA #set data for that month NA
+    list_netatmo_merge[[i]]=data
+  }else{list_netatmo_merge[[i]]=data} #otherwise keep data
 }
-
+}
+NA_test(month="August")
+NA_test(month="September")
 length(list_netatmo_merge) #still same as before (none were removed)
 #check how many NAs were added to data
 NAs=sapply(list_netatmo_merge, function(x) sum(is.na(x$temperature))) #none
@@ -57,22 +62,6 @@ for (x in daily_min_ref$date){
   daily_min_ref$daily_min[daily_min_ref$date==x]=min(temp$TT_TU[as.Date(temp$MESS_DATUM)==x], na.rm=T)
   daily_min_ref$SD[daily_min_ref$date==x]=sd(temp$TT_TU[as.Date(temp$MESS_DATUM)==x], na.rm=T)
   }
-library(ggplot2)
-library(dplyr)
-ggplot(bind_rows(list_netatmo_level_B, .id="df"), aes(date, daily_min, colour=df)) +
-  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
-  theme(legend.position="none")+
-geom_line(data=daily_min_ref, aes(x = daily_min_ref$date, y= daily_min_ref$daily_min), colour="black")+
-  geom_ribbon(data = daily_min_ref, aes(ymin=daily_min, ymax=daily_min+SD*3, colour="grey"),fill="grey")
-
-ggsave(filename = "overview_netatmo_daily_min.pdf", width=14, height=7)
-
-#scatterplot mean temp vs SD
-mean=data.frame("ID"=names(list_netatmo_merge), 
-                "mean_temp"=sapply(list_netatmo_merge, function(x) mean(x$temperature)),
-                "sd"=sapply(list_netatmo_merge, function(x) sd(x$temperature)))
-plot(mean$mean_temp, mean$sd)
-
 #check if data values are higher than five times the SD of ref
 #mit any() 
 #Data Quality Level C - filter systematic/single radiative errors
