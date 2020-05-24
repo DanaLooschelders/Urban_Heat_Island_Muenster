@@ -30,7 +30,8 @@ source("~/Urban_Heat_Island_Muenster/comp_wind_temp_diff.r")
 #netatmo data
 source("~/Urban_Heat_Island_Muenster/prep_plot_netatmo.R")
 source("~/Urban_Heat_Island_Muenster/merge_netatmo.R")
-source("~/Urban_Heat_Island_Muenster/QAQC_Netatmo.r") #need to execute supp weather data
+source("~/Urban_Heat_Island_Muenster/QAQC_Netatmo_level_A_B.r") #need to execute supp weather data
+source("~/Urban_Heat_Island_Muenster/QAQC_Netatmo_level_C_D.R") #need to execute supp weather data
 source("~/Urban_Heat_Island_Muenster/netatmo_plot_overview.R")
 
 #source("~/Urban_Heat_Island_Muenster/leaflet_netatmo.R")

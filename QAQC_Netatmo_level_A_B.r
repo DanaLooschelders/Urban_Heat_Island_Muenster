@@ -43,6 +43,7 @@ NA_test(month="September")
 length(list_netatmo_merge) #still same as before (none were removed)
 #check how many NAs were added to data
 NAs=sapply(list_netatmo_merge, function(x) sum(is.na(x$temperature))) #none
+any(NAs>0)
 
 #****************************************************************************
 #Data Quality Level B - identify real outdoor measurements
@@ -52,8 +53,10 @@ NAs=sapply(list_netatmo_merge, function(x) sum(is.na(x$temperature))) #none
 #and in SDref.
 #calculate daily min air temp and sd 
 list_netatmo_level_B=list_netatmo_merge #create output list
+
+
 #create output dataframe
-daily_min_table=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-30"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
+daily_min_table=data.frame("date"=unique(list_netatmo_merge[[1]]$Date), "daily_min"=rep(NA), "SD"=rep(NA))
 for (i in 1:length(list_netatmo_merge)){
   data=list_netatmo_merge[[i]]
   for (x in data$Date){
@@ -62,6 +65,7 @@ for (i in 1:length(list_netatmo_merge)){
     }
 list_netatmo_level_B[[i]]=daily_min_table
   }
+
 
 #temp -> DWD reference data
 daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-30"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
@@ -84,36 +88,76 @@ sd_aug_sd_ref=sd(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month], na
 
 #calculate monthly means for netatmo data
 mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
-                "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),
-                "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
+                "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min, na.rm=T)),
+                "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD, na.rm=T)))
 
-ggplot(data=mean.aug, aes(mean_min_temp, mean_sd))+
+
+test=
+  ggplot(data=mean.aug, aes(mean_min_temp, mean_sd))+
   geom_point()+ #netatmo mean monthly daily min values
-  geom_point(aes(x=mean(mean.aug$mean_min_temp), y=mean(mean.aug$mean_sd, na.rm=T)), color="green", shape=15)+ #one point for netatmo mean and sd
+  geom_point(aes(x=mean(mean.aug$mean_min_temp, na.rm=T), y=mean(mean.aug$mean_sd, na.rm=T)), color="green", shape=15)+ #one point for netatmo mean and sd
   #one point for reference data mean and sd point
   geom_point(aes(x=mean_aug_temp_ref, y=mean_aug_sd_ref), color="red", shape=15)+
   #ellipse for 5 times the sd for mean and sd of ref
   geom_ellipse(aes(a=sd_aug_sd_ref*5, x0=mean_aug_temp_ref, b=sd_aug_temp_ref*5, y0=mean_aug_sd_ref, angle=0))
-}
-#execute function for August and September
-level_B_1("August")
-ggsave(filename = "Level_B_1_netatmo_August.pdf", width=14, height=7)
-
-level_B_1("September")
-ggsave(filename = "Level_B_1_netatmo_September.pdf", width=14, height=7)
+ggsave(filename = paste("Level_B_1_netatmo",month,".pdf"), width=14, height=7)
 
 #how to: geom_ellipse
-  #x0 -> center coordinate on x axis
-  #y0 -> center coordinate on y axis
-  #a -> length of ellipse on y axis
-  #b -> length of ellipse on x axis
-  #angle 
+#x0 -> center coordinate on x axis
+#y0 -> center coordinate on y axis
+#a -> length of ellipse on y axis
+#b -> length of ellipse on x axis
+#angle 
 
-#level B peart 2
+#ggplot_built: builds a ggplot for rendering 
+#(outputs a list of dataframe s-> one for each layer)
+#and a panel object with axis limits/breaks etc
+built_whole=ggplot_build(test)
+built <- ggplot_build(test)$data
+points <- built[[1]] #first list element are the black points
+
+#ell <- built[[4]] #forth list element is the ellipse
+ell <- built[[4]][built[[4]]$group == built[[4]]$group[1],] 
+
+dat <- data.frame(
+  "ID"=built_whole[["plot"]][["data"]][["ID"]],
+  points[1:2], #first two columns are the coordinates
+  in.ell = as.logical(point.in.polygon(point.x=points$x, point.y=points$y, pol.x=ell$x, pol.y=ell$y)))
+
+return(dat)
+}
+  
+#execute function for August and September
+
+dat=level_B_1("August")
+#use for loop to exclude station that were flagged as false
+for (i in dat$ID){
+  if (dat$in.ell[dat$ID==i]==FALSE){
+    #remove station from both lists
+    list_netatmo_merge[[i]]=NULL
+    list_netatmo_level_B[[i]]=NULL
+    metadata[-metadata_merge$device_id==i,] #delete from metadata
+  }else{}
+}
+
+dat2=level_B_1("September")
+#use for loop to exclude station that were flagged as false
+for (i in dat2$ID){
+  if (dat2$in.ell[dat2$ID==i]==FALSE){
+    #remove station from both lists
+    list_netatmo_merge[[i]]=NULL
+    list_netatmo_level_B[[i]]=NULL
+    metadata[-metadata_merge$device_id==i,] #delete from metadata
+  }else{}
+}
+
+#level B part 2
+
 daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
 hist(daily_min_ref_aug$daily_min, breaks=10)
 
 hist(daily_min_ref$SD, breaks=10)
+
 #2D Histogram
 list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="August"))
 mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
@@ -123,14 +167,13 @@ mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug),
 h=hexbin(x=mean.aug$mean_min_temp, 
          y=mean.aug$mean_sd, 
          xlab = "SD", ylab="temp",
-          xbins=)
+          xbins=10*10)
 plot(h)
-h@count=h@count/sum(h@count, na.rm=T)
+h@count/sum(h@count, na.rm=T)
 length(mean.aug$ID)
 length(h@count)
 h@count
 plot(h)
 ?hexbin
-#Data Quality Level C - filter systematic/single radiative errors
 
-#Data Quality Level D -  outliers
+

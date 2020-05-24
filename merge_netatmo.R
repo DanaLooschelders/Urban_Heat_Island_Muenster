@@ -53,12 +53,21 @@ length(list_netatmo_merge[[1]]$timestamp)
 ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
   theme(legend.position="none")
-ggsave(filename = "overview_netatmo_merge.pdf", width=14, height=7)
+ggsave(filename = "overview_netatmo_merge2.pdf", width=14, height=7)
 
 #add column with date
 list_netatmo_merge_date <- lapply(list_netatmo_merge, `[`, 6)
 list_netatmo_merge_date=lapply(list_netatmo_merge_date, function(x) as.Date(x$Datetime))
 list_netatmo_merge <- mapply(cbind, list_netatmo_merge, "Date"=list_netatmo_merge_date, SIMPLIFY=F)
+
+#TEST***************************************************************
+#use only stations that recorded over whole period
+for (i in names(list_netatmo_merge)){
+   data=list_netatmo_merge[[i]]
+  if(data$Date[1]=="2019-08-01"&data$Date[length(data$date)]=="2019-09-30"){}
+  else{list_netatmo_merge[[i]]=NULL}
+}
+#***********************************************************************
 
 metadata_merge=rbind(metadata_1, metadata_2, metadata_3, metadata_4)
 metadata_merge=metadata_merge[!duplicated(metadata_merge$device_id),]
