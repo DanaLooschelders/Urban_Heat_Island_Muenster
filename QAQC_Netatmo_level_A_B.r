@@ -153,27 +153,27 @@ for (i in dat2$ID){
 
 #level B part 2
 
-daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
-hist(daily_min_ref_aug$daily_min, breaks=10)
+#daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
+#hist(daily_min_ref_aug$daily_min, breaks=10)
 
-hist(daily_min_ref$SD, breaks=10)
+#hist(daily_min_ref$SD, breaks=10)
 
 #2D Histogram
-list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="August"))
-mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
-                    "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),
-                    "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
+#list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="August"))
+#mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
+#                    "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),
+#                    "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
 
-h=hexbin(x=mean.aug$mean_min_temp, 
-         y=mean.aug$mean_sd, 
-         xlab = "SD", ylab="temp",
-          xbins=10*10)
-plot(h)
-h@count/sum(h@count, na.rm=T)
-length(mean.aug$ID)
-length(h@count)
-h@count
-plot(h)
-?hexbin
+#h=hexbin(x=mean.aug$mean_min_temp, 
+#         y=mean.aug$mean_sd, 
+#         xlab = "SD", ylab="temp",
+#          xbins=10*10)
+#plot(h)
+#h@count/sum(h@count, na.rm=T)
+#length(mean.aug$ID)
+#length(h@count)
+#h@count
+#plot(h)
+#?hexbin
 
 
