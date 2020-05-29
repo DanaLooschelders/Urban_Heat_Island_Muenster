@@ -3,7 +3,6 @@
 #weather stations for urban climate research)
 library(ggplot2)
 library(ggforce)
-library(hexbin)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo")
 #**************************************************************************
 #Data Quality Level A - inconsistent Metadata
@@ -48,12 +47,12 @@ any(NAs>0)
 #****************************************************************************
 #Data Quality Level B - identify real outdoor measurements
 #****************************************************************************
-
+#Level B part 1 
+#*************************************************************************
 #five times the sd in TNref (arithmetic mean ofUCON and DWD stations)
 #and in SDref.
 #calculate daily min air temp and sd 
 list_netatmo_level_B=list_netatmo_merge #create output list
-
 
 #create output dataframe
 daily_min_table=data.frame("date"=unique(list_netatmo_merge[[1]]$Date), "daily_min"=rep(NA), "SD"=rep(NA))
@@ -65,7 +64,6 @@ for (i in 1:length(list_netatmo_merge)){
     }
 list_netatmo_level_B[[i]]=daily_min_table
   }
-
 
 #temp -> DWD reference data
 daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-30"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
@@ -90,7 +88,6 @@ sd_aug_sd_ref=sd(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month], na
 mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
                 "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min, na.rm=T)),
                 "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD, na.rm=T)))
-
 
 test=
   ggplot(data=mean.aug, aes(mean_min_temp, mean_sd))+
@@ -151,39 +148,34 @@ for (i in dat2$ID){
   }else{}
 }
 
+#*************************************************************************
 #level B part 2
-
-#daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
-#hist(daily_min_ref_aug$daily_min, breaks=10)
-
-#hist(daily_min_ref$SD, breaks=10)
-
-#2D Histogram
-#list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="August"))
-#mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
-#                    "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),
-#                    "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
-
-#h=hexbin(x=mean.aug$mean_min_temp, 
-#         y=mean.aug$mean_sd, 
-#         xlab = "SD", ylab="temp",
-#          xbins=10*10)
-#plot(h)
-#h@count/sum(h@count, na.rm=T)
-#length(mean.aug$ID)
-#length(h@count)
-#h@count
-#plot(h)
-#?hexbin
+#*************************************************************************
 
 #Instructions from paper
 #1. compute histograms of TNref and SDref 
   #bin sizes: max and min of TNref and SDref in ellipse
   #bin numbers: 10
+#subset table to August values
+daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
+hist(daily_min_ref_aug$daily_min, breaks=10) #histogram of TNref
+hist(daily_min_ref_aug$SD, breaks=10) #histogram of SDref
+
 #2.compute relative frequency for every bin combination of histograms of TN/SD (2D)
-#try from stackoverflow
-nbins=100
-x.bin=daily_min_ref$ #from
+#create a subset list that includes only August values
+list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="August"))
+#calculate mean minimal temperature and standard deviation for every netatmo station
+mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
+                    "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),
+                    "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD)))
+
+#use ggplot to plot 2D histogramm
+n <- ggplot(mean.aug, aes(mean_min_temp, mean_sd)) 
+n <- n + stat_bin2d(bins = 10)
+n
+#get density values from plot
+hist=ggplot_build(n)
+
 #3. flag Netatmo stations in 2D bin with frequency >0.001 as TRUE
-
-
+#briefly check if any station is below 0.01
+any(hist$data[[1]]$density<0.001) #FALSE
