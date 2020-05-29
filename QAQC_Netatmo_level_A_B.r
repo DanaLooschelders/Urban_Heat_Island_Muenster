@@ -136,7 +136,7 @@ for (i in dat$ID){
     #remove station from both lists
     list_netatmo_merge[[i]]=NULL
     list_netatmo_level_B[[i]]=NULL
-    metadata[-metadata_merge$device_id==i,] #delete from metadata
+    metadata[metadata_merge$device_id==i,] #delete from metadata
   }else{}
 }
 
@@ -147,7 +147,7 @@ for (i in dat2$ID){
     #remove station from both lists
     list_netatmo_merge[[i]]=NULL
     list_netatmo_level_B[[i]]=NULL
-    metadata[-metadata_merge$device_id==i,] #delete from metadata
+    metadata[metadata_merge$device_id==i,] #delete from metadata
   }else{}
 }
 
@@ -175,5 +175,15 @@ for (i in dat2$ID){
 #h@count
 #plot(h)
 #?hexbin
+
+#Instructions from paper
+#1. compute histograms of TNref and SDref 
+  #bin sizes: max and min of TNref and SDref in ellipse
+  #bin numbers: 10
+#2.compute relative frequency for every bin combination of histograms of TN/SD (2D)
+#try from stackoverflow
+nbins=100
+x.bin=daily_min_ref$ #from
+#3. flag Netatmo stations in 2D bin with frequency >0.001 as TRUE
 
 
