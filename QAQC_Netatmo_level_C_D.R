@@ -8,8 +8,8 @@ rad=read.table("Dana_GeoDach.csv", sep=";", dec=",", header=T, na.strings = "-" 
 str(rad)
 names(rad)[1]="Datetime" #rename first column
 rad=data.frame("Datetime"=rad$Datetime, "SWrad"=rad$Shortwave.Radiation) #create column with just two variables
-rad$Datetime=strptime(rad$Datetime, format="%d.%m.%Y %H:%M") #convert to Posixlt
-rad$Datetime=as.POSIXct(rad$Datetime) #convert to Posixct
+rad$Datetime=strptime(rad$Datetime, format="%d.%m.%Y %H:%M", tz="Europe/Berlin") #convert to Posixlt
+rad$Datetime=as.POSIXct(rad$Datetime, tz="Europe/Berlin") #convert to Posixct
 rad=rad[complete.cases(rad),] #remove rows with all NAs
 #subset data to timeframe
 rad2=rad[rad$Datetime>="2019-08-01 00:00:00"&rad$Datetime<="2019-09-30 23:59:59",]
@@ -17,7 +17,8 @@ str(rad2) #check
 
 #aggregate data to hourly means
 rad2$Hour <- cut(as.POSIXct(rad2$Datetime, 
-             format="%Y-%m-%Y %H:%M:%S"), breaks="hour") #create new column with hour
+             format="%Y-%m-%Y %H:%M:%S"), breaks="hour",
+             tz="Europe/Berlin") #create new column with hour
 hourly_rad <- aggregate(SWrad ~ Hour, rad2, mean) #aggregate values to hourly means
 rm(rad, rad2) #tidy script by removing dataframes
 
@@ -27,9 +28,10 @@ list_netatmo_hourly=list_netatmo_merge #create new list
 for (i in 1:length(list_netatmo_hourly)){
 data=list_netatmo_merge[[i]]
 data$Hour = cut(as.POSIXct(data$Datetime, 
-                           format="%Y-%m-%d %H:%M:%S"), breaks="hour")
+                           format="%Y-%m-%d %H:%M:%S",
+                           tz="Europe/Berlin"), breaks="hour")
 hourly= aggregate(temperature ~ Hour, data, mean)
-#hourly$Hour=as.POSIXct(hourly$Hour, format="%Y-%m-%d %H:%M:%S", tz="")
+hourly$Hour=as.POSIXct(hourly$Hour, format="%Y-%m-%d %H:%M:%S", tz="Europe/Berlin")
 list_netatmo_hourly[[i]]=hourly
 }
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!wrong hour, set correct timeone?

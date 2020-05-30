@@ -66,30 +66,30 @@ list_netatmo_level_B[[i]]=daily_min_table
   }
 
 #temp -> DWD reference data
-daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01"), to=as.Date("2019-09-30"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
+daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01", tz="Europe/Berlin"), to=as.Date("2019-09-30", tz="Europe/Berlin"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
 
 for (x in daily_min_ref$date){
-  daily_min_ref$daily_min[daily_min_ref$date==x]=min(temp$TT_TU[as.Date(temp$MESS_DATUM)==x], na.rm=T)
-  daily_min_ref$SD[daily_min_ref$date==x]=sd(temp$TT_TU[as.Date(temp$MESS_DATUM)==x], na.rm=T)
+  daily_min_ref$daily_min[daily_min_ref$date==x]=min(temp$TT_TU[as.Date(temp$MESS_DATUM, tz="Europe/Berlin")==x], na.rm=T)
+  daily_min_ref$SD[daily_min_ref$date==x]=sd(temp$TT_TU[as.Date(temp$MESS_DATUM, tz="Europe/Berlin")==x], na.rm=T)
 }
 
 level_B_1=function(month="August"){
 #scatterplot mean temp vs SD
-list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")==month))
+list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B", tz="Europe/Berlin")==month))
 #list_netatmo_level_B_sep=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="September"))
 #caluculate monthly means for reference data
-mean_aug_temp_ref=mean(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
-mean_aug_sd_ref=mean(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
+mean_aug_temp_ref=mean(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B", tz="Europe/Berlin")==month], na.rm=T)
+mean_aug_sd_ref=mean(daily_min_ref$SD[strftime(daily_min_ref$date, "%B", tz="Europe/Berlin")==month], na.rm=T)
 
-sd_aug_temp_ref=sd(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
-sd_aug_sd_ref=sd(daily_min_ref$SD[strftime(daily_min_ref$date, "%B")==month], na.rm=T)
+sd_aug_temp_ref=sd(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B", tz="Europe/Berlin")==month], na.rm=T)
+sd_aug_sd_ref=sd(daily_min_ref$SD[strftime(daily_min_ref$date, "%B", tz="Europe/Berlin")==month], na.rm=T)
 
 #calculate monthly means for netatmo data
 mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
                 "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min, na.rm=T)),
                 "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD, na.rm=T)))
 
-test=
+tes
   ggplot(data=mean.aug, aes(mean_min_temp, mean_sd))+
   geom_point()+ #netatmo mean monthly daily min values
   geom_point(aes(x=mean(mean.aug$mean_min_temp, na.rm=T), y=mean(mean.aug$mean_sd, na.rm=T)), color="green", shape=15)+ #one point for netatmo mean and sd
@@ -163,7 +163,7 @@ hist(daily_min_ref_aug$SD, breaks=10) #histogram of SDref
 
 #2.compute relative frequency for every bin combination of histograms of TN/SD (2D)
 #create a subset list that includes only August values
-list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="August"))
+list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B", tz="Europe/BErlin")=="August"))
 #calculate mean minimal temperature and standard deviation for every netatmo station
 mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
                     "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),

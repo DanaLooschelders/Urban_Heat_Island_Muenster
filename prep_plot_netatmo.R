@@ -15,8 +15,8 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 crs(MS_shape) #get crs
 #transform coordinates to lat lon
 MS_shape=spTransform(x = MS_shape, CRSobj = "+proj=longlat +datum=WGS84")
-crs(MS_shape) #check
-plot(MS_shape)
+#crs(MS_shape) #check
+#plot(MS_shape)
 #plot points of netatmo stations
 metadata_1=read.csv("data_August/stations.csv")
 metadata_2=read.csv("data_August_September/stations.csv")
@@ -36,10 +36,10 @@ points=SpatialPointsDataFrame(coords = metadata[2:3],
                               proj4string=CRS("+proj=longlat +datum=WGS84"),
                               data=metadata)
 #test: plotting points in shapefile
-leaflet(MS_shape) %>%
-  addPolygons() %>%
-  addTiles() %>%
-  addCircles(data=points)
+#leaflet(MS_shape) %>%
+#  addPolygons() %>%
+#  addTiles() %>%
+#  addCircles(data=points)
 
 #subset points by shapefile -> get only points within Muenster
 station_subset <- points[MS_shape, ]
@@ -47,10 +47,10 @@ station_subset <- points[MS_shape, ]
 ID_in_MS=station_subset@data$device_id #get vector with netatmo IDs in MS
 
 #test: plotting points in shapefile
-leaflet(MS_shape) %>%
-  addPolygons(fillOpacity = 0) %>%
-  addTiles() %>%
-  addCircles(data = station_subset, col="black")
+#leaflet(MS_shape) %>%
+#  addPolygons(fillOpacity = 0) %>%
+#  addTiles() %>%
+#  addCircles(data = station_subset, col="black")
 
 #create list for netatmo data
 #subset data by IDs and write data for each ID in a list element

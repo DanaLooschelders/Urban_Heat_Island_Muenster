@@ -30,6 +30,8 @@ list_netatmo_merge=merge_netatmo()
 
 length(unique(names(list_netatmo_merge)))
 
+lapply(list_netatmo_merge, function(x) format(x$Datetime, tz="EUrope/Berlin"))
+
 #drop all dataframes with 0 rows
 list_netatmo_merge=Filter(function(x) dim(x)[1] > 0, list_netatmo_merge)
 length(list_netatmo_merge)
@@ -41,20 +43,17 @@ for (i in 1:length(list_netatmo_merge)){
   list_netatmo_merge[[i]]=data
 }
 
-#test if it worked
-length(unique(list_netatmo_merge[[1]]$timestamp))
-length(list_netatmo_merge[[1]]$timestamp)
-
 #add column with date
 list_netatmo_merge_date <- lapply(list_netatmo_merge, `[`, 6)
-list_netatmo_merge_date=lapply(list_netatmo_merge_date, function(x) as.Date(x$Datetime))
+list_netatmo_merge_date=lapply(list_netatmo_merge_date, function(x) as.Date(x$Datetime, tz="Europe/Berlin"))
 list_netatmo_merge <- mapply(cbind, list_netatmo_merge, "Date"=list_netatmo_merge_date, SIMPLIFY=F)
 
 #check and remove stations that didn't record every day
 for (i in names(list_netatmo_merge)){
   if(length(unique(list_netatmo_merge[[i]]$Date))==
      length(seq(from=min(list_netatmo_merge[[i]]$Date), 
-                to=max(list_netatmo_merge[[i]]$Date), by="day"))){
+                to=max(list_netatmo_merge[[i]]$Date), by="day",
+                tz="Europe/Berlin"))){
   }else{ list_netatmo_merge[[i]]=NULL}
 }
 
@@ -68,8 +67,8 @@ for (i in names(list_netatmo_merge)){
 #and create NAs for missing rows in order to get all dataframes to the same length
 list_netatmo_whole=list_netatmo_merge
 for (i in 1:length(list_netatmo_whole)){
-  time=data.frame("Datetime"=seq(from=as.POSIXct("2019-08-01 00:15:00"), 
-                                 to=as.POSIXct("2019-09-30 23:45:00"), by="30 min"))
+  time=data.frame("Datetime"=seq(from=as.POSIXct("2019-08-01 00:15:00", tz="Europe/Berlin"), 
+                                 to=as.POSIXct("2019-09-30 23:45:00", tz="Europe/Berlin"), by="30 min"))
 data=list_netatmo_merge[[i]]
  time=merge(x=time,y=data, all.x=TRUE, by="Datetime")
  list_netatmo_whole[[i]]=time
@@ -80,7 +79,7 @@ list_netatmo_merge=list_netatmo_whole
 
 for (i in 1:length(list_netatmo_merge)){
   data=list_netatmo_merge[[i]]
-  data$Date=as.Date(data$Datetime, tz="") #fill column with date
+  data$Date=as.Date(data$Datetime, tz="Europe/Berlin") #fill column with date
   data$device_id=names(list_netatmo_merge)[i] #add device id
   list_netatmo_merge[[i]]=data
   }
@@ -104,7 +103,7 @@ metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
 #add column with month index for August and September
 #add month index to dataframe
 list_netatmo_month <- lapply(list_netatmo_merge, `[`, 7)
-list_netatmo_month=lapply(list_netatmo_month, function(x) strftime(x$Date, "%B"))
+list_netatmo_month=lapply(list_netatmo_month, function(x) strftime(x$Date, "%B", tz="Europe/Berlin"))
 list_netatmo_merge <- mapply(cbind, list_netatmo_merge, "Month"=list_netatmo_month, SIMPLIFY=F)
 
 #tidy up environnment
