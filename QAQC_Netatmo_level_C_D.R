@@ -27,13 +27,17 @@ list_netatmo_hourly=list_netatmo_merge #create new list
 for (i in 1:length(list_netatmo_hourly)){
 data=list_netatmo_merge[[i]]
 data$Hour = cut(as.POSIXct(data$Datetime, 
-                           format="%Y-%m-%Y %H:%M:%S"), breaks="hour")
-hourly=hourly_rad <- aggregate(temperature ~ Hour, data, mean)
+                           format="%Y-%m-%d %H:%M:%S"), breaks="hour")
+hourly= aggregate(temperature ~ Hour, data, mean)
+#hourly$Hour=as.POSIXct(hourly$Hour, format="%Y-%m-%d %H:%M:%S", tz="")
 list_netatmo_hourly[[i]]=hourly
 }
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!wrong hour, set correct timeone?
 
 #create temperature difference between netatmo and reference data
-
+data=list_netatmo_hourly[[1]]
+str(hourly_rad)
+str(data)
 #use only values with rad >10 Wm-1
 #perform linear regression between the two
 

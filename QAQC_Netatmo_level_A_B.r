@@ -179,3 +179,8 @@ hist=ggplot_build(n)
 #3. flag Netatmo stations in 2D bin with frequency >0.001 as TRUE
 #briefly check if any station is below 0.01
 any(hist$data[[1]]$density<0.001) #FALSE
+
+ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colour=df)) +
+  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
+  theme(legend.position="none")
+ggsave(filename = "overview_netatmo_levelA_B.pdf", width=14, height=7)

@@ -58,7 +58,7 @@ for (i in names(list_netatmo_merge)){
   }else{ list_netatmo_merge[[i]]=NULL}
 }
 
-#use only stations that recorded over whole period
+#use only stations that recorded over whole period (check for start and end date)
 for (i in names(list_netatmo_merge)){
    data=list_netatmo_merge[[i]]
   if(data$Date[1]=="2019-08-01"&data$Date[length(data$date)]=="2019-09-30"){}
@@ -66,15 +66,26 @@ for (i in names(list_netatmo_merge)){
 }
 #as there are missing values inbetween create consecutive time sequence
 #and create NAs for missing rows in order to get all dataframes to the same length
-time=as.data.frame("Datetime"=seq(from=as.POSIXct("2019-08-01 00:15:00"), 
-            to=as.POSIXct("2019-09-30 23:45:00"), by="30 min"))
 list_netatmo_whole=list_netatmo_merge
 for (i in 1:length(list_netatmo_whole)){
- data=list_netatmo_merge[[i]]
- time=merge(data, time, by = "Datetime")
+  time=data.frame("Datetime"=seq(from=as.POSIXct("2019-08-01 00:15:00"), 
+                                 to=as.POSIXct("2019-09-30 23:45:00"), by="30 min"))
+data=list_netatmo_merge[[i]]
+ time=merge(x=time,y=data, all.x=TRUE, by="Datetime")
  list_netatmo_whole[[i]]=time
 }
-#plot with no legend (as legend takes most of the screen)
+
+list_netatmo_merge=list_netatmo_whole
+#replace NAs in Date column by date
+
+for (i in 1:length(list_netatmo_merge)){
+  data=list_netatmo_merge[[i]]
+  data$Date=as.Date(data$Datetime, tz="") #fill column with date
+  data$device_id=names(list_netatmo_merge)[i] #add device id
+  list_netatmo_merge[[i]]=data
+  }
+
+ #plot with no legend (as legend takes most of the screen)
 ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
   theme(legend.position="none")
@@ -97,4 +108,6 @@ list_netatmo_month=lapply(list_netatmo_month, function(x) strftime(x$Date, "%B")
 list_netatmo_merge <- mapply(cbind, list_netatmo_merge, "Month"=list_netatmo_month, SIMPLIFY=F)
 
 #tidy up environnment
-rm(metadata_1, metadata_2, metadata_3, metadata_4, list_netatmo_merge_date, list_netatmo_month) 
+rm(metadata_1, metadata_2, metadata_3, metadata_4, 
+   list_netatmo_merge_date, list_netatmo_month, list_netatmo_whole,
+   ids_to_keep) 
