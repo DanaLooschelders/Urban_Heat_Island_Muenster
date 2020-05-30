@@ -12,7 +12,7 @@ rad$Datetime=strptime(rad$Datetime, format="%d.%m.%Y %H:%M", tz="Europe/Berlin")
 rad$Datetime=as.POSIXct(rad$Datetime, tz="Europe/Berlin") #convert to Posixct
 rad=rad[complete.cases(rad),] #remove rows with all NAs
 #subset data to timeframe
-rad2=rad[rad$Datetime>="2019-08-01 00:00:00"&rad$Datetime<="2019-09-30 23:59:59",]
+rad2=rad[rad$Datetime>="2019-08-01 00:02:00"&rad$Datetime<="2019-09-30 23:59:59",]
 str(rad2) #check
 
 #aggregate data to hourly means

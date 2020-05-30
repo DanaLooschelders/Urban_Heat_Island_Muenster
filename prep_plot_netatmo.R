@@ -61,8 +61,11 @@ for (i in ID_in_MS){
 
 list_netatmo[[1]]$isoTime[1] #ISO-8601 date format
 
+#choose column with iso time
 list_netatmo_datetime <- lapply(list_netatmo, `[`, 5)
+#cconvert from isotime to UTC
 list_netatmo_datetime=lapply(list_netatmo_datetime, function(x) ymd_hms(x$isoTime))
+#bind lists
 list_netatmo <- mapply(cbind, list_netatmo, "Datetime"=list_netatmo_datetime, SIMPLIFY=F)
 
 

@@ -89,7 +89,7 @@ mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug),
                 "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min, na.rm=T)),
                 "mean_sd"=sapply(list_netatmo_level_B_aug, function(x) mean(x$SD, na.rm=T)))
 
-tes
+test=
   ggplot(data=mean.aug, aes(mean_min_temp, mean_sd))+
   geom_point()+ #netatmo mean monthly daily min values
   geom_point(aes(x=mean(mean.aug$mean_min_temp, na.rm=T), y=mean(mean.aug$mean_sd, na.rm=T)), color="green", shape=15)+ #one point for netatmo mean and sd

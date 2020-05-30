@@ -30,7 +30,12 @@ list_netatmo_merge=merge_netatmo()
 
 length(unique(names(list_netatmo_merge)))
 
-lapply(list_netatmo_merge, function(x) format(x$Datetime, tz="EUrope/Berlin"))
+#convert to UTC+2 
+for (i in 1:length(list_netatmo_merge)){
+  data=list_netatmo_merge[[i]]
+  data$Datetime=as.POSIXct(format(data$Datetime, tz="Europe/Berlin"))
+  list_netatmo_merge[[i]]=data
+}
 
 #drop all dataframes with 0 rows
 list_netatmo_merge=Filter(function(x) dim(x)[1] > 0, list_netatmo_merge)
@@ -52,23 +57,23 @@ list_netatmo_merge <- mapply(cbind, list_netatmo_merge, "Date"=list_netatmo_merg
 for (i in names(list_netatmo_merge)){
   if(length(unique(list_netatmo_merge[[i]]$Date))==
      length(seq(from=min(list_netatmo_merge[[i]]$Date), 
-                to=max(list_netatmo_merge[[i]]$Date), by="day",
-                tz="Europe/Berlin"))){
+                to=max(list_netatmo_merge[[i]]$Date), by="day"))){
   }else{ list_netatmo_merge[[i]]=NULL}
 }
 
 #use only stations that recorded over whole period (check for start and end date)
+#until the 01. of October because of time conversion
 for (i in names(list_netatmo_merge)){
    data=list_netatmo_merge[[i]]
-  if(data$Date[1]=="2019-08-01"&data$Date[length(data$date)]=="2019-09-30"){}
+  if(data$Date[1]=="2019-08-01"&data$Date[length(data$date)]=="2019-10-01"){}
   else{list_netatmo_merge[[i]]=NULL}
 }
 #as there are missing values inbetween create consecutive time sequence
 #and create NAs for missing rows in order to get all dataframes to the same length
 list_netatmo_whole=list_netatmo_merge
 for (i in 1:length(list_netatmo_whole)){
-  time=data.frame("Datetime"=seq(from=as.POSIXct("2019-08-01 00:15:00", tz="Europe/Berlin"), 
-                                 to=as.POSIXct("2019-09-30 23:45:00", tz="Europe/Berlin"), by="30 min"))
+  time=data.frame("Datetime"=seq(from=as.POSIXct("2019-08-01 02:15:00", tz="Europe/Berlin"), 
+                                 to=as.POSIXct("2019-10-01 23:45:00", tz="Europe/Berlin"), by="30 min"))
 data=list_netatmo_merge[[i]]
  time=merge(x=time,y=data, all.x=TRUE, by="Datetime")
  list_netatmo_whole[[i]]=time
@@ -76,13 +81,18 @@ data=list_netatmo_merge[[i]]
 
 list_netatmo_merge=list_netatmo_whole
 #replace NAs in Date column by date
-
 for (i in 1:length(list_netatmo_merge)){
   data=list_netatmo_merge[[i]]
   data$Date=as.Date(data$Datetime, tz="Europe/Berlin") #fill column with date
   data$device_id=names(list_netatmo_merge)[i] #add device id
   list_netatmo_merge[[i]]=data
-  }
+}
+
+#subset to the 30th of September
+for (i in 1:length(list_netatmo_merge)){
+  data=list_netatmo_merge[[i]]
+  data=data[data$Datetime<="2019-09-30 23:59:59",]
+}
 
  #plot with no legend (as legend takes most of the screen)
 ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colour=df)) +
