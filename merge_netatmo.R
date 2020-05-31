@@ -91,7 +91,8 @@ for (i in 1:length(list_netatmo_merge)){
 #subset to the 30th of September
 for (i in 1:length(list_netatmo_merge)){
   data=list_netatmo_merge[[i]]
-  data=data[data$Datetime<="2019-09-30 23:59:59",]
+  data=data[data$Datetime<=as.POSIXct("2019-09-30 23:59:59"),]
+  list_netatmo_merge[[i]]=data
 }
 
  #plot with no legend (as legend takes most of the screen)
