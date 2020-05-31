@@ -82,17 +82,17 @@ data=list_netatmo_merge[[i]]
 list_netatmo_merge=list_netatmo_whole
 #replace NAs in Date column by date
 for (i in 1:length(list_netatmo_merge)){
-  data=list_netatmo_merge[[i]]
-  data$Date=as.Date(data$Datetime, tz="Europe/Berlin") #fill column with date
-  data$device_id=names(list_netatmo_merge)[i] #add device id
-  list_netatmo_merge[[i]]=data
+  dat=list_netatmo_merge[[i]]
+  dat$Date=as.Date(dat$Datetime, tz="Europe/Berlin") #fill column with date
+  dat$device_id=names(list_netatmo_merge)[i] #add device id
+  list_netatmo_merge[[i]]=dat
 }
 
 #subset to the 30th of September
 for (i in 1:length(list_netatmo_merge)){
-  data=list_netatmo_merge[[i]]
-  data=data[data$Datetime<=as.POSIXct("2019-09-30 23:59:59"),]
-  list_netatmo_merge[[i]]=data
+  dat=list_netatmo_merge[[i]]
+  dat=dat[dat$Datetime<=as.POSIXct("2019-09-30 23:59:59"),]
+  list_netatmo_merge[[i]]=dat
 }
 
  #plot with no legend (as legend takes most of the screen)

@@ -21,7 +21,6 @@ rad2$Hour <- cut(as.POSIXct(rad2$Datetime,
              tz="Europe/Berlin") #create new column with hour
 hourly_rad <- aggregate(cbind(Temperature,SWrad) ~ Hour, rad2, mean) #aggregate values to hourly means
 hourly_rad$Hour=as.POSIXct(hourly_rad$Hour)
-str(hourly_rad)
 rm(rad, rad2) #tidy script by removing dataframes
 
 #aggregate netatmo data to hourly means
@@ -32,17 +31,16 @@ data=list_netatmo_merge[[i]]
 data$Hour = cut(as.POSIXct(data$Datetime, 
                            format="%Y-%m-%d %H:%M:%S",
                            tz="Europe/Berlin"), breaks="hour")
-hourly= aggregate(temperature ~ Hour, data, mean)
+hourly= aggregate(temperature ~ Hour, data, mean, na.action=na.pass)
 hourly$Hour=as.POSIXct(hourly$Hour, format="%Y-%m-%d %H:%M:%S", tz="Europe/Berlin")
 list_netatmo_hourly[[i]]=hourly
 }
 
-#create temperature difference between netatmo and reference data
-data=list_netatmo_hourly[[1]]
-#use only values with rad >10 Wm-1
-for (i in 1:length(list_netatmo_hourly[[i]])){
+#create output list
+list_netatmo_level_C=list_netatmo_hourly
+for (i in 1:length(list_netatmo_level_C)){
   #create one dataframe
-  data=cbind(hourly_rad, list_netatmo_hourly[[i]]$temperature)
+  data=cbind(hourly_rad, list_netatmo_level_C[[i]]$temperature)
   #name dataframe
   names(data)=c("Hour", "ref_Temperature","SWrad","netatmo_Temperature")
   #calculate Temperature difference between Netatmo and reference station
@@ -57,31 +55,42 @@ for (i in 1:length(list_netatmo_hourly[[i]])){
   }else{ #test if single values need to be filtered out
     #filter temp diff values that are >3 times SD of ref temp
     SD=sd(data$ref_Temperature)
-    for (i in 1:length(data$netatmo_Temperature)){
-      if( i>SD*3|i<SD*-3){
+    for (x in 1:length(data$netatmo_Temperature)){
+      if( x>SD*3|x<SD*-3){
         #if single value differs more then SD*3 in any direction set NA
-        data$netatmo_Temperature[i]=NA 
+        data$netatmo_Temperature[x]=NA 
       }else{}
       #replace corrected values
     }
-    list_netatmo_hourly[[i]]$temperature=data$netatmo_Temperature 
+    list_netatmo_level_C[[i]]$temperature=data$netatmo_Temperature 
   }
 }
 
+#add month indices back to list
+#add column with month index for August and September
+#add month index to dataframe
+#and create new output list
+list_netatmo_month <- lapply(list_netatmo_level_C, `[`, 1)
+list_netatmo_month=lapply(list_netatmo_month, function(x) strftime(x$Hour, "%B", tz="Europe/Berlin"))
+list_netatmo_level_D <- mapply(cbind, list_netatmo_level_C, "month"=list_netatmo_month, SIMPLIFY=F)
+rm(list_netatmo_month)
 #******************************************************************************
 #Data Quality Level D -  outliers
 #**********************************************************************************
 level_D=function(month="August"){
-for (i in 1:length(list_netatmo_merge)){
-  data=list_netatmo_merge[[i]]
+for (i in 1:length(list_netatmo_level_D)){
+  data=list_netatmo_level_D[[i]]
   data_month=data[data$month==month,]
-  sd_month=sd(data_month$Temperature)
-  for (x in 1:length(data_month$Temperature)){
-    if (x >= sd_month*3) {
-      data_month$Temperature[x]=NA #set value NA
+  sd_month=sd(data_month$temperature, na.rm=T)
+  for (x in 1:length(data_month$temperature)){
+    if (x > sd_month*3) {
+      data_month$temperature[x]=NA #set value NA
     }else{} #keep value
   }
   data[data$month==month,]=data_month #put controlled data back in dataframe
 } 
-  list_netatmo_merge[[i]]=data #put controlled data back in list
+  list_netatmo_level_D[[i]]=data #put controlled data back in list
 }
+
+list_netatmo_level_D=level_D(month="August")
+list_netatmo_level_D_2=level_D(month="September")
