@@ -36,8 +36,15 @@ hourly$Hour=as.POSIXct(hourly$Hour, format="%Y-%m-%d %H:%M:%S", tz="Europe/Berli
 list_netatmo_hourly[[i]]=hourly
 }
 
+#add month indices back to list
+#add column with month index for August and September
+#add month index to dataframe
 #create output list
-list_netatmo_level_C=list_netatmo_hourly
+list_netatmo_month <- lapply(list_netatmo_hourly, `[`, 1)
+list_netatmo_month=lapply(list_netatmo_month, function(x) strftime(x$Hour, "%B", tz="Europe/Berlin"))
+list_netatmo_level_C <- mapply(cbind, list_netatmo_hourly, "month"=list_netatmo_month, SIMPLIFY=F)
+rm(list_netatmo_month)
+#filter systematic errors
 for (i in 1:length(list_netatmo_level_C)){
   #create one dataframe
   data=cbind(hourly_rad, list_netatmo_level_C[[i]]$temperature)
@@ -52,28 +59,49 @@ for (i in 1:length(list_netatmo_level_C)){
   #then station has systematic radiative error and is removed
   if(cor_rad$p.value<0.01&cor_rad$estimate>0.5){
     list_netatmo_hourly[[i]]=NULL #remove station
-  }else{ #test if single values need to be filtered out
+  }else{}
+}
+  
+  #single radiative errors
+  #test if single values need to be filtered out
     #filter temp diff values that are >3 times SD of ref temp
-    SD=sd(data$ref_Temperature)
-    for (x in 1:length(data$netatmo_Temperature)){
-      if( x>SD*3|x<SD*-3){
+    #for August and September
+
+for (i in 1:length(list_netatmo_level_C)){
+  #create one dataframe
+  data=cbind(hourly_rad, list_netatmo_level_C[[i]]$temperature, list_netatmo_level_C[[i]]$month)
+  #name dataframe
+  names(data)=c("Hour", "ref_Temperature","SWrad","netatmo_Temperature", "month")
+  #calculate Temperature difference between Netatmo and reference station
+  data$Temp_diff=data$netatmo_Temperature-data$ref_Temperature
+  SD_aug=sd(data$ref_Temperature[data$month=="August"], na.rm=T)
+  SD_sep=sd(data$ref_Temperature[data$month=="September"], na.rm=T)
+    for (x in 1:length(data$Temp_diff[data$month=="August"])){
+      value=data$Temp_diff[data$month=="August"][x]
+      if( any(value>SD_aug*3,value<SD_aug*-3, is.na(value))){
         #if single value differs more then SD*3 in any direction set NA
-        data$netatmo_Temperature[x]=NA 
+        data$Temp_diff[data$month=="August"][x]=NA 
       }else{}
       #replace corrected values
+    }#for September
+    for (y in 1:length(data$Temp_diff[data$month=="September"])){
+      value=data$Temp_diff[data$month=="September"][y]
+      if( any(value>SD_sep*3,value<SD_sep*-3, is.na(value))){
+        #if single value differs more then SD*3 in any direction set NA
+        data$netatmo_Temperature[data$month=="September"][y]=NA 
+      }else{}
     }
     list_netatmo_level_C[[i]]$temperature=data$netatmo_Temperature 
   }
-}
 
-#add month indices back to list
-#add column with month index for August and September
-#add month index to dataframe
+ggplot(bind_rows(list_netatmo_level_C, .id="df"), aes(Hour, temperature, colour=df)) +
+  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
+  theme(legend.position="none")
+ggsave(filename = "overview_netatmo_level_C.pdf", width=14, height=7)
+
+
 #and create new output list
-list_netatmo_month <- lapply(list_netatmo_level_C, `[`, 1)
-list_netatmo_month=lapply(list_netatmo_month, function(x) strftime(x$Hour, "%B", tz="Europe/Berlin"))
-list_netatmo_level_D <- mapply(cbind, list_netatmo_level_C, "month"=list_netatmo_month, SIMPLIFY=F)
-rm(list_netatmo_month)
+list_netatmo_level_D = list_netatmo_level_C
 #******************************************************************************
 #Data Quality Level D -  outliers
 #**********************************************************************************
@@ -83,14 +111,21 @@ for (i in 1:length(list_netatmo_level_D)){
   data_month=data[data$month==month,]
   sd_month=sd(data_month$temperature, na.rm=T)
   for (x in 1:length(data_month$temperature)){
-    if (x > sd_month*3) {
+    value=data_month$temperature[1]
+    if (any(value > sd_month*3, is.na(value))) {
       data_month$temperature[x]=NA #set value NA
     }else{} #keep value
   }
   data[data$month==month,]=data_month #put controlled data back in dataframe
 } 
   list_netatmo_level_D[[i]]=data #put controlled data back in list
+  return(list_netatmo_level_D)
 }
 
 list_netatmo_level_D=level_D(month="August")
 list_netatmo_level_D_2=level_D(month="September")
+
+ggplot(bind_rows(list_netatmo_level_D_2, .id="df"), aes(Hour, temperature, colour=df)) +
+  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
+  theme(legend.position="none")
+ggsave(filename = "overview_netatmo_level_D2.pdf", width=14, height=7)
