@@ -112,7 +112,7 @@ for (i in 1:length(list_netatmo_level_D)){
   sd_month=sd(data_month$temperature, na.rm=T)
   for (x in 1:length(data_month$temperature)){
     value=data_month$temperature[1]
-    if (any(value > sd_month*3, is.na(value))) {
+    if (any(value > sd_month*3, value< sd_month*-3,is.na(value))) {
       data_month$temperature[x]=NA #set value NA
     }else{} #keep value
   }
@@ -126,6 +126,14 @@ list_netatmo_level_D=level_D(month="August")
 list_netatmo_level_D_2=level_D(month="September")
 
 ggplot(bind_rows(list_netatmo_level_D_2, .id="df"), aes(Hour, temperature, colour=df)) +
-  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
-  theme(legend.position="none")
+  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')
 ggsave(filename = "overview_netatmo_level_D2.pdf", width=14, height=7)
+
+#update metadata table
+#shorten metadatalist by excluding the IDs that had no data
+rownames(metadata_merge)=metadata_merge$device_id #set ID as rownames
+ids_to_keep=names(list_netatmo_level_D_2) #get character vector of ids to keep
+metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
+
+rm(ids_to_keep, list_netatmo_hourly, list_netatmo_level_B, list_netatmo_level_B_aug,
+   list_netatmo_level_D)
