@@ -6,4 +6,4 @@ folders contains Scripts for analysing Logger data, netatmo data an supplementar
 
 see master.r script for order in which to execute scripts
 
-see workflow_data_analysis for more info on analysis process
+see workflow for data analysis for more info on analysis process
