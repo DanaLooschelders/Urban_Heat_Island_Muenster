@@ -1,43 +1,43 @@
 #Master script to automatically perform analysis for datasets
 #choose correct date
-source("~/Urban_Heat_Island_Muenster/iButtons-Check_total_DL_from_02.08.R")
-source("~/Urban_Heat_Island_Muenster/iButtons-Check_total_DL_from_14.08.R")
-source("~/Urban_Heat_Island_Muenster/iButtons-Check_total_DL_from_20.08.R")
-source("~/Urban_Heat_Island_Muenster/iButtons-Check_total_DL_from_01.09.R")
+source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_02.08.R")
+source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_14.08.R")
+source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_20.08.R")
+source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_01.09.R")
 
 #execute all scripts in that order
-source("~/Urban_Heat_Island_Muenster/start_time_correction.R")
-source("~/Urban_Heat_Island_Muenster/tidy_data.r")
-source("~/Urban_Heat_Island_Muenster/plot_data_in_pairs.R")
-source("~/Urban_Heat_Island_Muenster/calculate_differences_green_blue.R")
-source("~/Urban_Heat_Island_Muenster/water_data_plot-r.R")
-source("~/Urban_Heat_Island_Muenster/veg_sealed_data_plot.r")
-source("~/Urban_Heat_Island_Muenster/water_air_temp_difference.r")
-source("~/Urban_Heat_Island_Muenster/split_day_night.r")
-source("~/Urban_Heat_Island_Muenster/plot_data.r")
+source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction.R")
+source("~/Urban_Heat_Island_Muenster/Logger/tidy_data.r")
+source("~/Urban_Heat_Island_Muenster/Logger/plot_data_in_pairs.R")
+source("~/Urban_Heat_Island_Muenster/Logger/calculate_differences_green_blue.R")
+source("~/Urban_Heat_Island_Muenster/Logger/water_data_plot-r.R")
+source("~/Urban_Heat_Island_Muenster/Logger/")
+source("~/Urban_Heat_Island_Muenster/Logger/water_air_temp_difference.r")
+source("~/Urban_Heat_Island_Muenster/Logger/split_day_night.r")
+source("~/Urban_Heat_Island_Muenster/Logger/plot_data.r")
 
 #for stats (don't always execute)
-source("~/Urban_Heat_Island_Muenster/mean_sd_logger.r")
-source("~/Urban_Heat_Island_Muenster/plot_statistics.R")
-source("~/Urban_Heat_Island_Muenster/stats_test_green_grey.R")
-source("~/Urban_Heat_Island_Muenster/tidy_for_linearity_test.R")
-source("~/Urban_Heat_Island_Muenster/linearity_test.R")
+source("~/Urban_Heat_Island_Muenster/Logger/mean_sd_logger.r")
+source("~/Urban_Heat_Island_Muenster/Logger/plot_statistics.R")
+source("~/Urban_Heat_Island_Muenster/Logger/stats_test_green_grey.R")
+source("~/Urban_Heat_Island_Muenster/Logger/tidy_for_linearity_test.R")
+source("~/Urban_Heat_Island_Muenster/Logger/linearity_test.R")
 
 #supplementary weather data
-source("~/Urban_Heat_Island_Muenster/DWD_data_wind_temp.r")
-source("~/Urban_Heat_Island_Muenster/comp_wind_temp_diff.r")
+source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp.r")
+source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_wind_temp_diff.r")
 
 #netatmo data
-source("~/Urban_Heat_Island_Muenster/prep_plot_netatmo.R")
-source("~/Urban_Heat_Island_Muenster/merge_netatmo.R")
-source("~/Urban_Heat_Island_Muenster/QAQC_Netatmo_level_A_B.r") #need to execute supp weather data
-source("~/Urban_Heat_Island_Muenster/QAQC_Netatmo_level_C_D.R") #need to execute supp weather data
-source("~/Urban_Heat_Island_Muenster/netatmo_plot_overview.R")
+source("~/Urban_Heat_Island_Muenster/Netatmo/prep_plot_netatmo.R")
+source("~/Urban_Heat_Island_Muenster/Netatmo/merge_netatmo.R")
+source("~/Urban_Heat_Island_Muenster/Netatmo/QAQC_Netatmo_level_A_B.r") #need to execute supp weather data
+source("~/Urban_Heat_Island_Muenster/Netatmo/QAQC_Netatmo_level_C_D.R") #need to execute supp weather data
+source("~/Urban_Heat_Island_Muenster/Netatmo/netatmo_plot_overview.R")
 
-#source("~/Urban_Heat_Island_Muenster/leaflet_netatmo.R")
-#source("~/Urban_Heat_Island_Muenster/data_from_json.r")
+#source("~/Urban_Heat_Island_Muenster/Netatmo/leaflet_netatmo.R")
+#source("~/Urban_Heat_Island_Muenster/Netatmo/data_from_json.r")
 
 #for mapping
-source("~/Urban_Heat_Island_Muenster/leaflet_heatmap_from_02.08.r")
-source("~/Urban_Heat_Island_Muenster/Heatmap.r")
-source("~/Urban_Heat_Island_Muenster/spatial_interpolation_idw.r")
+source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")
+source("~/Urban_Heat_Island_Muenster/Logger/Heatmap.r")
+source("~/Urban_Heat_Island_Muenster/Logger/spatial_interpolation_idw.r")
