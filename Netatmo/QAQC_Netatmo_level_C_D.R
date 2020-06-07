@@ -135,5 +135,9 @@ rownames(metadata_merge)=metadata_merge$device_id #set ID as rownames
 ids_to_keep=names(list_netatmo_level_D_2) #get character vector of ids to keep
 metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
 
-rm(ids_to_keep, list_netatmo_hourly, list_netatmo_level_B, list_netatmo_level_B_aug,
+#save metadata_merge to csv file
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
+write.csv2(file="Netatmo_metadata.csv", metadata_merge)
+
+rm(ids_to_keep, list_netatmo_hourly, list_netatmo_level_B,
    list_netatmo_level_D)

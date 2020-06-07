@@ -23,6 +23,11 @@ source("~/Urban_Heat_Island_Muenster/Logger/stats_test_green_grey.R")
 source("~/Urban_Heat_Island_Muenster/Logger/tidy_for_linearity_test.R")
 source("~/Urban_Heat_Island_Muenster/Logger/linearity_test.R")
 
+#for mapping Logger data
+source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")
+source("~/Urban_Heat_Island_Muenster/Logger/Heatmap.r")
+source("~/Urban_Heat_Island_Muenster/Logger/spatial_interpolation_idw.r")
+
 #supplementary weather data
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp.r")
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_wind_temp_diff.r")
@@ -37,7 +42,5 @@ source("~/Urban_Heat_Island_Muenster/Netatmo/netatmo_plot_overview.R")
 #source("~/Urban_Heat_Island_Muenster/Netatmo/leaflet_netatmo.R")
 #source("~/Urban_Heat_Island_Muenster/Netatmo/data_from_json.r")
 
-#for mapping
-source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")
-source("~/Urban_Heat_Island_Muenster/Logger/Heatmap.r")
-source("~/Urban_Heat_Island_Muenster/Logger/spatial_interpolation_idw.r")
+#for mapping Logger and netatmo
+source("~/Urban_Heat_Island_Muenster/Logger_Netatmo_map.R")
