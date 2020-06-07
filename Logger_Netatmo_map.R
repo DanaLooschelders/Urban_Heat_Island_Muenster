@@ -4,6 +4,9 @@ library(leaflet)
 library(sp)
 library(ggplot2)
 library(htmltools)
+library(maptools)
+library(maps)
+library(GISTools)
 #load Netatmo coordinates
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo")
 netatmo=read.csv2("Netatmo_metadata.csv")
@@ -23,6 +26,12 @@ leaflet(data=netatmo) %>%
   addMarkers(data=logger, popup = ~htmlEscape(popup_text))%>%
   addPolygons(data=MS_shape , color="black", fillOpacity = 0, weight = 1)%>%
   addLegend(colors = c("blue", "red"), 
-            labels=c("Netatmo station", "Thermochron iButton"))#%>%
+            labels=c("Netatmo station", "Thermochron iButton"))%>%
+  addScaleBar()
+  
+  #map.scale(xc = 52, yc = 7,len = 10, ndivs = 10, )%>%
+  #north.arrow()
+?map.scale
+?north.arrow
   #addMiniMap()
 

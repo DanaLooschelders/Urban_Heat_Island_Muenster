@@ -1,5 +1,5 @@
 #Master script to automatically perform analysis for datasets
-#choose correct date
+#choose correct date (data with 10 min intervall)
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_02.08.R")
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_14.08.R")
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_20.08.R")
@@ -11,10 +11,13 @@ source("~/Urban_Heat_Island_Muenster/Logger/tidy_data.r")
 source("~/Urban_Heat_Island_Muenster/Logger/plot_data_in_pairs.R")
 source("~/Urban_Heat_Island_Muenster/Logger/calculate_differences_green_blue.R")
 source("~/Urban_Heat_Island_Muenster/Logger/water_data_plot-r.R")
-source("~/Urban_Heat_Island_Muenster/Logger/")
+source("~/Urban_Heat_Island_Muenster/Logger/veg_sealed_data_plot.r")
 source("~/Urban_Heat_Island_Muenster/Logger/water_air_temp_difference.r")
 source("~/Urban_Heat_Island_Muenster/Logger/split_day_night.r")
 source("~/Urban_Heat_Island_Muenster/Logger/plot_data.r")
+
+#data with 30 min intervall, execute following block of scripts
+source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_24.09.r")
 
 #for stats (don't always execute)
 source("~/Urban_Heat_Island_Muenster/Logger/mean_sd_logger.r")
