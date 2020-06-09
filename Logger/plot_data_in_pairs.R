@@ -23,7 +23,7 @@ for (i in unique(metadata$PlaceID)){
     dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
     dat_logger3=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[3]]
     plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,3], 
-         type="l", ylim=c(5,45), ylab=expression("Temperature [°C]"), xlab="Date",
+         type="l", ylim=c(-5,30), ylab=expression("Temperature [°C]"), xlab="Date",
          col=metadata$color[metadata$ID==Loggers[1]],
          main=paste("Plot", i))
     lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,3],
@@ -44,7 +44,7 @@ for (i in unique(metadata$PlaceID)){
       dat_logger1=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[1]]
       dat_logger2=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[2]]
       plot(dat_logger1[[1]]$Datetime.1, dat_logger1[[1]][,3], 
-           type="l", ylim=c(5,45), ylab=expression("Temperature [°C]"), xlab="Date",
+           type="l", ylim=c(-5,30), ylab=expression("Temperature [°C]"), xlab="Date",
            col=metadata$color[metadata$ID==Loggers[1]],
            main=paste("Plot", i))
       lines(dat_logger2[[1]]$Datetime.1, dat_logger2[[1]][,3],

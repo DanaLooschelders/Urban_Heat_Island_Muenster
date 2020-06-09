@@ -1,6 +1,6 @@
 #filter temperature data into day/night
 #works for all datasets (if the check_iButton and tidy_data scripts were run before)
-
+library(dplyr)
 #create column with only date in temperature
 # select first column and write into seperate list
 list_iButton_corr_tidy_col <- lapply(list_iButton_corr_tidy, `[`, 2)
@@ -13,11 +13,14 @@ list_iButton_corr_tidy_date <- mapply(cbind, list_iButton_corr_tidy, "Date"=list
 
 #read in sunrise/sunset data
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
-sun=read.table("Sunrise_sunset_times.csv", sep=";", dec=",", header=T, stringsAsFactors = F)
+sun=read.table("Sunrise_sunset_times.csv", sep=";", 
+               dec=",", header=T, stringsAsFactors = F,
+               na.strings = c("", "NA"))
 names(sun)[1]="Datum"
 sun$Datum=strptime(sun$Datum, "%d.%m.%Y", tz="Europe/Paris")
 str(sun)
-
+sun = sun[,1:4]
+sun=na.omit(sun)
 #restructure dataframe to paste the date onto the times and convert to POSIXct
 sun2=data.frame("sunrise"= as.POSIXct(paste(sun$Datum, sun$Sonnenaufgang)))
 sun2$sunset=as.POSIXct(paste(sun$Datum, sun$Sonnenuntergang))
@@ -60,7 +63,7 @@ names(list_iButton_corr_tidy_date_day)=save.names #add names to list
 test2=list_iButton_corr_tidy_date_day[[6]]
 #plot it
 par(new=F)
-plot(test2$Datetime.1, test2[,4])
+plot(test2$Datetime.1, test2[,3], type="l")
 abline(v=sun2$sunrise_wDawn, col="blue")
 abline(v=sun2$sunset_wDawn, col="red")
 

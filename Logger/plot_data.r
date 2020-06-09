@@ -15,7 +15,6 @@ str(list_iButton_corr_tidy_date_day[[1]])
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/plots_day_night/")
 
 #plot and save day data
-
 for(i in 1:length(list_iButton_corr_tidy_date_day)){
   dataname=names(list_iButton_corr_tidy_date_day)[i] #save logger ID 
   date=as.character(list_iButton_corr_tidy_date_day[[1]][1,2])

@@ -18,6 +18,9 @@ source("~/Urban_Heat_Island_Muenster/Logger/plot_data.r")
 
 #data with 30 min intervall, execute following block of scripts
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_24.09.r")
+source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction_30_min.R")
+source("~/Urban_Heat_Island_Muenster/Logger/tidy_data_30_min.R")
+
 
 #for stats (don't always execute)
 source("~/Urban_Heat_Island_Muenster/Logger/mean_sd_logger.r")
