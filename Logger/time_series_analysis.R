@@ -15,6 +15,11 @@ time_series=ts(test, start=c(14), frequency = 24*6)
 #start 14 -> for 14th August 2019
 #change start time to day of the year (1 to 365)
 
+test2=list_iButton_corr_tidy[[3]]
+str(test2)
+test2=test2[,3]
+str(test2)
+time_series2=ts(test, start=c(14), frequency = 24*6)
 
 #data exploration
 any(is.na(time_series)) #check for na -> no missing values
@@ -40,3 +45,6 @@ ma_ts=ma(time_series, 6)
 
 #ARIMA
 arima(time_series)
+
+#SiZer
+SiZer_res=SiZer(time_series, time_series2)

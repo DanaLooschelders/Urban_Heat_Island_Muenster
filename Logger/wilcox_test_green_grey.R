@@ -1,3 +1,4 @@
+library(SiZer)
 #calculate statistics
 #significant difference between sealed area and vegetation?
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
@@ -48,6 +49,12 @@ for (i in 1:length(list_iButton_stats)){
   if(exists(x = "Vegetation", where=data)&exists(x="Sealed_area", where=data)){
     norm.test1=shapiro.test(data$Sealed_area)
     norm.test2=shapiro.test(data$Vegetation)
+    pdf(paste("ccf",substring(list_iButton_stats[[1]]$Time[1],1, 10),i,".pdf"))
+    ccf(data$Sealed_area, data$Vegetation, na.action = na.pass, lag.max=200)
+    dev.off()
+    pdf(paste("SiZer",substring(list_iButton_stats[[1]]$Time[1],1, 10),i,".pdf"))
+    plot(SiZer(data$Sealed_area, data$Vegetation))
+    dev.off()
   if(norm.test1$p.value>=0.05&norm.test2$p.value>=0.05){
     ttest.res=t.test(data$Sealed_area, data$Vegetation)
     dat[i,2]=ttest.res$p.value
