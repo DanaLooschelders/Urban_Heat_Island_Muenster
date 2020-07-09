@@ -4,6 +4,7 @@
   #for September: ylim=c(5,30)
   #for 20 August: ylim=c(10,45)
   #for 14 August: ylim=c(10,35)
+  #for 28 September: ylim=c(-5,30)
 
 
 #write seperate lists for each place_ID (with for loop?)

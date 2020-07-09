@@ -25,9 +25,10 @@ source("~/Urban_Heat_Island_Muenster/Logger/tidy_data_30_min.R")
 #for stats (don't always execute)
 source("~/Urban_Heat_Island_Muenster/Logger/mean_sd_logger.r")
 source("~/Urban_Heat_Island_Muenster/Logger/plot_statistics.R")
-source("~/Urban_Heat_Island_Muenster/Logger/stats_test_green_grey.R")
+source("~/Urban_Heat_Island_Muenster/Logger/wilcox_test_green_grey.R")
 source("~/Urban_Heat_Island_Muenster/Logger/tidy_for_linearity_test.R")
-source("~/Urban_Heat_Island_Muenster/Logger/linearity_test.R")
+source("~/Urban_Heat_Island_Muenster/Logger/time_series_plot.R")
+source("~/Urban_Heat_Island_Muenster/Logger/time_series_analysis.R")
 
 #for mapping Logger data
 source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")

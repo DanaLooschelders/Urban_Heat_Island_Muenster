@@ -20,10 +20,10 @@ logger$popup_text=paste(logger$Place_name,logger$Place_number,logger$Place_type,
 #map
 leaflet(data=netatmo) %>%
   addTiles() %>%
-  addCircles(color="blue") %>%
-  addMarkers(data=netatmo, popup=~htmlEscape(popup_text))%>%
-  addCircles(data=logger, color="red")%>%
-  addMarkers(data=logger, popup = ~htmlEscape(popup_text))%>%
+  addCircles(color="blue", radius=10) %>%
+  #addMarkers(data=netatmo, popup=~htmlEscape(popup_text))%>%
+  addCircles(data=logger, color="red", radius = 10)%>%
+  #addMarkers(data=logger, popup = ~htmlEscape(popup_text))%>%
   addPolygons(data=MS_shape , color="black", fillOpacity = 0, weight = 1)%>%
   addLegend(colors = c("blue", "red"), 
             labels=c("Netatmo station", "Thermochron iButton"))%>%
