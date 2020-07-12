@@ -1,27 +1,32 @@
 #Master script to automatically perform analysis for datasets
 #choose correct date (data with 10 min intervall)
+#data from 2019
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_02.08.R")
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_14.08.R")
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_20.08.R")
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_01.09.R")
+#data from 2020
+source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_07.06.2020.R")
 
-#execute all scripts in that order
+#execute all scripts in that order for 2019
 source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction.R")
 source("~/Urban_Heat_Island_Muenster/Logger/tidy_data.r")
 source("~/Urban_Heat_Island_Muenster/Logger/plot_data_in_pairs.R")
-source("~/Urban_Heat_Island_Muenster/Logger/calculate_differences_green_blue.R")
+source("~/Urban_Heat_Island_Muenster/Logger/calculate_differences_green_blue.R") #plots
 source("~/Urban_Heat_Island_Muenster/Logger/water_data_plot-r.R")
 source("~/Urban_Heat_Island_Muenster/Logger/veg_sealed_data_plot.r")
 source("~/Urban_Heat_Island_Muenster/Logger/water_air_temp_difference.r")
 source("~/Urban_Heat_Island_Muenster/Logger/split_day_night.r")
 source("~/Urban_Heat_Island_Muenster/Logger/plot_data.r")
 
+##execute all scripts in that order for 2019 (different logger IDs)
+
 #data with 30 min intervall, execute following block of scripts
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_24.09.r")
 source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction_30_min.R")
 source("~/Urban_Heat_Island_Muenster/Logger/tidy_data_30_min.R")
 
-#for stats (don't always execute)
+#for stats (don't always execute) for 2019
 source("~/Urban_Heat_Island_Muenster/Logger/tidy_for_linearity_test.R")
 source("~/Urban_Heat_Island_Muenster/Logger/time_series_plot.R")
 source("~/Urban_Heat_Island_Muenster/Logger/time_series_decomposition_correlation.R")
@@ -29,13 +34,16 @@ source("~/Urban_Heat_Island_Muenster/Logger/time_series_significance_test.R")
 source("~/Urban_Heat_Island_Muenster/Logger/mean_sd_logger.r")
 source("~/Urban_Heat_Island_Muenster/Logger/plot_statistics.R")
 source("~/Urban_Heat_Island_Muenster/Logger/linaer_reg_site_parameters_GSI.R")
+source("~/Urban_Heat_Island_Muenster/Logger/pca_site_parameters.R")
+
+#for stats (don't always execute) for 2020 (different logger IDs)
 
 #for mapping Logger data
 source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")
 source("~/Urban_Heat_Island_Muenster/Logger/Heatmap.r")
 source("~/Urban_Heat_Island_Muenster/Logger/spatial_interpolation_idw.r")
 
-#supplementary weather data
+#supplementary weather data 
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp.r")
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_wind_temp_diff.r")
 
