@@ -48,3 +48,4 @@ arima(time_series)
 
 #SiZer
 SiZer_res=SiZer(time_series, time_series2)
+mean_TS=mean(time_series, time_series2)

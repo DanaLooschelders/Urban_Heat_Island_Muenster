@@ -1,4 +1,5 @@
 library(SiZer)
+library(dplyr)
 #calculate statistics
 #significant difference between sealed area and vegetation?
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
@@ -67,4 +68,24 @@ for (i in 1:length(list_iButton_stats)){
 
 #save to file
 write.csv2(x=dat, file=paste("significance", substring(list_iButton_stats[[1]]$Time[1],1, 10), ".csv"))
+
+#merge all green/grey time series and calculate significant difference between them
+median_sealed=sapply(list_iButton_corr_tidy_sealed, function(x) median(x[,3], na.rm=T))
+median_vegetation=sapply(list_iButton_corr_tidy_vegetation, function(x) median(x[,3], na.rm=T))
+
+#test for normality
+shapiro_sealed=shapiro.test(median_sealed) 
+shapiro_vegetation=shapiro.test(median_vegetation) 
+#test for homogenity of variance
+var_result=var.test(median_sealed,median_vegetation)
+
+if(shapiro_vegetation[["p.value"]]>0.05&shapiro_sealed[["p.value"]]>0.5){
+  if(var_result[["p.value"]]>0.05){
+  t.test(median_vegetation, median_sealed, paired =FALSE, var.equal = TRUE)
+  }else{
+    t.test(median_vegetation, median_sealed, paired =FALSE, var.equal = FALSE)
+  }
+}else{
+wilcox.test(median_sealed, median_vegetation)
+  }
 
