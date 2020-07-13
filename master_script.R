@@ -9,9 +9,9 @@ source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_01.09.R
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_07.06.2020.R")
 
 #execute all scripts in that order for 2019
-source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction.R")
-source("~/Urban_Heat_Island_Muenster/Logger/tidy_data.r")
-source("~/Urban_Heat_Island_Muenster/Logger/plot_data_in_pairs.R")
+source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction.R") #sets all logger to same starting point
+source("~/Urban_Heat_Island_Muenster/Logger/QAQC_Logger.r") #corrects offset (lab test), spikes, outliers and plots histogram
+source("~/Urban_Heat_Island_Muenster/Logger/plot_data_in_pairs.R") #group the logger (GBS)
 source("~/Urban_Heat_Island_Muenster/Logger/calculate_differences_green_blue.R") #plots
 source("~/Urban_Heat_Island_Muenster/Logger/water_data_plot-r.R")
 source("~/Urban_Heat_Island_Muenster/Logger/veg_sealed_data_plot.r")
@@ -19,7 +19,7 @@ source("~/Urban_Heat_Island_Muenster/Logger/water_air_temp_difference.r")
 source("~/Urban_Heat_Island_Muenster/Logger/split_day_night.r")
 source("~/Urban_Heat_Island_Muenster/Logger/plot_data.r")
 
-##execute all scripts in that order for 2019 (different logger IDs)
+##execute all scripts in that order for 2020 (different logger IDs)
 
 #data with 30 min intervall, execute following block of scripts
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_24.09.r")
@@ -59,3 +59,5 @@ source("~/Urban_Heat_Island_Muenster/Netatmo/netatmo_plot_overview.R")
 
 #for mapping Logger and netatmo
 source("~/Urban_Heat_Island_Muenster/Logger_Netatmo_map.R")
+
+RStudio.Version()

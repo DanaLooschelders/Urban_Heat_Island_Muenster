@@ -1,7 +1,9 @@
-#iButtons tidy up - correct offset and tidy up temperature spikes 
+#iButtons QAQC 
+#this script: 1. corrects offset and tidies up 2. temperature spikes and 3. outliers
 #for 02.08.2019
 #and for 01.09.2019
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data")
+library(NCmisc) #for outlier detection
 
 str(list_iButton_corr_set) #the start-time corrected data (check that date corresponds)
 #create temporary list
@@ -10,6 +12,7 @@ list_iButton_corr_temp=list_iButton_corr_set
 offset_stats=read.table("iButton_Statistics.csv", sep=",", dec=".", header=T)
 str(offset_stats)
 
+#1. correct the offset for every logger (offset from lab test)
 for (i in names(list_iButton_corr_set)){
   if(any(offset_stats$ID_iButton==i)){
   off_value=offset_stats$Diff_T[offset_stats$ID_iButton==i]
@@ -67,7 +70,7 @@ metadata$color[metadata$type=="Water"]="blue"
 metadata$color[metadata$type=="Sealed_area"]="darkgrey"
 metadata$color[metadata$type=="Vegetation"]="green"
 
-#loop through data and correct temperature spikes
+#2. loop through data and correct temperature spikes
 for (i in 1:length(list_iButton_corr_tidy)) {
   name=names(list_iButton_corr_tidy[i])
 if (metadata$type[metadata$ID==name]=="Water") {
@@ -98,4 +101,21 @@ report.na[i]=sum(is.na(test[,3]))
 }
 
 report.na #check how many NAs were in data
+
+#3. correct outliers (outside more than 2.5 IQR)
+
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/stats/hist")
+for (i in 1:length(list_iButton_corr_tidy)){
+data=list_iButton_corr_tidy[[i]]
+pdf(file = paste("hist",
+                 substring(list_iButton_corr_tidy[[i]]$Datetime.1[1],1, 10),
+                 names(list_iButton_corr_tidy[i]), ".pdf"))
+hist(data[,3], main=paste("Histogramm of",substring(list_iButton_corr_tidy[[i]]$Datetime.1[1],1, 10),
+                          names(list_iButton_corr_tidy[i])), xlab="Temperature [°C]")
+dev.off()
+ data[which.outlier(data[,3], 
+                    method="iq", thr=2.5, 
+                    high=TRUE, low=TRUE),3]=NA
+  list_iButton_corr_tidy[[i]][,3]=data[,3]
+  }
 

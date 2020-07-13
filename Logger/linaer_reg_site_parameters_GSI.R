@@ -1,5 +1,5 @@
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
-Standort=read.table(file="Sensortabelle_Kartierung_R.csv", sep=";", dec=".", header=T)
+Standort=read.table(file="Sensortabelle Kartierung Stand 13.7.csv", sep=";", dec=".", header=T)
 str(Standort)
 names(Standort)[1]="ID"
 
