@@ -26,8 +26,9 @@ qplot(Standort$Temp_median, Standort$Aspect_ratio,
       geom=c("point", "smooth"))
 
 #calculate pearson correlation
-cor(Standort$Temp_median, Standort$Aspect_ratio, use="na.or.complete", method="pearson")
-#cacöculate pearson correlation with significance levels
+cor.test(Standort$Temp_median, Standort$Aspect_ratio, 
+         use="na.or.complete", method="pearson")
+#caclculate pearson correlation with significance levels
 rcorr(Standort$Temp_median, Standort$Aspect_ratio, type = "pearson")
 
 #correlation matrix
@@ -35,6 +36,19 @@ ggcorr(Standort, label=TRUE)
 Standort$BÃ.ume
 #combine multiple variables
 ggpairs(Standort, 
-        columns=c("Temp_median", "Aspect_ratio", "BÃ.ume"),
+        columns=c(names(Standort[26]), "Aspect_ratio", "BÃ.ume"),
         upper=list(continuous = wrap("cor", size=10)),
         lower=list(continuous="smooth"))
+#for Temp_median, Aspect ratio, tree 
+
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/cor_site")
+#for loop to loop through table and do cor analysis
+#prepare output table for results
+
+#cor_tab=data.frame("ID"=Standort$ID, cor_pearson=rep(NA), cor_sig=rep(NA))
+#for (i in 3:length(Standort)){
+#  
+#}
+#write.table(cor_tab, file=paste("cor", 
+#            substring(list_iButton_corr_tidy[[1]][1,2], 
+#            first=1, last=10), ".csv"))

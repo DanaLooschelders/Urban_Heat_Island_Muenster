@@ -33,7 +33,7 @@ source("~/Urban_Heat_Island_Muenster/Logger/time_series_decomposition_correlatio
 source("~/Urban_Heat_Island_Muenster/Logger/time_series_significance_test.R") #signficance test between logger pairs and for all grey against green logger
 source("~/Urban_Heat_Island_Muenster/Logger/descriptive_stats.r") #calculate mean, median and sd for 24h/day/night 
 source("~/Urban_Heat_Island_Muenster/Logger/plot_descriptive_stats.R") #plots with mean, meadian, standard deviation
-source("~/Urban_Heat_Island_Muenster/Logger/linaer_reg_site_parameters_GSI.R") #lm and cor for site chracteristics/temperatur median 
+source("~/Urban_Heat_Island_Muenster/Logger/cor_site_parameters.R") #lm and cor for site chracteristics/temperatur median 
 source("~/Urban_Heat_Island_Muenster/Logger/pca_site_parameters.R")
 
 #for stats (don't always execute) for 2020 (different logger IDs)
