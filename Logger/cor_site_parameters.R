@@ -80,7 +80,7 @@ for (i in 1:length(Standort[,-17])){ #use all columns expept median temp
 #prepare output table for results
 cor_tab=data.frame(parameter=names(Standort)[-17], cor_pearson=rep(NA), cor_sig=rep(NA))
 for (i in 1:length(Standort[,-17])){ #use all columns expept median temp
-#calculate pearson correlation
+  #calculate pearson correlation
 cor_result=cor.test(Standort$Temp_median, Standort[,i], 
                     use="na.or.complete", method="pearson")
 cor_tab$cor_sig[cor_tab$parameter==names(Standort[i])]=cor_result$p.value #write significance value in table
@@ -90,3 +90,5 @@ write.table(cor_tab, file=paste("cor",
             substring(list_iButton_corr_tidy[[1]][1,2], 
             first=1, last=10), ".csv"), sep=";", dec=",",
             row.names=FALSE)
+
+######check if use="na.or.complete" is the correct option
