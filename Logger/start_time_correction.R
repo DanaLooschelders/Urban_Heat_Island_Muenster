@@ -29,7 +29,7 @@ for(i in 1:length(list_iButton_corr)){
   list_iButton_corr_set[[i]]=list_iButton_corr_set[[i]][-length(test3[,1]+1),1:2] #delete last row in every dataframe (sometimes NA)
 }
 
-
+rm(test, test2, test3, start_time, end_time)
 #test spline interpolation
 #test=xts(list_iButton_corr[[5]][,2],list_iButton_corr[[5]][,3])
 #test2 = merge(test,date_time_complete)

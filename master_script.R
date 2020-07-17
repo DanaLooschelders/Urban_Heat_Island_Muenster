@@ -7,6 +7,7 @@ source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_20.08.R
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_01.09.R")
 #data from 2020
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_07.06.2020.R")
+source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_03.07.2020.r")
 
 #execute all scripts in that order for 2019
 source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction.R") #sets all logger to same starting point
@@ -20,6 +21,12 @@ source("~/Urban_Heat_Island_Muenster/Logger/split_day_night.r") #split the data 
 source("~/Urban_Heat_Island_Muenster/Logger/plot_split_data.r") #plot the day and night data
 
 ##execute all scripts in that order for 2020 (different logger IDs)
+source("~/Urban_Heat_Island_Muenster/Logger/start_time_correction.R") #sets all logger to same starting point
+source("~/Urban_Heat_Island_Muenster/Logger/subset_use_only_for_03.07_data.r") #sets all logger to same starting point
+source("~/Urban_Heat_Island_Muenster/Logger/QAQC_Logger_2020.r") #sets all logger to same starting point
+source("~/Urban_Heat_Island_Muenster/Logger/plot_data_in_pairs_2020.R") #sets all logger to same starting point
+
+
 
 #data with 30 min intervall, execute following block of scripts
 source("~/Urban_Heat_Island_Muenster/Logger/iButtons-Check_total_DL_from_24.09.r")
