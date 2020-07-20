@@ -5,24 +5,27 @@
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data")
 library(NCmisc) #for outlier detection
 
-str(list_iButton_corr_set) #the start-time corrected data (check that date corresponds)
+#str(list_iButton_corr_set) #the start-time corrected data (check that date corresponds)
 #create temporary list
 list_iButton_corr_temp=list_iButton_corr_set
 #read in offset values
 offset_stats=read.table("iButton_Statistics.csv", sep=",", dec=".", header=T)
-str(offset_stats)
+#str(offset_stats)
 
 #1. correct the offset for every logger (offset from lab test)
+Loggers_offset_check=data.frame(names=names(list_iButton_corr_set), offset=rep(NA))
 for (i in names(list_iButton_corr_set)){
   if(any(offset_stats$ID_iButton==i)){
   off_value=offset_stats$Diff_T[offset_stats$ID_iButton==i]
   data=list_iButton_corr_set[[i]]
   data$Temperature_C_w_off=data$Temperature_C+off_value
   list_iButton_corr_set[[i]]=data
+  Loggers_offset_check$offset[Loggers_offset_check$names==i]="yes"
   } else{
     data=list_iButton_corr_set[[i]]
-    data$Temperature_C_miss_off=data$Temperature_C
+    data$Temperature_C_w_off=data$Temperature_C
     list_iButton_corr_set[[i]]=data
+    Loggers_offset_check$offset[Loggers_offset_check$names==i]="no"
   }
 }
 
@@ -37,22 +40,22 @@ for (i in names(list_iButton_corr_set)){
 #assign description for plots
 
 list_iButton_corr_tidy=list_iButton_corr_set #create new, tidy list
-str(list_iButton_corr)
+#str(list_iButton_corr)
 report.na=rep(NA, length(list_iButton_corr_tidy))
 
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 #read in csv with lat lon and description of places
-des=read.table("Sensortabelle Kartierung Stand 17.7.csv", 
+des=read.table("Sensortabelle Kartierung Stand 19.7.csv", 
                sep=";", dec=",",skip=2, header=F)
 #read in again only for column names
-meta.des=read.table("Sensortabelle Kartierung Stand 17.7.csv", 
+meta.des=read.table("Sensortabelle Kartierung Stand 19.7.csv", 
                sep=";", dec=",", header=T)
 #save column names in vector
 col.names=names(meta.des)
 #set column names to table
 names(des)=col.names
 #check
-str(des)
+#str(des)
 #drop unneccessary vectors
 rm(col.names, meta.des)
 

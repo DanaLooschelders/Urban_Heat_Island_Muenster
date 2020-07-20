@@ -62,8 +62,9 @@ usePackage("tidyverse")
 # setwd(choose.dir()) # Uncomment if necessary, but only works for Windows operating system
 #setwd("V:/klima/Projekte/2019_Urban_Heat_Island/Data/Data_raw/Calibration_test_20190704-20190708")
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data/UHI_20200703-20200717/")
-#the logger IDs 56 and 01 were added manually to the .csv files as they were missing in the original file
-
+#the logger IDs 56 and 102 were added manually to the .csv files as they were missing in the original file
+#later, ID 102 was corrected to 93 because 102 was the old ID from Stiftherrenstrasse 
+#and 93 was the true missing ID from Spiekerhof vegetation
 #################
 # Data iButtons #
 #################

@@ -16,7 +16,9 @@ for (i in unique(metadata$Standort)){
   metadata_sub=metadata[metadata$Standort==i,]
  pdf(file=name, paper = "a4r", height=7, width=14)
   plot(list_iButton_corr_tidy[[as.character(metadata_sub$Logger_ID[1])]][2:3],
-       type="l", col=metadata_sub$color[1], ylim=c(5,35))
+       type="l", col=metadata_sub$color[1], ylim=c(5,35),
+       ylab="Temperature [°C]", xlab="Date", main=paste("Temperature at", i, "in 2020"),
+       sub="WL = Waterlogger   WOL = Water Surface Logger   VL = Vegetation Logger   SL = Sealed Logger")
   for(i in 2:length(metadata_sub$Logger_ID)){
     lines(list_iButton_corr_tidy[[as.character(metadata_sub$Logger_ID[i])]][2:3],
           col=metadata_sub$color[i])
