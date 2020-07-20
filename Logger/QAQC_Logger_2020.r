@@ -29,6 +29,11 @@ for (i in names(list_iButton_corr_set)){
   }
 }
 
+#export offset table
+write.table(Loggers_offset_check, 
+            file=paste("Offset_check", 
+                       substring(list_iButton_corr_set[[1]]$Datetime.1[1], 1,10), ".csv"),
+            sep=";", dec=",", row.names=F)
 
 #for the 02.08.2019
 #list_iButton_corr_tidy[["33"]] #somehow the offset for this one is missing
