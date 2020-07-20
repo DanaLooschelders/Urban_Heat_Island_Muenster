@@ -1,8 +1,12 @@
-#explore the correlation between the median temperature and site specific parameters
+#explore the correlation between the median air temperature and site specific parameters
 library(ggplot2)
 library(GGally)
 library(Hmisc)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
+
+#drop water logger and water surface logger
+metadata_numeric=metadata[metadata$Loggertyp!="WL",]
+metadata_numeric=metadata_numeric[metadata_numeric$Loggertyp!="WOL",]
 
 Logger_IDs=metadata$Logger_ID
 #drop non-numeric columns
@@ -13,9 +17,20 @@ metadata_numeric$Logger_ID=Logger_IDs
 #use for loop to add median corresponding to Logger_ID (take care of replaced loggers/Logger_IDS)
 
 for(i in names(list_iButton_corr_tidy)){
-  metadata_numeric$Temp_median[metadata_numeric$Logger_ID==as.numeric(i)]=median(list_iButton_corr_tidy[[i]]$Temperature_C_w_off)
+  metadata_numeric$Temp_median[metadata_numeric$Logger_ID==as.numeric(i)]=
+    median(list_iButton_corr_tidy[[i]]$Temperature_C_w_off,
+           na.rm=T)
 }
-metadata_numeric=metadata_numeric[,-17] #drop column with Logger_IDS
+
+#drop column with Logger_IDS, lat and lon and water parameters, and buildungspecific parameters
+metadata_numeric=metadata_numeric[,-c(1:3,13:18)] 
+
+#set the NA in the columns in percent landcover to zero
+metadata_numeric2=metadata_numeric
+metadata_numeric2[is.na(metadata_numeric2)]=0
+metadata_numeric[,c(2:4, 6:8)]=metadata_numeric2[,c(2:4, 6:8)]
+
+
 #explore relationship between aspect ratio and median temp
 #plot data with linear regression line
 plot(metadata_numeric$Temp_median~ metadata_numeric$Aspect_ratio)
@@ -40,7 +55,7 @@ ggcorr(metadata_numeric, label=TRUE)
 
 #combine multiple variables
 ggpairs(metadata_numeric, 
-        columns=c(names(metadata_numeric[26]), "Aspect_ratio", "BÃ.ume"),
+        columns=c(names(metadata_numeric[11]), "Aspect_ratio", "Baeume"),
         upper=list(continuous = wrap("cor", size=10)),
         lower=list(continuous="smooth"))
 #for Temp_median, Aspect ratio, tree 
@@ -48,7 +63,7 @@ ggpairs(metadata_numeric,
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/cor_site")
 
 #loop through table and plot
-for (i in 1:length(metadata_numeric[,-17])){ #use all columns expept median temp
+for (i in 1:length(metadata_numeric)){ #use all columns expept lat, lon and median temp, 
   #plot data with linear regression line
   pdf(file=paste("scatter_lm", names(metadata_numeric[i]), substring(list_iButton_corr_tidy[[1]][1,2], 
                                          first=1, last=10), ".pdf"))
@@ -74,10 +89,11 @@ for (i in 1:length(metadata_numeric[,-17])){ #use all columns expept median temp
   ggsave(filename=paste("scatter_smooth", names(metadata_numeric[i]), 
                         substring(list_iButton_corr_tidy[[1]][1,2], 
                                   first=1, last=10), ".pdf"), device = "pdf")
-  }
+}
+
 #prepare output table for results
-cor_tab=data.frame(parameter=names(metadata_numeric)[-17], cor_pearson=rep(NA), cor_sig=rep(NA))
-for (i in 1:length(metadata_numeric[,-17])){ #use all columns expept median temp
+cor_tab=data.frame(parameter=names(metadata_numeric), cor_pearson=rep(NA), cor_sig=rep(NA))
+for (i in 1:length(metadata_numeric)){ #use all columns expept median temp
   #calculate pearson correlation
 cor_result=cor.test(metadata_numeric$Temp_median, metadata_numeric[,i], 
                     use="na.or.complete", method="pearson")
