@@ -29,7 +29,7 @@ metadata_numeric=metadata_numeric[,-c(1:3,13:18)]
 metadata_numeric2=metadata_numeric
 metadata_numeric2[is.na(metadata_numeric2)]=0
 metadata_numeric[,c(2:4, 6:8)]=metadata_numeric2[,c(2:4, 6:8)]
-
+rm(metadata_numeric2)
 
 #explore relationship between aspect ratio and median temp
 #plot data with linear regression line

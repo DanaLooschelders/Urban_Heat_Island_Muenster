@@ -21,7 +21,7 @@ source("~/Urban_Heat_Island_Muenster/Logger/2019/split_day_night.r") #split the 
 source("~/Urban_Heat_Island_Muenster/Logger/2019/plot_split_data.r") #plot the day and night data
 
 ##execute all scripts in that order for 2020 (different logger IDs)
-source("~/Urban_Heat_Island_Muenster/Logger/2020/start_time_correction.R") #sets all logger to same starting point
+source("~/Urban_Heat_Island_Muenster/Logger/2019/start_time_correction.R") #sets all logger to same starting point
 source("~/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/QAQC_Logger_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_data_in_pairs_2020.R") 
@@ -40,10 +40,10 @@ source("~/Urban_Heat_Island_Muenster/Logger/2019/time_series_decomposition_corre
 source("~/Urban_Heat_Island_Muenster/Logger/2019/time_series_significance_test.R") #signficance test between logger pairs and for all grey against green logger
 source("~/Urban_Heat_Island_Muenster/Logger/2019/descriptive_stats.r") #calculate mean, median and sd for 24h/day/night 
 source("~/Urban_Heat_Island_Muenster/Logger/2019/plot_descriptive_stats.R") #plots with mean, meadian, standard deviation
-source("~/Urban_Heat_Island_Muenster/Logger/pca_site_parameters.R")
 
 #for stats/time series analysis for 2020 (different logger IDs)
 source("~/Urban_Heat_Island_Muenster/Logger/2020/cor_site_parameters.R") #lm and cor for site chracteristics/temperatur median 
+source("~/Urban_Heat_Island_Muenster/Logger/pca_site_parameters.R") #pca for site chracteristics/temperatur median 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_plot_2020.R") #plot the decomposed time series
 
 
