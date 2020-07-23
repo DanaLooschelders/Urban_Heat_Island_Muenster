@@ -4,7 +4,7 @@
 #and for 01.09.2019
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data")
 library(NCmisc) #for outlier detection
-
+library(readxl)
 #str(list_iButton_corr_set) #the start-time corrected data (check that date corresponds)
 #create temporary list
 list_iButton_corr_temp=list_iButton_corr_set
@@ -49,22 +49,9 @@ list_iButton_corr_tidy=list_iButton_corr_set #create new, tidy list
 report.na=rep(NA, length(list_iButton_corr_tidy))
 
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
-#read in csv with lat lon and description of places
-des=read.table("Sensortabelle Kartierung Stand 19.7.csv", 
-               sep=";", dec=",",skip=2, header=F)
-#read in again only for column names
-meta.des=read.table("Sensortabelle Kartierung Stand 19.7.csv", 
-               sep=";", dec=",", header=T)
-#save column names in vector
-col.names=names(meta.des)
-#set column names to table
-names(des)=col.names
-#check
-#str(des)
-#drop unneccessary vectors
-rm(col.names, meta.des)
-
-names(des)[1]="Standort_ID" #change first column name
+#read in metadata
+des=read_excel(path = "Sensortabelle_Kartierung_Stand_22.07.2020_DL_ohne_meta.xlsx", 
+               col_names = T, na = "NA")
 
 #create a metadata table for logger
 #set ID as first column

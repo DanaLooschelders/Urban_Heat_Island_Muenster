@@ -45,6 +45,7 @@ source("~/Urban_Heat_Island_Muenster/Logger/2019/plot_descriptive_stats.R") #plo
 source("~/Urban_Heat_Island_Muenster/Logger/2020/cor_site_parameters.R") #lm and cor for site chracteristics/temperatur median 
 source("~/Urban_Heat_Island_Muenster/Logger/pca_site_parameters.R") #pca for site chracteristics/temperatur median 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_plot_2020.R") #plot the decomposed time series
+source("~/Urban_Heat_Island_Muenster/Logger/2020/aasee_wind_stream.R") 
 
 
 #for mapping Logger data

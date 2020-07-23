@@ -39,6 +39,7 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/stats")
 #create dynamically named dataframe
 dat=data.frame("place"=names(list_iButton_stats), "ttest"=rep(NA), "wilcox"=rep(NA))
 #test normality and significance for every place
+
 for (i in 1:length(list_iButton_stats)){
   data=list_iButton_stats[[i]]
   if(exists(x = "VL", where=data)&exists(x="SL", where=data)){
@@ -47,9 +48,11 @@ for (i in 1:length(list_iButton_stats)){
     pdf(paste("ccf",substring(list_iButton_stats[[1]]$Time[1],1, 10),i,".pdf"))
     ccf(data$SL, data$VL, na.action = na.pass, lag.max=200)
     dev.off()
-    #(paste("SiZer",substring(list_iButton_stats[[1]]$Time[1],1, 10),i,".pdf"))
-    #plot(SiZer(data$SL, data$VL))
-    #dev.off()
+    data$SL=na.spline(data$SL)
+    data$VL=na.spline(data$VL)
+    pdf(file=paste("SiZer",substring(list_iButton_stats[[1]]$Time[1],1, 10),i,".pdf"))
+    plot(SiZer(data$SL, data$VL))
+    dev.off()
   if(norm.test1$p.value>=0.05&norm.test2$p.value>=0.05){
     ttest.res=t.test(data$SL, data$VL)
     dat[i,2]=ttest.res$p.value
@@ -63,16 +66,21 @@ for (i in 1:length(list_iButton_stats)){
 #save to file
 write.csv2(x=dat, file=paste("significance", substring(list_iButton_stats[[1]]$Time[1],1, 10), ".csv"))
 
+
 #merge all green/grey time series and calculate significant difference between them
-median_sealed=sapply(list_iButton_corr_tidy_sealed, function(x) median(x[,3], na.rm=T))
+median_sealed=sapply(list_iButton_corr_tidy_SL, function(x) median(x[,3], na.rm=T))
 median_VL=sapply(list_iButton_corr_tidy_VL, function(x) median(x[,3], na.rm=T))
+median_WOL=sapply(list_iButton_corr_tidy_VL, function(x) median(x[,3], na.rm=T))
 
 #test for normality
 shapiro_sealed=shapiro.test(median_sealed) 
 shapiro_VL=shapiro.test(median_VL) 
+shapiro_WOL=shapiro.test(median_WOL)
 #test for homogenity of variance
 var_result=var.test(median_sealed,median_VL)
+var_result2=var.test(median_sealed, median_VL)
 
+#test for significance between green and grey infrastructure
 if(shapiro_VL[["p.value"]]>0.05&shapiro_sealed[["p.value"]]>0.5){
   if(var_result[["p.value"]]>0.05){
   t.test(median_VL, median_sealed, paired =FALSE, var.equal = TRUE)
@@ -82,4 +90,14 @@ if(shapiro_VL[["p.value"]]>0.05&shapiro_sealed[["p.value"]]>0.5){
 }else{
 wilcox.test(median_sealed, median_VL)
   }
+#test for significance between grey and blue infrastructure
+if(shapiro_WOL[["p.value"]]>0.05&shapiro_sealed[["p.value"]]>0.5){
+  if(var_result2[["p.value"]]>0.05){
+    t.test(median_WOL, median_sealed, paired =FALSE, var.equal = TRUE)
+  }else{
+    t.test(median_WOL, median_sealed, paired =FALSE, var.equal = FALSE)
+  }
+}else{
+  wilcox.test(median_sealed, median_WOL)
+}
 

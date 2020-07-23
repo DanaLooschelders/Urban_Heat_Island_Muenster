@@ -1,6 +1,5 @@
 plot.loggertype<-function(loggertype="WL")
   {
-  loggertype="SL"
   #plot all loggers of same type
 type=metadata[metadata$Loggertyp==loggertype,]
 #get index of all loggertypes in dataset
@@ -24,9 +23,11 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/overview_plots")
 name=paste("Overview",loggertype, substr(as.character(list_iButton_corr_tidy_type[[1]][1,2]), 
                                   1,10),".pdf", sep="_")
 ggsave(filename=name, width = 14, height=7, units = "in")
+return(list_iButton_corr_tidy_type)
 }
 
-plot.loggertype("VL")
-plot.loggertype("WOL")
-plot.loggertype("SL")
-plot.loggertype("WL")
+#plot and save for all types
+list_iButton_corr_tidy_VL=plot.loggertype("VL")
+list_iButton_corr_tidy_WOL=plot.loggertype("WOL")
+list_iButton_corr_tidy_SL=plot.loggertype("SL")
+list_iButton_corr_tidy_WL=plot.loggertype("WL")
