@@ -49,12 +49,13 @@ time_series=ts(test_cut, start=c(7), frequency = 24*6)
 plot(test$Datetime.1, test$Temperature_C_w_off,type="l")
 #clean outliers/missing values
 test$time_series_clean=tsclean(x=time_series, replace.missing = TRUE, lambda = "auto")
+time_series_clean=tsclean(time_series, replace.missing = TRUE, lambda = "auto")
 #plot again
 plot(test$Datetime.1, test$time_series_clean, type="l")
 #smooth
-test$cnt_ma = ma(test$time_series_clean, order=14*24) #hourly
-test$cnt_ma_day = ma(test$time_series_clean, order=14) #daily
-
+test$cnt_ma = ma(test$time_series_clean, order=6) #hourly
+test$cnt_ma_day = ma(test$time_series_clean, order=14*6) #daily
+?ma
 ggplot() + 
   geom_line(data = test, aes(x = Datetime.1, y = time_series_clean, colour = "Counts")) +
   geom_line(data = test, aes(x = Datetime.1, y = cnt_ma,   colour = "Hourly Moving Average"))  +
@@ -62,28 +63,40 @@ ggplot() +
   ylab('Temperature') 
 
 #2. decompose data
-decomp_ts=decompose(time_series_clean)
+decomp_ts=decompose(test$time_series_clean)
 plot(decomp_ts)
 
 #calculate seasonal component
-count_ma = ts(na.omit(test$cnt_ma), frequency=14*24) 
+count_ma = ts(na.omit(test$cnt_ma), frequency=6*24) 
 decomp = stl(count_ma, s.window="periodic")
 deseasonal_cnt <- seasadj(decomp)
 plot(decomp) 
 
 #test assumption -> stationary?
-adf.test(time_series_clean, alternative = "stationary") #stationary
+adf.test(test$time_series_clean, alternative = "stationary") #stationary
 
 #autokorrelation
-acf(time_series_clean, lag.max=200) #autokorreliert
+acf(test$time_series_clean, lag.max=20) #autokorreliert
 #partielle autokorrelation
-pacf(time_series_clean, lag.max=2000)
+pacf(test$time_series_clean, lag.max=20)
+test$log_data=log(test$time_series_clean)
+plot(test$log_data)
+
+
+auto.arima(time_series_clean)
+decompose()
 ?arima
-arima(time_series_clean)
+arima(test$time_series_clean)
+#SARIMA (p,d,q)(P,D,Q)m
 #order (non-seasonal part) 
-  #p -> auto regression model
-  #d -> degree of differencing
-  #q -> moving average order/number of terms to include
+  #p -> auto regression model (AR)
+  #d -> degree of differencing (I)
+  #q -> moving average order/number of terms to include (MA)
+  #P -> seasonal AR order
+  #D -> seasonal differencing
+  #Q -> seasonal MA order
+  #m -> time span of repeating seasonal pattern
+
 #check residuals (no pattern, normally distributed)
 #example from book with:
 plot(y=rstudent(model3),x=as.vector(time(tempdub)),

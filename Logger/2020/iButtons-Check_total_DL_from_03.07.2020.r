@@ -210,3 +210,4 @@ end_time=strptime("2020-07-17 00:00:00", "%Y-%m-%d %H:%M:%S")
 #---> changed for own time span
 list_iButton_corr = lapply(list_iButton, function(x) {subset(x, x[,1] >= start_time & x[,1] <= end_time)})
 
+rm(list = as.character(files_iButtons)) #remove csv.files from environment
