@@ -2,7 +2,7 @@
 #overall, 24-hour, daily, nightly 
 #mean, median, standard deviation (mms)
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/stats")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/stats_plot_mms/")
 
 #*************************************************************************
 #prep data
@@ -104,3 +104,9 @@ for (i in 1:length(list_iButton_corr_tidy_date_factor)){
 names(list_iButton_day_mms)=names(list_iButton_corr_tidy_date_factor)
 names(list_iButton_night_mms)=names(list_iButton_corr_tidy_date_factor)
 
+#calculate hourly means
+list_iButton_hourly=lapply(list_iButton_corr_tidy, 
+                           function(x) aggregate(x$Temperature_C_w_off, 
+                                                 list(hour=cut(x$Datetime.1, 
+                                                               breaks="hour")),
+                                                 mean, na.rm=T))
