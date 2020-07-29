@@ -26,10 +26,19 @@ Aasee_VL=metadata$Logger_ID[metadata$Standort_ID=="Aasee_3_VL"]
 Aasee_VL_data_day=data.frame(list_iButton_corr_tidy_date_day[names(list_iButton_corr_tidy_date_day)==Aasee_VL])
 Aasee_VL_data_night=data.frame(list_iButton_corr_tidy_date_night[names(list_iButton_corr_tidy_date_night)==Aasee_VL])
 
+#test for normality
+shapiro.test(Aasee_WOL_mean_day[,1]) #not normal
+shapiro.test(Aasee_WOL_mean_night[,1]) #not normal
 
-names(list_iButton_corr_tidy_date_night)=save.names #add the names to the list
+#use non-parametric test
+wilcox.test(Aasee_WOL_mean_day[,1], Aasee_VL_data_day[,1])
+#p-value < 2.220446e-16
+#significant difference
+median(Aasee_WOL_mean_day[,1], na.rm=T) #13.3206912225
+median(Aasee_VL_data_day[,1], na.rm=T) #17.5035468076
 
-shapiro.test(Aasee_WOL_mean_day)
-shapiro.test(Aasee_WOL_mean_night)
-
-wilcox.test(Aasee_WOL_mean)
+wilcox.test(Aasee_WOL_mean_night[,1], Aasee_VL_data_night[,1])
+#p-value = 3.10259097e-16
+#significant difference
+median(Aasee_WOL_mean_night[,1], na.rm=T) #11.4934327057
+median(Aasee_VL_data_night[,1], na.rm=T) #12.9977325869

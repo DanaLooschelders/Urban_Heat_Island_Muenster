@@ -8,12 +8,12 @@ source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_03
 source("~/Urban_Heat_Island_Muenster/Logger/2019/start_time_correction.R") #sets all logger to same starting point
 source("~/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/QAQC_Logger_2020.r") 
-source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_data_in_pairs_2020.R") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_differences_green_blue_2020.R")
 #source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_water_air_difference_2020.r")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_site_type_together_2020.r") #plot all water/Vegetation/sealed/etc logger together
 source("~/Urban_Heat_Island_Muenster/Logger/2020/split_day_night_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_split_data_2020.r")
+source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_data_in_pairs_2020.R") 
 
 #for stats/time series analysis for 2020 (different logger IDs)
 source("~/Urban_Heat_Island_Muenster/Logger/2020/cor_site_parameters.R") #lm and cor for site chracteristics/temperatur median 
