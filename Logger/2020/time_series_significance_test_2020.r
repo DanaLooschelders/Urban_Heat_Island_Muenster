@@ -68,10 +68,16 @@ write.csv2(x=dat, file=paste("significance", substring(list_iButton_stats[[1]]$T
 
 
 #merge all green/grey time series and calculate significant difference between them
-median_sealed=sapply(list_iButton_corr_tidy_SL, function(x) median(x[,3], na.rm=T))
-median_VL=sapply(list_iButton_corr_tidy_VL, function(x) median(x[,3], na.rm=T))
-median_WOL=sapply(list_iButton_corr_tidy_VL, function(x) median(x[,3], na.rm=T))
+sealed_dataframe=data.frame(sapply(list_iButton_corr_tidy_SL, function(x) cbind(x[,3])))
+median_sealed <-apply(sealed_dataframe, 1, median)
 
+VL_dataframe=sapply(list_iButton_corr_tidy_VL, function(x) cbind(x[,3]))
+median_VL <-apply(VL_dataframe, 1, median)
+
+WOL_dataframe=data.frame(sapply(list_iButton_corr_tidy_WOL, function(x) cbind(x[,3])))
+median_WOL <-apply(WOL_dataframe, 1, median)
+
+rm(sealed_dataframe, VL_dataframe, WOL_dataframe)
 #test for normality
 shapiro_sealed=shapiro.test(median_sealed) 
 shapiro_VL=shapiro.test(median_VL) 
