@@ -19,12 +19,14 @@ for (i in unique(metadata$Standort)){
        type="l", col=metadata_sub$color[1], ylim=c(5,35),
        ylab="Temperature [°C]", xlab="Date", main=paste("Temperature at", i, "in 2020"),
        sub="WL = Waterlogger   WOL = Water Surface Logger   VL = Vegetation Logger   SL = Sealed Logger")
+  abline(v=sun2$sunrise, col="orange")
+  abline(v=sun2$sunset, col="darkred")
   for(i in 2:length(metadata_sub$Logger_ID)){
     lines(list_iButton_corr_tidy[[as.character(metadata_sub$Logger_ID[i])]][2:3],
           col=metadata_sub$color[i])
   }
-  legend("topright",legend = metadata_sub$Standort_ID, 
-         fill =metadata_sub$color )
+  legend("topright",legend = c(metadata_sub$Standort_ID,"Sunrise", "Sunset" ), 
+         fill =c(metadata_sub$color,"orange", "darkred" ))
   dev.off()
 }
 

@@ -47,6 +47,8 @@ for (i in unique(metadata$Standort)){
          main=paste("Temperature Difference between \nwater and air temperature (GI) in", i, "(1)"),
          sub="Diff > 0 : Water temp was higher then air temp")
     abline(h=0, col="red")
+    abline(v=sun2$sunrise, col="orange")
+    abline(v=sun2$sunset, col="red")
     dev.off()
     #same for second logger
     name=paste(date,"Water air temp (GI) difference","plot",dataname, "(2)", ".pdf")

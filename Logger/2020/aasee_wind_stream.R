@@ -4,6 +4,8 @@ require(htmltools)
 require(htmlwidgets)
 #for ts
 require(forecast)
+install.packages("TSclust")
+require(TSclust)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
 coords=read.table(file="Sensortabelle Kartierung Stand 22.7.csv", dec=",", sep=";", header=T)
 coords=coords[-1,]
@@ -112,3 +114,15 @@ for(i in 2:length(list_iButton_hourly_Aegidii)){
 legend("topright", legend = names(list_iButton_hourly_Aegidii), 
        fill =colors, cex=0.7 )
 dev.off()
+
+#test dissimilarities between ts
+aegidii=matrix(nrow=length(list_iButton_hourly_Aegidii), 
+               ncol=length(list_iButton_hourly_Aegidii[[1]][,1]))
+for(i in 1:length(list_iButton_hourly_Aegidii)){
+  aegidii[i,]=list_iButton_hourly_Aegidii[[i]][,2]
+}
+
+#Decide on dissimilarity method
+diss(SERIES=na.spline(aegidii), METHOD="CORT")
+
+ccf(na.spline(aegidii[1,]), na.spline(aegidii[2,]), lag.max=200)

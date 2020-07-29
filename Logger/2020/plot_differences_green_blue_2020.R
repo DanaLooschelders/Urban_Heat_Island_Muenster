@@ -49,7 +49,7 @@ for (i in unique(metadata$Standort)){
   name=paste(substr(as.character(list_iButton_corr_tidy[[1]][1,2]), 
                     1,10),"BI_SI_difference","plot",i,".pdf")
   Loggers=metadata$Logger_ID[metadata$Standort==i] #save ID of Loggers belonging to place
-  #check if place has logger in grey and green infrastructure
+  #check if place has logger in blue and green infrastructure
   if(any(metadata$Loggertyp[metadata$Standort==i]=="WL")&any(metadata$Loggertyp[metadata$Standort==i]=="SL")){ 
     water=Loggers[Loggers==metadata$Logger_ID[metadata$Standort==i&metadata$Loggertyp=="WL"]] #get ID of logger in veg
     sealed=Loggers[Loggers==metadata$Logger_ID[metadata$Standort==i&metadata$Loggertyp=="SL"]] #get ID of logger in sealed area
@@ -61,6 +61,11 @@ for (i in unique(metadata$Standort)){
          type="l", ylab="Temperature difference [°C]", xlab="Date",
          main=paste("Temperature Difference between \ngrey Air Temp and water temp in", i))
     abline(h=0, col="red")
+    abline(v=sun2$sunrise, col="orange")
+    abline(v=sun2$sunset, col="darkred")
+    legend("topright", 
+           legend=c("Diff. Temperature",  "Sunrise", "Sunset"), 
+           fill=c("black", "orange", "darkred"), cex=0.7)
     dev.off()
     #save in dataframe
     WA_Temp_diff_data_frame[i]=diff_temp

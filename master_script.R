@@ -10,6 +10,7 @@ source("~/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.
 source("~/Urban_Heat_Island_Muenster/Logger/2020/QAQC_Logger_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_data_in_pairs_2020.R") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_differences_green_blue_2020.R")
+#source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_water_air_difference_2020.r")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_site_type_together_2020.r") #plot all water/Vegetation/sealed/etc logger together
 source("~/Urban_Heat_Island_Muenster/Logger/2020/split_day_night_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_split_data_2020.r")
@@ -20,9 +21,10 @@ source("~/Urban_Heat_Island_Muenster/Logger/pca_site_parameters.R") #pca for sit
 source("~/Urban_Heat_Island_Muenster/Logger/2020/descriptive_stats_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_descriptive_stats_2020.r")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_plot_2020.R") #plot the decomposed time series
+source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_significance_test_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/aasee_wind_stream.R") 
 source("~/Urban_Heat_Island_Muenster/Logger/2019/Seasonal_ARIMA.R") 
-
+source("~/Urban_Heat_Island_Muenster/Logger/2020/water_air_split_significance_tests.r") 
 
 #for mapping Logger data
 source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")
