@@ -176,7 +176,7 @@ list_iButton_temp <- lapply(list_iButton, `[`, 3)
 # Add the new transformed timestamp to the original list
 # There are two options, uncomment the one you need.
 # 1. Add POSIXct timestamp as additional column
-list_iButton <- mapply(cbind, "Datetime"=list_iButton_datetime, list_iButton_temp, "Datetime.1"=list_iButton_datetime, SIMPLIFY=F)
+list_iButton <- mapply(cbind, list_iButton_temp, "Datetime.1"=list_iButton_datetime, SIMPLIFY=F)
 
 # 2. Replace the old timestamp with POSIXct timestamp
 #list_iButton = map2(list_iButton, list_iButton_datetime, ~ mutate(., Datetime = .y)) 
@@ -207,7 +207,8 @@ end_time=strptime("2020-07-30 00:00:00", "%Y-%m-%d %H:%M:%S")
 # So for each data table the same time period is selected
 #---> outcommented list_iButton_corr = lapply(list_iButton, function(x) {subset(x, x[,1] >= start_Labtest & x[,1] <= end_Labtest)})
 #---> changed for own time span
-list_iButton_corr = lapply(list_iButton, function(x) {subset(x, x[,1] >= start_time & x[,1] <= end_time)})
+list_iButton_corr = lapply(list_iButton, function(x) {subset(x, x[,2] >= start_time & x[,2] <= end_time)})
 
 rm(list = as.character(files_iButtons)) #remove csv.files from environment
 list_iButton_corr_set=list_iButton_corr
+

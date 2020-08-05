@@ -73,6 +73,7 @@ for (i in 1:length(list_iButton_corr_tidy)) {
   name=names(list_iButton_corr_tidy[i])
 if (metadata$Loggertyp[metadata$Logger_ID==name]=="WL") {
 test=list_iButton_corr_tidy[[i]]
+len=dim(test)[1]
 test$diff=rep(NA)
 test$diff[1:length(test[,3])-1]=diff(test[,3])
 spike=which(test$diff>=2.5) #3°C/10min as threshold after spike
@@ -80,11 +81,13 @@ for (x in spike) {
   test[x:(x+18),3]=NA #two hours of data after spike is removed
 }
 test[,3][test$diff<= -5]=NA
+test=test[1:len,] #ensure that no new rows with NAs were added
 list_iButton_corr_tidy[[i]]=test
 #names(list_iButton_corr_tidy[])=name_save
 report.na[i]=sum(is.na(test[,3]))
 } else { #for air temperature (sealed area and vegetation and water surface air temperature)
   test=list_iButton_corr_tidy[[i]]
+  len=dim(test)[1]
   test$diff=rep(NA)
   test$diff[1:length(test[,3])-1]=diff(test[,3])
   spike=which(test$diff>=5) #5°C/10min as threshold for spike
@@ -92,6 +95,7 @@ report.na[i]=sum(is.na(test[,3]))
     test[x:(x+3),4]=NA
   }
   test[,3][test$diff<= -5]=NA
+  test=test[1:len,] #ensure that no new rows with NAs were added
   list_iButton_corr_tidy[[i]]=test
   #names(list_iButton_corr_tidy[])=name_save
   report.na[i]=sum(is.na(test[,3]))
