@@ -7,7 +7,7 @@
   #for 28 September: ylim=c(-5,30)
 
 #plot graphs for all unique sites (not IDs)
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/paired_plots/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/paired_plots/merge/")
 
 for (i in unique(metadata$Standort)){
   name=paste(substr(as.character(list_iButton_corr_tidy[[1]][1,2]), 1,10),

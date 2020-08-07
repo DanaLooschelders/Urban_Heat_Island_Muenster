@@ -18,7 +18,7 @@ ggplot(bind_rows(list_iButton_corr_tidy_type, .id="df"),
        aes(Datetime.1, Temperature_C_w_off, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color=loggertype)
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/overview_plots")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/overview_plots/merge")
 #save plot
 name=paste("Overview",loggertype, substr(as.character(list_iButton_corr_tidy_type[[1]][1,2]), 
                                   1,10),".pdf", sep="_")

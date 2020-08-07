@@ -24,12 +24,12 @@ for(i in 1:length(list_iButton_corr)){
   test2=data.frame("Temperature_corr"=test2) #name the new column
   test2$Datetime.1=rownames(test2) #use the newly set times to replace previous time data
   rownames(test2)=NULL #delete rownames
-  test3=test2[c(rep(FALSE,9),TRUE),] #keep only every 10th value to get 10min res
+  test3=test2[c(TRUE,rep(FALSE,9)),] #keep only every 10th value to get 10min res
   list_iButton_corr_set[[i]][1:length(test3[,1]),1:2]=test3[,1:2] #replace the time and temp column with the new values
   list_iButton_corr_set[[i]]=list_iButton_corr_set[[i]][-length(test3[,1]+1),1:2] #delete last row in every dataframe (sometimes NA)
 }
 
-rm(test, test2, test3, start_time, end_time)
+rm(test, test2, test3)
 #test spline interpolation
 #test=xts(list_iButton_corr[[5]][,2],list_iButton_corr[[5]][,3])
 #test2 = merge(test,date_time_complete)

@@ -3,7 +3,7 @@ library(grid)
 library(gridExtra)
 #plot 24 h stats
 #overview plots
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/stats_plot_mms")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/stats_plot_mms/merge")
 ggplot(bind_rows(list_iButton_24h_mms, .id="df"), aes(date, mean, colour=df)) +
   geom_line()+theme_bw()+ylab("mean Temperature [°C]")+xlab("Date")+ labs(color='mean values') 
 ggsave(filename=paste(list_iButton_24h_mms[[1]][1,1],"overview_mean_plot",  

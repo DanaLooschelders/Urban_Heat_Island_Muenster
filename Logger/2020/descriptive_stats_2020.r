@@ -2,7 +2,7 @@
 #overall, 24-hour, daily, nightly 
 #mean, median, standard deviation (mms)
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/stats_plot_mms/")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/stats_plot_mms/merge")
 
 #*************************************************************************
 #prep data

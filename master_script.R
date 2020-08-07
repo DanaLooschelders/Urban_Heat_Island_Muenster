@@ -4,6 +4,14 @@
 source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_07.06.2020.R")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_03.07.2020.r")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_17.07.2020.r")
+source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_17.07.2020_as_2nd_list.r")
+
+#to map all July 2020 data together execute the following scripts
+source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_03.07.2020.r")
+source("~/Urban_Heat_Island_Muenster/Logger/2019/start_time_correction.R") #sets all logger to same starting point
+source("~/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.r") 
+source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_17.07.2020_as_2nd_list.r")
+source("~/Urban_Heat_Island_Muenster/Logger/2020/merge_july_2020_data.R")
 
 ##execute all scripts in that order for 2020 (different logger IDs)
 #only for 03.07 script

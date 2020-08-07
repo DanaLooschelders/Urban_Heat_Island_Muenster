@@ -2,7 +2,7 @@
 library(ggplot2)
 library(GGally)
 library(Hmisc)
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/spatial_data/merge")
 
 #for GI: 
   #landcover (bare soil, ground vegetation, bushes, trees)
@@ -70,7 +70,7 @@ ggpairs(metadata_numeric,
         lower=list(continuous="smooth"))
 #for Temp_median, Aspect ratio, tree 
 
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/cor_site")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/cor_site/merge")
 
 #*********************************************************************************************
 #loop through table and plot for green infrastructure
