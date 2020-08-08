@@ -28,8 +28,7 @@ sun2$date=sun$Datum
 
 
 #use start_time and end_time to subset sun2 data to correct length
-sun2=sun2[sun2$date>=start_time&sun2$date<=end_time,]
-
+sun2=sun2[sun2$date>=list_iButton_corr_set[[1]][1,2]&sun2$date<=list_iButton_corr_set[[1]][dim(list_iButton_corr_set[[1]])[1],2],]
 
 #****************************************************************
 #subset for day

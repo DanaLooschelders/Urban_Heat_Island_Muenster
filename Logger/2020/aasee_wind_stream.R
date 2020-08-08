@@ -205,8 +205,8 @@ dev.off()
 mean(list_iButton_Aegidii_day[[1]][,3], na.rm=T)
 mean(list_iButton_Aegidii_day[[5]][,3], na.rm=T)
 
-mean(list_iButton_Aegidii_night[[1]][,3])
-mean(list_iButton_Aegidii_night[[5]][,3])
+mean(list_iButton_Aegidii_night[[1]][,3],na.rm=T)
+mean(list_iButton_Aegidii_night[[5]][,3],na.rm=T)
 
 #prep data
 temp=list_iButton_corr_tidy_Aegidii[[1]][,3]
@@ -241,11 +241,11 @@ mean(temp_wind$temp_ref[temp_wind$factor=="night"], na.rm=T)
 Ehrenpark=list_iButton_corr_tidy_date_factor[["87"]]
 Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
 
-mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="day"])
-mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"])
+mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="day"],na.rm=T)
+mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"],na.rm=T)
 
-mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="night"])
-mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="night"])
+mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="night"],na.rm=T)
+mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="night"],na.rm=T)
 
 #test significance
 #normality:
@@ -258,10 +258,10 @@ wilcox.test(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="night"],
             Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="night"])
 
 #compare Haus Kump and first Aegidiilogger
-mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"])
+mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"],na.rm=T)
 mean(temp_wind$temp[temp_wind$factor=="day"], na.rm=T)
 
-mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="night"])
+mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="night"],na.rm=T)
 mean(temp_wind$temp[temp_wind$factor=="night"], na.rm=T)
 
 shapiro.test(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"])

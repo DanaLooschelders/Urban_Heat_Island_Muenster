@@ -17,7 +17,8 @@ source("~/Urban_Heat_Island_Muenster/Logger/2020/merge_july_2020_data.R")
 #only for 03.07 script
 source("~/Urban_Heat_Island_Muenster/Logger/2019/start_time_correction.R") #sets all logger to same starting point
 source("~/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.r") 
-#for all
+
+#for all (continue here after mergering)
 source("~/Urban_Heat_Island_Muenster/Logger/2020/QAQC_Logger_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_differences_green_blue_2020.R")
 #source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_water_air_difference_2020.r")

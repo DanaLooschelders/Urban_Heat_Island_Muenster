@@ -21,3 +21,8 @@ for(i in 1:length(list_iButton_corr_set)){
   colnames(test2)=c("Temperature_C", "Datetime.1")
   list_iButton_corr_set[[i]]=test2
 }
+
+list_iButton_corr_set_date <- lapply(list_iButton_corr_set, `[`, 2)
+list_iButton_corr_set_date <- lapply(list_iButton_corr_set_date, function(x) as.POSIXct(x$Datetime.1,format="%Y-%m-%d %H:%M:%S"))
+list_iButton_corr_set = map2(list_iButton_corr_set, list_iButton_corr_set_date, ~ mutate(., Datetime.1 = .y)) 
+
