@@ -53,6 +53,11 @@ for (i in 1:length(list_iButton_corr_tidy_date_factor)){
     mms.overall$median[mms.overall$logger==name]=median(data[,3], na.rm=T) #calculate median for every logger
     mms.overall$sd[mms.overall$logger==name]=sd(data[,3], na.rm=T) #calculate standard deviation for every logger
 }
+mms.overall[,2:4]=round(mms.overall[2:4], digits = 1)
+write.table(file = paste(substr(list_iButton_corr_tidy_date_factor[[1]][1,2],1,10), 
+                         "overall_stats.csv"), x = mms.overall, row.names=F,sep=";", dec=",")
+
+
 #****************************************************************
 #get 24h mean, median and standard deviation
 #****************************************************************
