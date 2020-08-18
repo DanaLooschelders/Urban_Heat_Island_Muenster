@@ -61,7 +61,7 @@ usePackage("tidyverse")
 # Set Working directory (wd)
 # setwd(choose.dir()) # Uncomment if necessary, but only works for Windows operating system
 #setwd("V:/klima/Projekte/2019_Urban_Heat_Island/Data/Data_raw/Calibration_test_20190704-20190708")
-setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data/UHI_20200717-20200731//")
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data/UHI_20200717-20200731/")
 #the logger IDs 56 and 102 were added manually to the .csv files as they were missing in the original file
 #later, ID 102 was corrected to 93 because 102 was the old ID from Stiftherrenstrasse 
 #and 93 was the true missing ID from Spiekerhof vegetation
@@ -82,12 +82,12 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data/UHI_20200717-202007
 
 # Customized header
 # Create new header as the default one from the files isn't really pretty
-second_iButton_header = c("Date", "time", "Temperature_C")
+second_iButton_header = c("Datetime", "Temperature_C")
 
 # Create vector containing ID #
 # We only need the ID # without the first (empty) column, so we set the first column to NULL in colClasses
 #--> changed name (to second file from raw data - UHI timeframe)
-second_iButton_ID=read.table("0800000051790E21_200731.csv", sep = ",", dec = ".", header = F, skip = 4,
+second_iButton_ID=read.table("0800000051790E21_200817.csv", sep = ",", dec = ".", header = F, skip = 4,
                       nrows = 1, as.is = T, colClasses=c("NULL", NA)) 
 
 
@@ -170,9 +170,9 @@ list_second_iButton_datetime <- lapply(list_second_iButton, `[`, 1)
 # We get a sublist only containing POSIXct datetime format for each second_iButton
 # outcommented ---> list_second_iButton_datetime <- lapply(list_second_iButton_datetime, function(x) as.POSIXct(x$Datetime,format = "%d-%m-%Y %H:%M"))
 #---> shouldn't it be: "%Y-%m-%d %H:%M"? changed in next line
-list_second_iButton_datetime <- lapply(list_second_iButton_datetime, function(x) seq(from = as.POSIXct("2020-07-17 00:00"), length.out = dim(x)[1],by="10 mins"))
+list_second_iButton_datetime <- lapply(list_second_iButton_datetime, function(x) as.POSIXct(x$Datetime,format = "%Y-%m-%d %H:%M"))
 
-list_second_iButton_temp <- lapply(list_second_iButton, `[`, 3)
+list_second_iButton_temp <- lapply(list_second_iButton, `[`, 2)
 # Add the new transformed timestamp to the original list
 # There are two options, uncomment the one you need.
 # 1. Add POSIXct timestamp as additional column

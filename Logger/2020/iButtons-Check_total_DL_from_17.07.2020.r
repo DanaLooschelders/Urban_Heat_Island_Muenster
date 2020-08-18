@@ -87,7 +87,7 @@ iButton_header = c("Date", "time", "Temperature_C")
 # Create vector containing ID #
 # We only need the ID # without the first (empty) column, so we set the first column to NULL in colClasses
 #--> changed name (to second file from raw data - UHI timeframe)
-iButton_ID=read.table("0800000051790E21_200731.csv", sep = ",", dec = ".", header = F, skip = 4,
+iButton_ID=read.table("0800000051790E21_200817.csv", sep = ",", dec = ".", header = F, skip = 4,
                       nrows = 1, as.is = T, colClasses=c("NULL", NA)) 
 
 
@@ -170,7 +170,8 @@ list_iButton_datetime <- lapply(list_iButton, `[`, 1)
 # We get a sublist only containing POSIXct datetime format for each iButton
 # outcommented ---> list_iButton_datetime <- lapply(list_iButton_datetime, function(x) as.POSIXct(x$Datetime,format = "%d-%m-%Y %H:%M"))
 #---> shouldn't it be: "%Y-%m-%d %H:%M"? changed in next line
-list_iButton_datetime <- lapply(list_iButton_datetime, function(x) seq(from = as.POSIXct("2020-07-17 00:00"), length.out = dim(x)[1],by="10 mins"))
+list_iButton_datetime <- lapply(list_iButton_datetime, function(x) as.POSIXct(x$Datetime,format = "%Y-%m-%d %H:%M"))
+
 
 list_iButton_temp <- lapply(list_iButton, `[`, 3)
 # Add the new transformed timestamp to the original list
