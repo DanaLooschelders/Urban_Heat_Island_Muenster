@@ -28,7 +28,7 @@ rm(list = ls())
 
 # Adapt R-settings to display of more digits
 options(digits.secs=3)
-options(digits=12)
+options(digits=2)
 
 # --------------------------------------------------------------------------------------------------------------------------------
 ### Predefine functions for later use ###

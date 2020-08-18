@@ -19,4 +19,19 @@ wind_sw=wind
 wind_sw$wind_speed[wind_sw$wind_dir<191|wind_sw$wind_dir>258]=NA
 #subset for windspeed >0
 wind_sw$wind_speed[wind_sw$wind_speed<0]=NA
-#
+
+#read in radiation data
+#GS_10 => Globalstrahlung
+#SD_10 => Sonnenscheindauer
+
+rad=read.table("produkt_zehn_min_sd_20190130_20200801_01766.txt", 
+                sep=";", dec=".",header=T)
+str(rad)
+rad$MESS_DATUM=strptime(rad$MESS_DATUM, format="%Y%m%d%H%M")
+#subset to measuring time
+rad=rad[rad$MESS_DATUM>=list_iButton_corr_tidy[[1]][1,2]&rad$MESS_DATUM<=list_iButton_corr_tidy[[1]][dim(list_iButton_corr_tidy[[1]])[1],2],]
+
+which(is.na(rad$GS_10)) #check
+rad=rad[-c(1:12),] #remove rows with only NAs
+rad$GS_10[rad$GS_10<0]=NA
+

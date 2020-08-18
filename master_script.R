@@ -1,10 +1,15 @@
 #Master script to automatically perform analysis for datasets
+options(digits = 2)
+#round to 1 or .5
+x=seq(-1,3,by=.1)
+x
+round(x/.5)*.5
+
 #choose correct date (data with 10 min intervall)
 #data from 2020
 source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_07.06.2020.R")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_03.07.2020.r")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_17.07.2020.r")
-source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_17.07.2020_as_2nd_list.r")
 
 #to map all July 2020 data together execute the following scripts
 source("~/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_03.07.2020.r")
@@ -34,9 +39,14 @@ source("~/Urban_Heat_Island_Muenster/Logger/2020/descriptive_stats_2020.r")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_descriptive_stats_2020.r")
 source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_plot_2020.R") #plot the decomposed time series
 source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_significance_test_2020.r") 
-source("~/Urban_Heat_Island_Muenster/Logger/2020/aasee_wind_stream.R") 
 source("~/Urban_Heat_Island_Muenster/Logger/2019/Seasonal_ARIMA.R") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/water_air_split_significance_tests.r") 
+
+#wind stream analysis 2020
+source("~/Urban_Heat_Island_Muenster/Logger/2020/prep_data_for_wind_stream.R") 
+source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/read_in_wind_rad_data_DWD.r") 
+source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_windstream_Data.r") 
+source("~/Urban_Heat_Island_Muenster/Logger/2020/sig_dif_windstream.r") 
 
 #for mapping Logger data
 source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")
@@ -44,6 +54,9 @@ source("~/Urban_Heat_Island_Muenster/Logger/Heatmap.r")
 source("~/Urban_Heat_Island_Muenster/Logger/spatial_interpolation_idw.r")
 
 #supplementary weather data 
+  #recent scripts
+source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_rad_temp_diff.r")
+  #older scripts
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp.r")
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_wind_temp_diff.r")
 

@@ -28,6 +28,7 @@ for(i in 1:length(list_iButton_corr)){
   test2$Datetime.1=date_time_complete #use the newly set times to replace previous time data
   rownames(test2)=NULL #delete rownames
   test3=test2[c(TRUE,rep(FALSE,29)),] #keep only every 30th value to get 10min res
+  test3=round(test3/.5)*.5
   list_iButton_corr_set[[i]][1:length(test3[,1]),1:2]=test3[,1:2] #replace the time and temp column with the new values
   #list_iButton_corr_set[[i]]=list_iButton_corr_set[[i]][-length(test3[,1]+1),1:2] #delete last row in every dataframe (sometimes NA)
 }
