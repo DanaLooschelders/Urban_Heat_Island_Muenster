@@ -1,4 +1,4 @@
-library(MESS)
+
 
 #plot the differences between sealed areas and water
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots/merge/")
@@ -80,53 +80,3 @@ WA_Temp_diff_data_frame$Date=list_iButton_corr_tidy[[1]][,2]
 write.table(WA_Temp_diff_data_frame, 
             file=paste(substr(as.character(list_iButton_corr_tidy[[1]][1,2]), 
                               1,10),"WA_Temp_diff_data.csv"), sep = ";", dec=".", row.names=FALSE)
-#************************************************************************************************
-#integrate area under curve to compare potential
-AUC_data_frame=matrix(data=NA,ncol=length(unique(metadata$Standort)), nrow=2)
-AUC_data_frame=as.data.frame(AUC_data_frame)
-colnames(AUC_data_frame)=unique(metadata$Standort)
-AUC_data_frame$potential=c("cooling","warming")
-
-#INTEGRATION IS NOT WORKING
-
-AUC2_data_frame=AUC_data_frame
-for (i in unique(metadata$Standort)){
-  Loggers=metadata$Logger_ID[metadata$Standort==i] #save ID of Loggers belonging to place
-  #check if place has logger in grey and green infrastructure
-  if(any(metadata$Loggertyp[metadata$Standort==i]=="WL")&any(metadata$Loggertyp[metadata$Standort==i]=="SL")){ 
-    #get water logger ID
-    water=Loggers[Loggers==metadata$Logger_ID[metadata$Standort==i&metadata$Loggertyp=="WL"]] #get ID of logger in water
-    #get sealed logger ID
-     sealed=Loggers[Loggers==metadata$Logger_ID[metadata$Standort==i&metadata$Loggertyp=="SL"]] #get ID of logger in sealed area
-    #get water temp data
-    dat_logger_water=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==water]] #get water logger data
-    #get air temp data
-    dat_logger_sealed=list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Loggers[Loggers==sealed]] #get sealed logger data
-    #calculate difference between air and water temp
-    diff_temp=dat_logger_sealed[[1]][,3] - dat_logger_water[[1]][,3] #calculate difference between grey infrastructure and water temp
-    #create data farme with date and temperature difference
-    data_join=data.frame("date"=as.POSIXct(dat_logger_water[[1]][,2]), "temp"=diff_temp)
-    #subset data for warming/cooling impact
-    data_join_cool=data_join[data_join$temp>0,]
-    data_join_warm=data_join[data_join$temp<0,]
-    #data_join_warm$temp=data_join_warm$temp*-1 #use positive values to integrate
-    #do a spline interpolation for warming area/cooling area
-    AUC_data_frame[1,as.character(i)]=MESS::auc(x = data_join_cool$date,data_join_cool$temp, 
-                                          type="spline", absolutearea = FALSE, subdivisions = 1000L)
-    AUC_data_frame[2,as.character(i)]=MESS::auc(x = data_join_warm$date,data_join_warm$temp, 
-                                          type="spline", absolutearea = FALSE, subdivisions = 1000L)
-    
-    AUC2_data_frame[1,as.character(i)]=auc(x = data_join$date,data_join$temp, 
-                                                type="spline", absolutearea = FALSE, 
-                                                subdivisions = 1000L)
-    AUC2_data_frame[2,as.character(i)]=auc(x = data_join$date,
-                                                 data_join$temp, 
-                                                type="spline", 
-                                                absolutearea = TRUE, 
-                                                subdivisions = 1000L)
-    
-    }else{}
-}
-write.table(AUC2_data_frame, 
-            file=paste(substr(as.character(list_iButton_corr_tidy[[1]][1,2]), 
-                              1,10),"AUC2_data.csv"), sep = ";", dec=".", row.names=FALSE)

@@ -87,3 +87,5 @@ abline(v=sun2$sunset, col="blue")
 dev.off()
 
 cor.test(diff, wind_sw$wind_speed)
+
+#use stiftsherrenstrasselogger as comparison for other aegidiilogger
