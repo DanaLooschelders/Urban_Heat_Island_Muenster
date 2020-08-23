@@ -40,3 +40,8 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots/merge/")
 write.csv2(results, 
            "result_mean_diff_SL_VL.csv", 
            row.names = F)
+
+shapiro.test(merge_VL_SL$VL_Temp)
+
+plot(merge_VL_SL$VL_Temp, merge_VL_SL$diff)
+summary(lm(merge_VL_SL$VL_Temp~merge_VL_SL$diff))

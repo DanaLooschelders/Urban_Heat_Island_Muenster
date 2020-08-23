@@ -48,7 +48,8 @@ source("~/Urban_Heat_Island_Muenster/Logger/2020/water_air_split_significance_te
 source("~/Urban_Heat_Island_Muenster/Logger/2020/prep_data_for_wind_stream.R") 
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/read_in_wind_rad_data_DWD.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/plot_windstream_Data.r") 
-source("~/Urban_Heat_Island_Muenster/Logger/2020/sig_dif_windstream.r") 
+source("~/Urban_Heat_Island_Muenster/Logger/2020/sig_dif_windstream_filter_for_SW_wind.r") 
+source("~/Urban_Heat_Island_Muenster/Logger/2020/sig_dif_windstream_all_values.r") 
 
 #for mapping Logger data
 source("~/Urban_Heat_Island_Muenster/Logger/leaflet_heatmap_from_02.08.r")

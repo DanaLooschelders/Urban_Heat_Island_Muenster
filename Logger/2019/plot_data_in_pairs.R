@@ -34,8 +34,7 @@ for (i in unique(metadata$PlaceID)){
     legend("topright", legend=c("Sealed_area", "Vegetation", "Water"), 
            fill = c("darkgrey", "green", "blue"))
     dev.off()
-    }
-    else if(length(Loggers)==2){
+    }else if(length(Loggers)==2){
       pdf(file=name, paper="a4r", height=7, width=14)
       #save color for legend
       col1=metadata$color[metadata$ID==Loggers[1]]
@@ -52,6 +51,5 @@ for (i in unique(metadata$PlaceID)){
             col=metadata$color[metadata$ID==Loggers[2]])
       legend("topright", legend=c(label1, label2), fill=c(col1, col2))
       dev.off()
-    }
-  else{}
+    }else{}
 }

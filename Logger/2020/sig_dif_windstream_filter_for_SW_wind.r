@@ -13,9 +13,13 @@ temp_two=list_iButton_corr_tidy_Aegidii[[2]][,3]
 date=list_iButton_corr_tidy_Aegidii[[1]][,2]
 factor=list_iButton_factor_Aegidii[[1]][,6]
 
+Ehrenpark=list_iButton_corr_tidy_date_factor[["87"]]
+Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
+
 #check correlation of windspeed and temperature
 cor(wind_sw$wind_speed,temp, use = "na.or.complete")
 cor.test(wind_sw$wind_speed,temp, use = "na.or.complete")
+
 
 #compare only temperatures with windspeeds >0 and wind dir from SW
 temp_wind=data.frame(wind_sw$MESS_DATUM, 
@@ -23,8 +27,32 @@ temp_wind=data.frame(wind_sw$MESS_DATUM,
                      temp,
                      temp_two,
                      temp_ref,
+                     Ehrenpark,
+                     Haus_Kump,
                      date,
                      factor)
+temp_wind$diff_HK_EP=Haus_Kump$Temperature_C_w_off-Ehrenpark$Temperature_C_w_off
+temp_wind$diff_HK_AE=Haus_Kump$Temperature_C_w_off-temp_wind$temp
+#do correlation for day only
+#data not normally distributed --> no significance test possible
+#test for Ehrenpark
+cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="day"],
+    temp_wind$diff_HK_EP[temp_wind$factor=="day"],
+    use = "na.or.complete",method = "spearman")
+
+cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="night"],
+    temp_wind$diff_HK_EP[temp_wind$factor=="night"],
+    use = "na.or.complete", method = "spearman")
+
+#for first Aegidii
+cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="day"],
+         temp_wind$diff_HK_AE[temp_wind$factor=="day"],
+         use = "na.or.complete",method = "spearman")
+
+cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="night"],
+         temp_wind$diff_HK_AE[temp_wind$factor=="night"],
+         use = "na.or.complete", method = "spearman")
+
 temp_wind$temp[is.na(temp_wind$wind_sw.wind_speed)]=NA
 #filter temp values for which windspeed is higher 0
 temp_wind$temp_ref[is.na(temp_wind$wind_sw.wind_speed)]=NA
@@ -36,8 +64,6 @@ mean(temp_wind$temp[temp_wind$factor=="night"], na.rm=T)
 mean(temp_wind$temp_ref[temp_wind$factor=="night"], na.rm=T)
 
 #compare Ehrenpark (87) and Haus Kump (64)
-Ehrenpark=list_iButton_corr_tidy_date_factor[["87"]]
-Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
 
 mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="day"],na.rm=T)
 mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"],na.rm=T)
