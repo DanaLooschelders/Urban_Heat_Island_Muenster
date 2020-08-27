@@ -26,9 +26,30 @@ SL_Temp <-rowMeans(cbind(list_iButton_corr_tidy_SL[[1]][,3],
                          list_iButton_corr_tidy_SL[[11]][,3], 
                          list_iButton_corr_tidy_SL[[12]][,3], 
                          na.rm=T))
+
+
 #dataframe for results
 merge_VL_SL=data.frame(VL_Temp, SL_Temp, 
                        "date"=list_iButton_corr_tidy_SL[[1]][,2])
+
+ggplot(data=merge_VL_SL)+
+  geom_line(aes(x=date, y=VL_Temp, col="vegetated"))+
+  geom_line(aes(x=date, y=SL_Temp, col="sealed"))+
+  theme(legend.position="right")+
+  labs(title="Temperature in July 2020",
+       x="Date",
+       y="Temperature [°C]",
+       color="Site type")
+
+plot(merge_VL_SL$date, merge_VL_SL$VL_Temp, 
+     type="l", 
+     col="green",
+     ylab="Temperature [°C]",
+     xlab="",
+     main="Temperature in JUly 2020")
+lines(merge_VL_SL$date, merge_VL_SL$SL_Temp, col="red")
+legend("topright", legend=c("vegetated", "sealed"))
+
 
 merge_VL_SL$diff=merge_VL_SL$SL_Temp-merge_VL_SL$VL_Temp #calculate difference
 

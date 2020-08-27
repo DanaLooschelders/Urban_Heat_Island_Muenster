@@ -99,6 +99,8 @@ source("~/Urban_Heat_Island_Muenster/Logger/2019/time_series_plot.R") #plot the 
 source("~/Urban_Heat_Island_Muenster/Logger/2019/time_series_significance_test.R") #signficance test between logger pairs and for all grey against green logger
 source("~/Urban_Heat_Island_Muenster/Logger/2019/descriptive_stats.r") #calculate mean, median and sd for 24h/day/night 
 source("~/Urban_Heat_Island_Muenster/Logger/2019/plot_descriptive_stats.R") #plots with mean, meadian, standard deviation
+source("~/Urban_Heat_Island_Muenster/Logger/2019/plot_site_type_together_2019.r") #plots with mean, meadian, standard deviation
+source("~/Urban_Heat_Island_Muenster/Logger/2019/green_grey_merge_sig_test_2019.r") #plots with mean, meadian, standard deviation
 
 #data with 30 min intervall, execute following block of scripts
 source("~/Urban_Heat_Island_Muenster/Logger/2019/iButtons-Check_total_DL_from_24.09.r")

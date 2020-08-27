@@ -1,10 +1,12 @@
 #time series analysis
 #significant zero crossings 
 #install.packages("SiZer")
-library(SiZer)
+#install.packages("fpp2")
+library(fpp2)
 library(tseries)
 library(forecast)
 
+time_series=ts(list_iButton_corr[[1]][2],start=c(list_iButton_corr[[1]][1,2]),frequency = 24*6)
 
 #data exploration
 any(is.na(time_series)) #check for na -> no missing values
@@ -13,16 +15,24 @@ any(is.na(time_series)) #check for na -> no missing values
 times_series_decomp=decompose(time_series) 
 plot(times_series_decomp) #plot decomp ts
 
+acf(time_series, lag.max=80)
+ts_diff=diff(time_series, 1)
+plot(ts_diff)
+
+mean(ts_diff) #close to zero
+#pacf and acf for differenced data
+pacf(ts_diff)
+acf(ts_diff)
+
+auto.arima()
+model1=arima(time_series,c() )
+acuracy(model1)
 
 #moving average
 ma_ts=ma(time_series, 6)
 
 #ARIMA
 arima(time_series)
-
-#SiZer
-SiZer_res=SiZer(time_series, time_series2)
-mean_TS=mean(time_series, time_series2)
 
 #Do a proper SARIMA
 #create list with objects of class time series
@@ -83,7 +93,8 @@ test$log_data=log(test$time_series_clean)
 plot(test$log_data)
 
 
-auto.arima(time_series_clean)
+
+
 decompose()
 ?arima
 arima(test$time_series_clean)
@@ -97,10 +108,41 @@ arima(test$time_series_clean)
   #Q -> seasonal MA order
   #m -> time span of repeating seasonal pattern
 
-#check residuals (no pattern, normally distributed)
-#example from book with:
-plot(y=rstudent(model3),x=as.vector(time(tempdub)),
-     xlab='Time',ylab='Standardized Residuals',type='o')
+#when using auto.arima:
+auto.arima(time_series_clean) 
+#result: ARIMA(3,0,0)(0,1,0)[144] 
 
+#AIC=3598   AICc=3598   BIC=3619
+#with fpp2 package from Scott (YT video)
+model1=Arima(time_series_clean, order=c(3,0,0), seasonal = c(0,1,0))
+
+(model1=Arima(time_series_clean, order=c(3,0,0), seasonal = c(0,1,0)))
+#Series: time_series_clean 
+#ARIMA(3,0,0)(0,1,0)[144] 
+#Coefficients:
+#  ar1     ar2    ar3
+#0.783  -0.036  0.223
+#s.e.  0.027   0.035  0.027
+#sigma^2 estimated as 0.935:  log likelihood=-1795
+#AIC=3598   AICc=3598   BIC=3619
+#
 #visible pattern/bias -> plot ACF/PACF
+checkresiduals(model1)
+#refit model if needed
+
+#use stepwise=FALSE and approximation=FALSE to make it twork harder
+auto.arima(time_series_clean, 
+           seasonal = TRUE,
+           stepwise =FALSE,
+           approximation=FALSE) 
+
+
+
+model1=Arima(time_series_clean, order=c(3,0,0), seasonal = c(0,1,0))
+
+(model1=Arima(time_series_clean, order=c(3,0,0), seasonal = c(0,1,0)))
+
+#check residuals (no pattern, normally distributed)
+#visible pattern/bias -> plot ACF/PACF
+checkresiduals(model2)
 #refit model if needed
