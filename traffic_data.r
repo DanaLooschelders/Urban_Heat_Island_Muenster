@@ -1,9 +1,8 @@
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/traffic_data_july/")
-
 library(tidyr)
+library(ggplot2)
 #file structure: one file for every day
 # headers display: metadata, class, hours: 00:00 to 23:00
-
 #read in files
 files_traffic=list.files(pattern =".csv")  
 
@@ -26,6 +25,7 @@ rm(list = as.character(files_traffic)) #remove csv.files from environment
 
 #use only first column
 list_traffic_meta <- lapply(list_traffic, `[`, 1)
+
 #remove first 3 characters from first column
 list_traffic_meta=lapply(list_traffic_meta, function(x) substr(x$V1, start=4, stop =14))
 #map list together 
@@ -43,7 +43,6 @@ for(i in 1:length(list_traffic_new)){
   list_traffic_new[[i]]=dat
 }
 
-#keep only dataframes for July 2020
 
 #add number of cars on lanes: 
   #all FV31 (coming from south) --> rm none
@@ -66,3 +65,18 @@ for(i in 1:length(list_traffic_new)){
   dat=dat[7,6:29] #remove unneccessary columns and rows (keep only sums)
   list_traffic_new[[i]]=dat
 }
+#transpose data to order values in rows
+list_traffic_new2=lapply(list_traffic_new, function(x) as.data.frame(t(x)))
+
+#create dataframe
+traffic=data.frame("datetime"=seq(as.POSIXct("2020-07-01 00:00:00"),
+                                  as.POSIXct("2020-07-31 23:00:00"), 
+                                  by="hour"),
+                   "cars"=cbind(unlist(list_traffic_new2)))
+rownames(traffic)=NULL
+
+ggplot()+
+geom_line(aes(traffic$datetime, traffic$cars))+
+  xlab("Date")+
+  ylab("Number of cars")+
+  ggtitle("Numbers of cars passing the Aasee")
