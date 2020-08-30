@@ -146,3 +146,92 @@ model1=Arima(time_series_clean, order=c(3,0,0), seasonal = c(0,1,0))
 #visible pattern/bias -> plot ACF/PACF
 checkresiduals(model2)
 #refit model if needed
+
+#***********************************************************************
+#use method from paper
+#with VL_temp and SL_temp
+plot(VL_Temp, type="l")
+#coerce to time series
+VL_Temp_ts=ts(VL_Temp,
+              start=c(list_iButton_corr[[1]][1,2]),
+              frequency = 24*6)
+#clean ts
+VL_Temp_clean=tsclean(VL_Temp_ts)
+#check acf and pacf
+acf(VL_Temp_clean, lag.max=200)
+pacf(VL_Temp_clean, lag.max=200)
+#check which model would fit
+model_VL=auto.arima(VL_Temp_clean, 
+                    seasonal = TRUE)
+#ARIMA(0,1,3)(0,1,0)[144]
+
+#Coefficients:
+#ma1     ma2    ma3
+#0.071  -0.136  0.050
+#s.e.   0.025   0.026  0.025
+
+#sigma^2 estimated as 0.212:  log likelihood=-1020
+#AIC=2047   AICc=2047   BIC=2069
+
+#test resiudals
+qqnorm(model_VL[["residuals"]])
+qqline(model_VL[["residuals"]])
+
+checkresiduals(model_VL)
+
+model_VL=auto.arima(VL_Temp_clean, 
+                    seasonal = TRUE,
+                    stepwise=F)
+#ARIMA(0,1,3)(0,1,0)[144] 
+
+#Coefficients:
+#ma1     ma2    ma3
+#-0.071  -0.136  0.050
+#s.e.   0.025   0.026  0.025
+
+#sigma^2 estimated as 0.212:  log likelihood=-1020
+#AIC=2047   AICc=2047   BIC=2069
+#*********************************************
+#for SL_temp
+plot(SL_Temp, type="l")
+#coerce to time series
+SL_Temp_ts=ts(SL_Temp,
+              start=c(list_iButton_corr[[1]][1,2]),
+              frequency = 24*6)
+#clean ts
+SL_Temp_clean=tsclean(SL_Temp_ts)
+#check acf and pacf
+acf(SL_Temp_clean, lag.max=200)
+pacf(SL_Temp_clean, lag.max=200)
+#check which model would fit
+model_SL=auto.arima(SL_Temp_clean, 
+                    seasonal = TRUE)
+#ARIMA(2,1,0)(0,1,0)[144] 
+
+#Coefficients:
+#  ar1     ar2
+#-0.249  -0.232
+#s.e.   0.024   0.024
+
+#sigma^2 estimated as 0.476:  log likelihood=-1662
+#AIC=3329   AICc=3329   BIC=3345
+
+#test resiudals
+qqnorm(model_SL[["residuals"]])
+qqline(model_SL[["residuals"]])
+
+checkresiduals(model_SL)
+
+model_SL=auto.arima(SL_Temp_clean, 
+                    seasonal = TRUE,
+                    stepwise=F)
+ 
+#ARIMA(2,1,3)(0,1,0)[144] 
+
+#Coefficients:
+#  ar1    ar2   ma1   ma2     ma3
+#-1.04  -0.62  0.79  0.19  -0.230
+#s.e.   0.11   0.12  0.11  0.12   0.042
+
+#sigma^2 estimated as 0.474:  log likelihood=-1657
+#AIC=3325   AICc=3325   BIC=3357

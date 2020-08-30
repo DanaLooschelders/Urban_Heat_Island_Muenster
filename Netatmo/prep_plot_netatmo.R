@@ -22,7 +22,9 @@ metadata_1=read.csv("data_August/stations.csv")
 metadata_2=read.csv("data_August_September/stations.csv")
 metadata_3=read.csv("data_September/stations.csv")
 metadata_4=read.csv("data_September_2/stations.csv")
-
+#for 2020
+metadata_6=read.csv("data_2020/stations.csv")
+metadata_7=read.csv("data_2020/stations_2.csv")
 prep_plot=function(datapath="data_August/net_2019-08-01_to_2019-08-20.csv",
                      metadata=metadata_1,
                      startdate="01.08"){
@@ -32,14 +34,14 @@ data=read.csv(datapath)
 stations=unique(data$device_id)
 
 #transform coordiantes to lat lon and create spatial points
-points=SpatialPointsDataFrame(coords = metadata[2:3], 
+points=SpatialPointsDataFrame(coords = metadata_7[2:3], 
                               proj4string=CRS("+proj=longlat +datum=WGS84"),
-                              data=metadata)
+                              data=metadata_7)
 #test: plotting points in shapefile
-#leaflet(MS_shape) %>%
-#  addPolygons() %>%
-#  addTiles() %>%
-#  addCircles(data=points)
+leaflet(MS_shape) %>%
+  addPolygons() %>%
+  addTiles() %>%
+  addCircles(data=points)
 
 #subset points by shapefile -> get only points within Muenster
 station_subset <- points[MS_shape, ]

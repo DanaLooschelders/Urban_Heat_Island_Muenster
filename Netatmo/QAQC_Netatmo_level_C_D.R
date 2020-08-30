@@ -4,7 +4,7 @@ library(zoo)
 #Data Quality Level C - filter systematic/single radiative errors
 #*************************************************************************
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
-rad=read.table("Dana_GeoDach.csv", sep=";", dec=",", header=T, na.strings = "-" )
+rad=read.table("GeoDach_Dana_2020.csv", sep=";", dec=",", header=T, na.strings = "-" )
 str(rad)
 names(rad)[1]="Datetime" #rename first column
 rad=data.frame("Datetime"=rad$Datetime, "SWrad"=rad$Shortwave.Radiation, "Temperature"=rad$Temperature) #create column with just two variables
@@ -13,7 +13,7 @@ rad$Datetime=as.POSIXct(rad$Datetime, tz="Europe/Berlin") #convert to Posixct
 rad=rad[complete.cases(rad),] #remove rows with all NAs
 
 #subset data to timeframe
-rad2=rad[rad$Datetime>="2019-08-01 02:00:00"&rad$Datetime<="2019-09-30 23:59:59",]
+rad2=rad[rad$Datetime>="2020-07-07 02:00:00"&rad$Datetime<="2020-07-28 23:59:59",]
 str(rad2) #check
 #aggregate data to hourly means
 rad2$Hour <- cut(as.POSIXct(rad2$Datetime, 
@@ -74,23 +74,23 @@ for (i in 1:length(list_netatmo_level_C)){
   names(data)=c("Hour", "ref_Temperature","SWrad","netatmo_Temperature", "month")
   #calculate Temperature difference between Netatmo and reference station
   data$Temp_diff=data$netatmo_Temperature-data$ref_Temperature
-  SD_aug=sd(data$ref_Temperature[data$month=="August"], na.rm=T)
-  SD_sep=sd(data$ref_Temperature[data$month=="September"], na.rm=T)
-    for (x in 1:length(data$Temp_diff[data$month=="August"])){
-      value=data$Temp_diff[data$month=="August"][x]
+  SD_aug=sd(data$ref_Temperature[data$month=="Juli"], na.rm=T)
+  #SD_sep=sd(data$ref_Temperature[data$month=="September"], na.rm=T)
+    for (x in 1:length(data$Temp_diff[data$month=="Juli"])){
+      value=data$Temp_diff[data$month=="Juli"][x]
       if( any(value>SD_aug*3,value<SD_aug*-3, is.na(value))){
         #if single value differs more then SD*3 in any direction set NA
-        data$Temp_diff[data$month=="August"][x]=NA 
+        data$Temp_diff[data$month=="Juli"][x]=NA 
       }else{}
       #replace corrected values
     }#for September
-    for (y in 1:length(data$Temp_diff[data$month=="September"])){
-      value=data$Temp_diff[data$month=="September"][y]
-      if( any(value>SD_sep*3,value<SD_sep*-3, is.na(value))){
+    #for (y in 1:length(data$Temp_diff[data$month=="September"])){
+      #value=data$Temp_diff[data$month=="September"][y]
+      #if( any(value>SD_sep*3,value<SD_sep*-3, is.na(value))){
         #if single value differs more then SD*3 in any direction set NA
-        data$netatmo_Temperature[data$month=="September"][y]=NA 
-      }else{}
-    }
+       # data$netatmo_Temperature[data$month=="September"][y]=NA 
+      #}else{}
+    #}
     list_netatmo_level_C[[i]]$temperature=data$netatmo_Temperature 
   }
 
@@ -105,7 +105,7 @@ list_netatmo_level_D = list_netatmo_level_C
 #******************************************************************************
 #Data Quality Level D -  outliers
 #**********************************************************************************
-level_D=function(month="August"){
+level_D=function(month="Juli"){
 for (i in 1:length(list_netatmo_level_D)){
   data=list_netatmo_level_D[[i]]
   data_month=data[data$month==month,]
@@ -122,17 +122,17 @@ for (i in 1:length(list_netatmo_level_D)){
   return(list_netatmo_level_D)
 }
 
-list_netatmo_level_D=level_D(month="August")
-list_netatmo_level_D_2=level_D(month="September")
+list_netatmo_level_D=level_D(month="Juli")
+#list_netatmo_level_D_2=level_D(month="September")
 
-ggplot(bind_rows(list_netatmo_level_D_2, .id="df"), aes(Hour, temperature, colour=df)) +
+ggplot(bind_rows(list_netatmo_level_D, .id="df"), aes(Hour, temperature, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')
-ggsave(filename = "overview_netatmo_level_D2.pdf", width=14, height=7)
+ggsave(filename = "overview_netatmo_level_D.pdf", width=14, height=7)
 
 #update metadata table
 #shorten metadatalist by excluding the IDs that had no data
 rownames(metadata_merge)=metadata_merge$device_id #set ID as rownames
-ids_to_keep=names(list_netatmo_level_D_2) #get character vector of ids to keep
+ids_to_keep=names(list_netatmo_level_D) #get character vector of ids to keep
 metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
 
 #save metadata_merge to csv file
@@ -141,3 +141,14 @@ write.csv2(file="Netatmo_metadata.csv", metadata_merge)
 
 rm(ids_to_keep, list_netatmo_hourly, list_netatmo_level_B,
    list_netatmo_level_D)
+
+#transform coordiantes to lat lon and create spatial points
+points=SpatialPointsDataFrame(coords = metadata_merge[2:3], 
+                              proj4string=CRS("+proj=longlat +datum=WGS84"),
+                              data=metadata_merge)
+
+#final test: plotting points in shapefile
+leaflet(MS_shape) %>%
+  addPolygons() %>%
+  addTiles() %>%
+  addCircles(data=points)

@@ -21,7 +21,7 @@ any(duplicated(metadata_merge[2:9])) #FALSE
 #list_netatmo_merge[[3]]$temperature[20:35]=NA
 
 #For August
-NA_test=function(month="August"){
+NA_test=function(month="Juli"){
 for (i in names(list_netatmo_merge)){
   data=list_netatmo_merge[[i]] #use only one dataset
   for( x in data$Date[data$Month==month]){ #subset for one day in specified month
@@ -37,13 +37,13 @@ for (i in names(list_netatmo_merge)){
   }else{list_netatmo_merge[[i]]=data} #otherwise keep data
 }
 }
-NA_test(month="August")
-NA_test(month="September")
+NA_test(month="Juli")
+#NA_test(month="September")
 length(list_netatmo_merge) #still same as before (none were removed)
 #check how many NAs were added to data
 NAs=sapply(list_netatmo_merge, function(x) sum(is.na(x$temperature))) #none
 any(NAs>0)
-
+NAs
 #****************************************************************************
 #Data Quality Level B - identify real outdoor measurements
 #****************************************************************************
@@ -66,18 +66,20 @@ list_netatmo_level_B[[i]]=daily_min_table
   }
 
 #temp -> DWD reference data
-daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2019-08-01", tz="Europe/Berlin"), to=as.Date("2019-09-30", tz="Europe/Berlin"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
+daily_min_ref=data.frame("date"=seq.Date(from=as.Date("2020-07-07", tz="Europe/Berlin"), to=as.Date("2020-07-28", tz="Europe/Berlin"), by=1), "daily_min"=rep(NA), "SD"=rep(NA))
 
 for (x in daily_min_ref$date){
   daily_min_ref$daily_min[daily_min_ref$date==x]=min(temp$TT_TU[as.Date(temp$MESS_DATUM, tz="Europe/Berlin")==x], na.rm=T)
   daily_min_ref$SD[daily_min_ref$date==x]=sd(temp$TT_TU[as.Date(temp$MESS_DATUM, tz="Europe/Berlin")==x], na.rm=T)
 }
 
-level_B_1=function(month="August"){
+
 #scatterplot mean temp vs SD
+month="Juli"
 list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B", tz="Europe/Berlin")==month))
 #list_netatmo_level_B_sep=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B")=="September"))
 #caluculate monthly means for reference data
+
 mean_aug_temp_ref=mean(daily_min_ref$daily_min[strftime(daily_min_ref$date, "%B", tz="Europe/Berlin")==month], na.rm=T)
 mean_aug_sd_ref=mean(daily_min_ref$SD[strftime(daily_min_ref$date, "%B", tz="Europe/Berlin")==month], na.rm=T)
 
@@ -96,7 +98,7 @@ test=
   #one point for reference data mean and sd point
   geom_point(aes(x=mean_aug_temp_ref, y=mean_aug_sd_ref), color="red", shape=15)+
   #ellipse for 5 times the sd for mean and sd of ref
-  geom_ellipse(aes(a=sd_aug_sd_ref*5, x0=mean_aug_temp_ref, b=sd_aug_temp_ref*5, y0=mean_aug_sd_ref, angle=0))
+geom_ellipse(aes(a=sd_aug_sd_ref*5, x0=mean_aug_temp_ref, b=sd_aug_temp_ref*5, y0=mean_aug_sd_ref, angle=0))
 ggsave(filename = paste("Level_B_1_netatmo",month,".pdf"), width=14, height=7)
 
 #how to: geom_ellipse
@@ -121,12 +123,10 @@ dat <- data.frame(
   points[1:2], #first two columns are the coordinates
   in.ell = as.logical(point.in.polygon(point.x=points$x, point.y=points$y, pol.x=ell$x, pol.y=ell$y)))
 
-return(dat)
-}
+
   
 #execute function for August and September
 
-dat=level_B_1("August")
 #use for loop to exclude station that were flagged as false
 for (i in dat$ID){
   if (dat$in.ell[dat$ID==i]==FALSE){
@@ -137,16 +137,16 @@ for (i in dat$ID){
   }else{}
 }
 
-dat2=level_B_1("September")
+#dat2=level_B_1("September")
 #use for loop to exclude station that were flagged as false
-for (i in dat2$ID){
-  if (dat2$in.ell[dat2$ID==i]==FALSE){
-    #remove station from both lists
-    list_netatmo_merge[[i]]=NULL
-    list_netatmo_level_B[[i]]=NULL
-    metadata[metadata_merge$device_id==i,] #delete from metadata
-  }else{}
-}
+#for (i in dat2$ID){
+#if (dat2$in.ell[dat2$ID==i]==FALSE){
+ #   #remove station from both lists
+  #  list_netatmo_merge[[i]]=NULL
+   # list_netatmo_level_B[[i]]=NULL
+    #metadata[metadata_merge$device_id==i,] #delete from metadata
+  #}else{}
+#}
 
 #*************************************************************************
 #level B part 2
@@ -157,13 +157,13 @@ for (i in dat2$ID){
   #bin sizes: max and min of TNref and SDref in ellipse
   #bin numbers: 10
 #subset table to August values
-daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="August",]
+daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="Juli",]
 hist(daily_min_ref_aug$daily_min, breaks=10) #histogram of TNref
 hist(daily_min_ref_aug$SD, breaks=10) #histogram of SDref
 
 #2.compute relative frequency for every bin combination of histograms of TN/SD (2D)
 #create a subset list that includes only August values
-list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B", tz="Europe/BErlin")=="August"))
+list_netatmo_level_B_aug=lapply(list_netatmo_level_B, function(x) subset(x, strftime(x$date, "%B", tz="Europe/Berlin")=="Juli"))
 #calculate mean minimal temperature and standard deviation for every netatmo station
 mean.aug=data.frame("ID"=names(list_netatmo_level_B_aug), 
                     "mean_min_temp"=sapply(list_netatmo_level_B_aug, function(x) mean(x$daily_min)),

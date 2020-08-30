@@ -34,7 +34,7 @@ name2=paste("Boxplot",loggertype, substr(as.character(list_iButton_corr_tidy_typ
 list_for_boxplot <- lapply(list_iButton_corr_tidy_type, `[`, 3)
 dataframe_for_boxplot=do.call(cbind, list_for_boxplot)
 colnames(dataframe_for_boxplot)=names(list_for_boxplot)
-dataframe_for_boxplot=dataframe_for_boxplot%>%select(colnames(dataframe_for_boxplot))%>%
+dataframe_for_boxplot=dataframe_for_boxplot%>%
   pivot_longer(.,cols=colnames(dataframe_for_boxplot), 
                names_to="Site",values_to="Temperature [°C]")
 ggplot(data=dataframe_for_boxplot, aes(y=`Temperature [°C]`, x=Site))+

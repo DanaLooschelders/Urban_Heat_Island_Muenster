@@ -59,7 +59,9 @@ source("~/Urban_Heat_Island_Muenster/Logger/spatial_interpolation_idw.r")
 #supplementary weather data 
   #recent scripts
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_rad_temp_diff.r")
-  #older scripts
+source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp_2020.R")
+
+ #older scripts
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp.r")
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_wind_temp_diff.r")
 

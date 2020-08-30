@@ -82,7 +82,7 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/logger_data/UHI_20200717-202007
 
 # Customized header
 # Create new header as the default one from the files isn't really pretty
-iButton_header = c("Date", "time", "Temperature_C")
+iButton_header = c("Datetime", "Temperature_C")
 
 # Create vector containing ID #
 # We only need the ID # without the first (empty) column, so we set the first column to NULL in colClasses
@@ -173,7 +173,7 @@ list_iButton_datetime <- lapply(list_iButton, `[`, 1)
 list_iButton_datetime <- lapply(list_iButton_datetime, function(x) as.POSIXct(x$Datetime,format = "%Y-%m-%d %H:%M"))
 
 
-list_iButton_temp <- lapply(list_iButton, `[`, 3)
+list_iButton_temp <- lapply(list_iButton, `[`, 2)
 # Add the new transformed timestamp to the original list
 # There are two options, uncomment the one you need.
 # 1. Add POSIXct timestamp as additional column

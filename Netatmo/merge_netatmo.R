@@ -3,25 +3,25 @@ setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 #create new list
 #individually name lists to puzzle them together later
 merge_netatmo=function(){
-list_netatmo_1=prep_plot(datapath="data_August/net_2019-08-01_to_2019-08-20.csv",
-                         metadata=metadata_1,
-                         startdate="01.08")
-list_netatmo_2=prep_plot(datapath="data_August_September/net_2019-08-20_to_2019-09-05.csv",
-                         metadata=metadata_2,
-                         startdate="20.08")
-list_netatmo_3=prep_plot(datapath="data_September/net_2019-09-05_to_2019-09-25.csv",
-                         metadata=metadata_3,
-                         startdate="05.09")
-list_netatmo_4=prep_plot(datapath="data_September_2/net_2019-09-25_to_2019-09-30.csv",
-                         metadata=metadata_4,
-                         startdate="25.09")
+list_netatmo_1=prep_plot(datapath="data_2020/net_2020-07-07_to_2020-07-14.csv",
+                         metadata=metadata_6,
+                         startdate="07.07")
+list_netatmo_2=prep_plot(datapath="data_2020/net_2020-07-14_to_2020-07-28.csv",
+                         metadata=metadata_7,
+                         startdate="14.07")
+#list_netatmo_3=prep_plot(datapath="data_September/net_2019-09-05_to_2019-09-25.csv",
+                         #metadata=metadata_3,
+                         #startdate="05.09")
+#list_netatmo_4=prep_plot(datapath="data_September_2/net_2019-09-25_to_2019-09-30.csv",
+                         #metadata=metadata_4,
+                         #startdate="25.09")
 list_netatmo_merge=list_netatmo_1
 #Map list 1 and list 2 together
 list_netatmo_merge[names(list_netatmo_2)] <- Map(rbind, list_netatmo_merge[names(list_netatmo_2)], list_netatmo_2)
 #Map 1 (merged with 2) and 3 together
-list_netatmo_merge[names(list_netatmo_3)] <- Map(rbind, list_netatmo_merge[names(list_netatmo_3)], list_netatmo_3)
+#list_netatmo_merge[names(list_netatmo_3)] <- Map(rbind, list_netatmo_merge[names(list_netatmo_3)], list_netatmo_3)
 #Map 1 (merged with 2,3) and 4 together
-list_netatmo_merge[names(list_netatmo_4)] <- Map(rbind, list_netatmo_merge[names(list_netatmo_4)], list_netatmo_4)
+#list_netatmo_merge[names(list_netatmo_4)] <- Map(rbind, list_netatmo_merge[names(list_netatmo_4)], list_netatmo_4)
 return(list_netatmo_merge)
 }
 
@@ -62,18 +62,18 @@ for (i in names(list_netatmo_merge)){
 }
 
 #use only stations that recorded over whole period (check for start and end date)
-#until the 01. of October because of time conversion
+#until one day later than specified, because of time conversion
 for (i in names(list_netatmo_merge)){
    data=list_netatmo_merge[[i]]
-  if(data$Date[1]=="2019-08-01"&data$Date[length(data$date)]=="2019-10-01"){}
+  if(data$Date[1]=="2020-07-07"&data$Date[length(data$date)]=="2020-07-29"){}
   else{list_netatmo_merge[[i]]=NULL}
 }
 #as there are missing values inbetween create consecutive time sequence
 #and create NAs for missing rows in order to get all dataframes to the same length
 list_netatmo_whole=list_netatmo_merge
 for (i in 1:length(list_netatmo_whole)){
-  time=data.frame("Datetime"=seq(from=as.POSIXct("2019-08-01 02:15:00", tz="Europe/Berlin"), 
-                                 to=as.POSIXct("2019-10-01 23:45:00", tz="Europe/Berlin"), by="30 min"))
+  time=data.frame("Datetime"=seq(from=as.POSIXct("2020-07-07 02:15:00", tz="Europe/Berlin"), 
+                                 to=as.POSIXct("2020-07-29 01:45:00", tz="Europe/Berlin"), by="30 min"))
 data=list_netatmo_merge[[i]]
  time=merge(x=time,y=data, all.x=TRUE, by="Datetime")
  list_netatmo_whole[[i]]=time
@@ -91,7 +91,7 @@ for (i in 1:length(list_netatmo_merge)){
 #subset to the 30th of September
 for (i in 1:length(list_netatmo_merge)){
   dat=list_netatmo_merge[[i]]
-  dat=dat[dat$Datetime<=as.POSIXct("2019-09-30 23:59:59"),]
+  dat=dat[dat$Datetime<=as.POSIXct("2020-07-28 23:45:00"),]
   list_netatmo_merge[[i]]=dat
 }
 
@@ -99,10 +99,10 @@ for (i in 1:length(list_netatmo_merge)){
 ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
   theme(legend.position="none")
-ggsave(filename = "overview_netatmo_merge.pdf", width=14, height=7)
+ggsave(filename = "overview_netatmo_merge_2020.pdf", width=14, height=7)
 
 
-metadata_merge=rbind(metadata_1, metadata_2, metadata_3, metadata_4)
+metadata_merge=rbind(metadata_6, metadata_7)
 metadata_merge=metadata_merge[!duplicated(metadata_merge$device_id),]
 length(unique(metadata_merge$device_id))
 
