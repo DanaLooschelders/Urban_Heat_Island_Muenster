@@ -23,6 +23,8 @@ source("~/Urban_Heat_Island_Muenster/Logger/2020/merge_july_2020_data.R")
 #only for 03.07 script
 source("~/Urban_Heat_Island_Muenster/Logger/2019/start_time_correction.R") #sets all logger to same starting point
 source("~/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.r") 
+#for 17.07
+source("~/Urban_Heat_Island_Muenster/Logger/2020/start_time_correction.R") #sets all logger to same starting point
 
 #for all (continue here after mergering)
 source("~/Urban_Heat_Island_Muenster/Logger/2020/QAQC_Logger_2020.r") 
@@ -43,6 +45,7 @@ source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_plot_2020.R") #plot
 source("~/Urban_Heat_Island_Muenster/Logger/2020/time_series_significance_test_2020.r") 
 source("~/Urban_Heat_Island_Muenster/Logger/2019/Seasonal_ARIMA.R") 
 source("~/Urban_Heat_Island_Muenster/Logger/2020/water_air_split_significance_tests.r") 
+source("~/Urban_Heat_Island_Muenster/Logger/2020/green_grey_merge_sig_test_2020.r")
 
 #wind stream analysis 2020
 source("~/Urban_Heat_Island_Muenster/Logger/2020/prep_data_for_wind_stream.R") 
@@ -71,6 +74,7 @@ source("~/Urban_Heat_Island_Muenster/Netatmo/merge_netatmo.R")
 source("~/Urban_Heat_Island_Muenster/Netatmo/QAQC_Netatmo_level_A_B.r") #need to execute supp weather data
 source("~/Urban_Heat_Island_Muenster/Netatmo/QAQC_Netatmo_level_C_D.R") #need to execute supp weather data
 source("~/Urban_Heat_Island_Muenster/Netatmo/netatmo_plot_overview.R")
+source("~/Urban_Heat_Island_Muenster/Netatmo/plot_netatmo_2020.r")
 
 #source("~/Urban_Heat_Island_Muenster/Netatmo/leaflet_netatmo.R")
 #source("~/Urban_Heat_Island_Muenster/Netatmo/data_from_json.r")

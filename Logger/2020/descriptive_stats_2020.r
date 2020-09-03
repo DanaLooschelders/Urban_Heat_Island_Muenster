@@ -1,7 +1,7 @@
 #descriptive statistics:
 #overall, 24-hour, daily, nightly 
 #mean, median, standard deviation (mms)
-
+options(digits=2)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/stats_plot_mms/merge")
 
 #*************************************************************************

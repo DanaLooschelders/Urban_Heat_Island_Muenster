@@ -1,6 +1,12 @@
+library(leaflet)
+library(sp)
+library(ggplot2)
+library(htmltools)
+library(maptools)
+library(maps)
+library(GISTools)
 
 #plots for thesis
-
 #Histogram with Air temp?
 
 #Boxplot for all sealed, vegetated sites? Or overall air temp graph?
@@ -60,7 +66,12 @@ ggplot(d,aes(x = site, y = x)) +
 
 
 #Example line plot of logger pair
+#****************************************************************************
 
+#******************************************************************************
+#plot smooth scatter plot with temp/temp diff
+
+#***********************************************************************
 #Integration plot
 source("~/Urban_Heat_Island_Muenster/Logger/2020/integrate_differences_green_blue.r") 
 AUC_data_frame
@@ -77,3 +88,41 @@ AUC_long$intergal[1:5]=AUC_data_frame_t$`1`
 
 ggplot(data=AUC_data_frame)+
   geom_bar()
+
+#*********************************************************************
+options(digits=10)
+#data for map
+setwd("F:/satellite_data_Muenster/MODIS_neu")
+MS_shape=readOGR("stadtgebiet.shp")
+#transform coordinates to lat lon
+MS_shape=spTransform(x = MS_shape, CRSobj = "+proj=longlat +datum=WGS84")
+
+
+#map for Aasee wind stream
+meta_map=metadata[metadata$Standort_ID=="Aasee_3_VL"|metadata$Standort=="Ehrenpark"|metadata$Standort_ID=="Aegidiistr_1_SL",]
+meta_map$Lat=meta_map$Lat/1000000
+meta_map$Lon=meta_map$Lon/1000000
+
+meta_map$popup_text=c(".  Aegidiistr",".  Haus Kump", ".  Ehrenpark")
+leaflet(data=meta_map) %>%
+  addTiles() %>%
+  #setView()%>% #set screen
+  addProviderTiles("Esri.WorldGrayCanvas")%>%
+   addCircles(color = "black")%>%
+  addLabelOnlyMarkers(data=meta_map, label=~meta_map$popup_text,
+                      labelOptions=labelOptions(noHide=T,
+                                                direction="right", textOnly=T))%>%
+  addScaleBar()
+#************************************************************************
+#overall map with logger sites
+#plot in black/white
+metadata$Lat=metadata$Lat/100000
+metadata$Lon=metadata$Lon/1000000
+
+leaflet(data=metadata) %>%
+  addTiles() %>%
+  setView(lat = 51.957900, lng=	7.623341, zoom=12.5	)%>% #set screen
+  addProviderTiles("Esri.WorldGrayCanvas")%>%
+  addCircles(color = "black")%>%
+   addScaleBar()
+

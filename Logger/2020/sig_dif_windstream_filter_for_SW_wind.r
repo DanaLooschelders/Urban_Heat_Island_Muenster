@@ -1,3 +1,4 @@
+options(digits=3)
 #check for signficant difference to map windstream
 #check temperature difference between Aegidii logger (first and last)
 mean(list_iButton_Aegidii_day[[1]][,3], na.rm=T)

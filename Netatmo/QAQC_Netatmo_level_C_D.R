@@ -139,8 +139,7 @@ metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
 write.csv2(file="Netatmo_metadata.csv", metadata_merge)
 
-rm(ids_to_keep, list_netatmo_hourly, list_netatmo_level_B,
-   list_netatmo_level_D)
+rm(ids_to_keep, list_netatmo_hourly)
 
 #transform coordiantes to lat lon and create spatial points
 points=SpatialPointsDataFrame(coords = metadata_merge[2:3], 
@@ -152,3 +151,4 @@ leaflet(MS_shape) %>%
   addPolygons() %>%
   addTiles() %>%
   addCircles(data=points)
+

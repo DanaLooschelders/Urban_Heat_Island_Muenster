@@ -1,6 +1,6 @@
 #merge data to one time series
 #bind Temp in dataframe
-
+options(digits=2)
 VL_Temp <-rowMeans(cbind(list_iButton_corr_tidy_VL[[1]][,3],
                                     list_iButton_corr_tidy_VL[[2]][,3],
                                     list_iButton_corr_tidy_VL[[3]][,3], 
@@ -62,7 +62,24 @@ write.csv2(results,
            "result_mean_diff_SL_VL.csv", 
            row.names = F)
 
-shapiro.test(merge_VL_SL$VL_Temp)
+shapiro.test(merge_VL_SL$SL_Temp)
 
-plot(merge_VL_SL$VL_Temp, merge_VL_SL$diff)
-summary(lm(merge_VL_SL$VL_Temp~merge_VL_SL$diff))
+plot(merge_VL_SL$SL_Temp, merge_VL_SL$diff)
+summary(lm(merge_VL_SL$SL_Temp~merge_VL_SL$diff))
+
+cor.test(merge_VL_SL$SL_Temp,merge_VL_SL$diff, method="spearman")
+
+#plot
+plot(merge_VL_SL$SL_Temp,merge_VL_SL$diff)
+abline(lm(merge_VL_SL$SL_Temp~merge_VL_SL$diff), col="red")
+#plot data with linear regression line with sd in ggplot (in pretty)
+#use alpha to change opacity of points
+#e.g. alpha=I(1/5) -> total opacity is reaced when 5 points overlap
+qplot(merge_VL_SL$SL_Temp,merge_VL_SL$diff,
+      method="lm", geom=c("point", "smooth"))+
+  theme_classic()+
+  ylab("Difference between T in SI and T in GI [°C]")+
+  xlab("Temperature in SI [°C]")
+#plot data with no specified method for trend line
+qplot(merge_VL_SL$SL_Temp,merge_VL_SL$diff,
+      geom=c("point", "smooth"))

@@ -2,7 +2,7 @@
 library(openair)
 library(plotrix)
 library(leaflet)
-
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/windstream/merge")
 rad2deg <- function(rad) {(rad * 180) / (pi)}
 deg2rad <- function(deg) {(deg * pi) / (180)}
 
@@ -38,7 +38,7 @@ directions=c("N", "NNO", "NO", "ONO", "O", "OSO", "SO", "SSO", "S", "SSW", "SW",
 # relative frequency plot
 pdf(file="wind_dir_mean.pdf")
 polar.plot(as.numeric(rel_freq),polar.pos=deg,
-           main="mean wind direction at \n FMO from Aug '19 to May'20", 
+           main="mean wind direction at \n FMO in July 2020", 
            rp.type="p", start=90, clockwise=TRUE, 
            label.pos=deg,labels=directions, line.col="blue",
            radial.lim=c(0,max(rel_freq)),
