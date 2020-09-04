@@ -63,10 +63,17 @@ source("~/Urban_Heat_Island_Muenster/Logger/spatial_interpolation_idw.r")
   #recent scripts
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_rad_temp_diff.r")
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp_2020.R")
-
  #older scripts
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp.r")
 source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/comp_wind_temp_diff.r")
+
+#traffic data
+source("~/Urban_Heat_Island_Muenster/traffic_data.r")
+source("~/Urban_Heat_Island_Muenster/traffic_air_stream_analysis.r")
+
+#plots (in pretty)
+source("~/Urban_Heat_Island_Muenster/pretty_plots_for_thesis.r")
+source("~/Urban_Heat_Island_Muenster/pretty_plots_for_thesis_2019.r")
 
 #netatmo data
 source("~/Urban_Heat_Island_Muenster/Netatmo/prep_plot_netatmo.R")
@@ -76,8 +83,9 @@ source("~/Urban_Heat_Island_Muenster/Netatmo/QAQC_Netatmo_level_C_D.R") #need to
 source("~/Urban_Heat_Island_Muenster/Netatmo/netatmo_plot_overview.R")
 source("~/Urban_Heat_Island_Muenster/Netatmo/plot_netatmo_2020.r")
 
-#source("~/Urban_Heat_Island_Muenster/Netatmo/leaflet_netatmo.R")
-#source("~/Urban_Heat_Island_Muenster/Netatmo/data_from_json.r")
+#older netatmo scripts
+source("~/Urban_Heat_Island_Muenster/Netatmo/leaflet_netatmo.R")
+source("~/Urban_Heat_Island_Muenster/Netatmo/data_from_json.r")
 
 #for mapping Logger and netatmo
 source("~/Urban_Heat_Island_Muenster/Logger_Netatmo_map.R")

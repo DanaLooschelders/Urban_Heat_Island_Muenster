@@ -1,8 +1,9 @@
-
+library(ggplot2)
 #plots for thesis
 
 #Histogram with Air temp?
 
+#*****************************************************************************
 #Boxplot for all sealed, vegetated sites? Or overall air temp graph?
 #for sealed sites
 list_iButton_corr_tidy_Sealed_area_col=lapply(list_iButton_corr_tidy_Sealed_area, `[`, 3)
@@ -66,21 +67,6 @@ median(d_air$x, na.rm=T)
 #for 14 Aug 20
 #for 20. Aug 23
 #for 01 Sep 16
-#all logger
-list_iButton_corr_tidy_col=lapply(list_iButton_corr_tidy, `[`, 3)
-d <- data.frame(x = unlist(list_iButton_corr_tidy_col), 
-                   site = rep(names(list_iButton_corr_tidy_col),
-                              times = sapply(list_iButton_corr_tidy_col,length)))
-ggplot(d,aes(x = site, y = x)) +
-  geom_boxplot()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+ #rotates the axix labels on x axis
-  xlab("Sites")+ #adds title for x axis
-  ylab("Temperature [°C]")+ #adds title for y axis
-  ggtitle("Temperature in July 2020") #adds plot title
-
-
-#Example line plot of logger pair
-
 #Integration plot
 source("~/Urban_Heat_ISealed_areaand_Muenster/Logger/2020/integrate_differences_green_blue.r") 
 AUC_data_frame
