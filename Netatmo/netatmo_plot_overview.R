@@ -9,14 +9,14 @@ ggplot(bind_rows(list_netatmo_level_B, .id="df"), aes(date, daily_min, colour=df
 
 ggsave(filename = "overview_netatmo_daily_min.pdf", width=14, height=7)
 #plot only August data
-list_netatmo_merge_aug=lapply(list_netatmo_merge, function(x) subset(x, Month=="August"))
+list_netatmo_merge_aug=lapply(list_netatmo_merge, function(x) subset(x, Month=="Juli"))
 
 #plot
 ggplot(bind_rows(list_netatmo_merge_aug, .id="df"), aes(Datetime, temperature, colour=df)) +
   geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("")+ labs(color='Netatmo devices in MS')+
   theme(legend.position="none")
 
-ggsave(filename = "overview_netatmo_August.pdf", width=14, height=7)
+ggsave(filename = "overview_netatmo_Juli_2020.pdf", width=14, height=7)
 
 #plot only September data
 list_netatmo_merge_sep=lapply(list_netatmo_merge, function(x) subset(x, x$Month=="September"))

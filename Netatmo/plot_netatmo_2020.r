@@ -13,18 +13,24 @@ sd(d_netatmo$x, na.rm=T)
 
 #boxplot
 Netatmo_col=lapply(list_netatmo_level_D, `[`, 2)
+names(Netatmo_col)=as.character(seq(1, length(Netatmo_col)))
+names_netatmo=names(Netatmo_col)
 netatmo_d <- data.frame(x = unlist(Netatmo_col), 
-                   site = rep(names(Netatmo_col),
+                   site = as.integer(rep(names(Netatmo_col)),
                               times = sapply(Netatmo_col,length)))
-ggplot(netatmo_d,aes(x = site, y = x)) +
+means <- aggregate(x ~  site, netatmo_d, median)
+means=round(means, 1)
+ggplot(data=netatmo_d, aes(x = as.factor(site), y = x)) +
   geom_boxplot()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+ #rotates the axix labels on x axis
-  xlab("Sites")+ #adds title for x axis
+  #theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+ #rotates the axix labels on x axis
+  xlab("")+ #adds title for x axis
   ylab("Temperature [°C]")+ #adds title for y axis
-  ggtitle("Temperature in July 2020")+ #adds plot title
-  stat_summary(fun.y="mean", geom="point", size=1, col="red")
+  stat_summary(fun="mean", geom="point", size=1, col="black")+
+  theme_classic()+
+  geom_text(data=metadata_merge, aes(label=mean_temp, y=mean_temp+1), size=2)
 ggsave(filename = "Netatmo_July_2020_Boxplot.pfd",  device="pdf",width = 14, height=7, units = "in")
 
+#
 #add column with mean for August to metadata_merge
 for (i in names(list_netatmo_level_D)){
   data=list_netatmo_level_D[[i]]
@@ -55,15 +61,23 @@ leaflet(data=metadata_merge) %>%
 #create palette for binned colors
 binpal <- colorBin(palette=c("yellow", "orange", "red", "brown"), metadata_merge$mean_temp, 4, pretty = FALSE)
 options(digits=3)
+metadata_merge$new_ID=names_netatmo
 #plot the mean temperature for August and September
-map=  leaflet(data=metadata_merge)%>%
-  addTiles() %>%
-  addCircles(color=~binpal(mean_temp), fill=~binpal(mean_temp), 
-             weight = 10, fillOpacity = 200,stroke = T,opacity = 20)%>%
+  leaflet(data=metadata_merge)%>%
+  addProviderTiles("Esri.WorldGrayCanvas")%>%
+  #addCircles(color=~binpal(mean_temp), fill=~binpal(mean_temp), 
+             #weight = 10, fillOpacity = 200,stroke = T,opacity = 20)%>%
   addPolygons(data=MS_shape , color="black", fillOpacity = 0, weight = 1)%>%
-  addLegend(pal=binpal, values=metadata_merge$mean_temp)
-mapshot(map, file="netatmo_mean_2020.png")
+  #addLegend(pal=binpal, values=metadata_merge$mean_temp)%>%
+  addLabelOnlyMarkers(data=metadata_merge, label=~metadata_merge$new_ID,
+                    labelOptions=labelOptions(noHide=T,
+                                              direction="right", 
+                                              textOnly=T))%>%
+  addScaleBar()
 
+mapshot(map, file="netatmo_mean_2020.png")
+#CONTINUE HERE
+#do map with numbers indead of dots
 
 #transform coordiantes to lat lon and create spatial points
 points=SpatialPointsDataFrame(coords = metadata_merge[2:3], 

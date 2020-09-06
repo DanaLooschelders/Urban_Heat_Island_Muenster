@@ -40,7 +40,7 @@ merge_VL_SL=data.frame(VL_Temp, SL_Temp,
                        "date"=list_iButton_corr_tidy_SL[[1]][,2])
 
 ggplot(data=merge_VL_SL)+
-  geom_line(aes(x=date, y=VL_Temp, linetype="vegetated"))+
+  geom_line(aes(x=date, y=VL_Temp, linetype="vegetated"), color="grey")+
   geom_line(aes(x=date, y=SL_Temp, linetype="sealed"))+
   theme(legend.position="right")+
   labs(title="Temperature in July 2020",
@@ -48,7 +48,7 @@ ggplot(data=merge_VL_SL)+
        y="Temperature [°C]",
        color="Site type")+
   theme_classic()+
-  scale_linetype_manual(values=c("dotted", "dashed"))
+  scale_linetype_manual(values=c("dotted", "solid"))
 
 #****************************************************************************
 #smooth scatter plot for temp ~ temp-diff
@@ -109,11 +109,20 @@ ULB_vegetated=list_iButton_corr_tidy[["109"]] #vegetation
 #HOW TO PLOT THREE LINES IN BW?
 ggplot()+
   geom_line(data=ULB_water, aes(x=Datetime.1, y=Temperature_C_w_off),
-            linetype="solid")+
+            linetype="solid", color="darkblue")+
   geom_line(data=ULB_sealed, aes(x=Datetime.1, y=Temperature_C_w_off),
-            linetype="dotted")+
-  #geom_line(data=ULB_sealed, aes(x=Datetime.1, y=Temperature_C_w_off),
-            #linetype="dashed")+
+            linetype="solid", color="black")+
+  geom_line(data=ULB_vegetated, aes(x=Datetime.1, y=Temperature_C_w_off),
+            linetype="solid", color="darkgreen")+
+  theme_classic()
+#in bw
+ggplot()+
+  geom_line(data=ULB_water, aes(x=Datetime.1, y=Temperature_C_w_off),
+            linetype="solid", color="black")+
+  geom_line(data=ULB_sealed, aes(x=Datetime.1, y=Temperature_C_w_off),
+            linetype="solid", color="black")+
+  geom_line(data=ULB_vegetated, aes(x=Datetime.1, y=Temperature_C_w_off),
+            linetype="solid", color="grey")+
   theme_classic()
 #*****************************************************************************
 
@@ -209,7 +218,7 @@ Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
 ggplot()+
   geom_line(aes(Ehrenpark$Datetime.1, 
                 Ehrenpark$Temperature_C_w_off-Haus_Kump$Temperature_C_w_off),
-            linetype="dotted")+
+            linetype="longdash")+
   geom_line(aes(traffic_sub$datetime, traffic_sub$cars/1000))+
   theme_bw()+
   ylab(bquote("Difference" ~T[downwind]~ "-" ~T[upwind]~ "[°C]"))+
