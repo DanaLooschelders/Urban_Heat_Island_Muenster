@@ -20,6 +20,9 @@ Aasee_WOL_mean_night <-rowMeans(cbind(list_iButton_Aasee_WOL_night[[1]][,3],
 Aasee_WOL_mean_day=data.frame("Temperature"=Aasee_WOL_mean_day,"Date"=as.POSIXct(list_iButton_Aasee_WOL_day[[1]][,2]))
 Aasee_WOL_mean_night=data.frame("Temperature"=Aasee_WOL_mean_night,"Date"=as.POSIXct(list_iButton_Aasee_WOL_night[[1]][,2]))
 
+plot(Aasee_WOL_mean_day$Temperature, type="l")
+plot(Aasee_WOL_mean_night$Temperature, type="l")
+
 #use VL Haus Kump data
 Aasee_VL=metadata$Logger_ID[metadata$Standort_ID=="Aasee_3_VL"]
 #get data

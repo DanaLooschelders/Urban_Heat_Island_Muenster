@@ -1,3 +1,5 @@
+#daten transformieren
+#in auto.arima D=1
 library(fpp2)
 library(tseries)
 library(forecast)
@@ -28,8 +30,42 @@ plot(tsstationary) #--> looks better when differenced
 #check acf and pacf
 acf(VL_Temp_clean, lag.max=200, na.action = "na.pass")
 pacf(VL_Temp_clean, lag.max=200, na.action="na.pass")
+
+#try box.cox transformation
+lam=BoxCox.lambda(VL_Temp_clean) 
+#model with lambda
+model_VL2=auto.arima(VL_Temp_clean, D=1,lambda = lam, d = 1)
+summary(model_VL2)
+#Series: VL_Temp_clean 
+#ARIMA(2,1,3)(0,1,0)[144] 
+#Box Cox transformation: lambda= 0.2744232 
+
+#Coefficients:
+#  ar1     ar2      ma1      ma2     ma3
+#0.6242  0.1813  -0.5716  -0.3681  0.1570
+#s.e.  0.1045  0.0929   0.1036   0.0858  0.0208
+
+#sigma^2 estimated as 0.002735:  log likelihood=4849.94
+#AIC=-9687.88   AICc=-9687.85   BIC=-9651.52
+
+#Training set error measures:
+#  ME      RMSE       MAE        MPE   MAPE      MASE
+#Training set -0.002861368 0.4263397 0.2677245 -0.0268072 1.5138 0.1353266
+#ACF1
+#Training set -0.02527957
+qqnorm(model_VL2[["residuals"]])
+qqline(model_VL2[["residuals"]])
+shapiro.test(model_VL2[["residuals"]])
+#check residual plots
+checkresiduals(model_VL2)
+coeftest(model_VL2)
+#z test of coefficients:
 #check which model would fit
 #try auto.arima again with stepwise=F for more accurate results
+model_VL3=auto.arima(VL_Temp_clean, D=1,
+                     lambda = lam, d = 1, approximation =F)
+summary(model_VL3)
+
 model_VL=auto.arima(VL_Temp_clean, 
                     seasonal = TRUE)
 summary(model_VL)
@@ -185,16 +221,21 @@ kpss.test(SL_Temp_clean)
 #test assumption -> stationary?
 adf.test(SL_Temp_clean, alternative = "stationary") #stationary
 #difference
-ndiffs(SL_Temp_clean) #0 -> no differencing required
+ndiffs(SL_Temp_clean) 
 
 tsstationary = diff(SL_Temp_clean, differences=2)
 plot(tsstationary)
 
+lamd=BoxCox.lambda(SL_Temp_clean)
+model_SL2=auto.arima(SL_Temp_clean, 
+                     seasonal = TRUE,
+                     stepwise=F)
+summary(model_SL)
 #check which model would fit
 #try auto.arima again with stepwise=F for more accurate results
 model_SL=auto.arima(SL_Temp_clean, 
-                    seasonal = TRUE,
-                    stepwise=F)
+                    seasonal = TRUE, d=1,
+                    lambda = lamd)
 
 #test if resiudals are normally distributed
 qqnorm(model_SL[["residuals"]])

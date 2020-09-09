@@ -40,15 +40,14 @@ merge_VL_SL=data.frame(VL_Temp, SL_Temp,
                        "date"=list_iButton_corr_tidy_SL[[1]][,2])
 
 ggplot(data=merge_VL_SL)+
-  geom_line(aes(x=date, y=VL_Temp, linetype="vegetated"), color="grey")+
-  geom_line(aes(x=date, y=SL_Temp, linetype="sealed"))+
+  geom_line(aes(x=date, y=VL_Temp, color="vegetated"))+
+  geom_line(aes(x=date, y=SL_Temp, color="sealed"))+
   theme(legend.position="right")+
-  labs(title="Temperature in July 2020",
-       x="Date",
+  labs(x="Date",
        y="Temperature [°C]",
        color="Site type")+
-  theme_classic()+
-  scale_linetype_manual(values=c("dotted", "solid"))
+  theme_classic()
+
 
 #****************************************************************************
 #smooth scatter plot for temp ~ temp-diff
@@ -109,21 +108,27 @@ ULB_vegetated=list_iButton_corr_tidy[["109"]] #vegetation
 #HOW TO PLOT THREE LINES IN BW?
 ggplot()+
   geom_line(data=ULB_water, aes(x=Datetime.1, y=Temperature_C_w_off),
-            linetype="solid", color="darkblue")+
-  geom_line(data=ULB_sealed, aes(x=Datetime.1, y=Temperature_C_w_off),
-            linetype="solid", color="black")+
-  geom_line(data=ULB_vegetated, aes(x=Datetime.1, y=Temperature_C_w_off),
-            linetype="solid", color="darkgreen")+
-  theme_classic()
-#in bw
-ggplot()+
-  geom_line(data=ULB_water, aes(x=Datetime.1, y=Temperature_C_w_off),
-            linetype="solid", color="black")+
+            linetype="solid", color="black", size=1.1)+
   geom_line(data=ULB_sealed, aes(x=Datetime.1, y=Temperature_C_w_off),
             linetype="solid", color="black")+
   geom_line(data=ULB_vegetated, aes(x=Datetime.1, y=Temperature_C_w_off),
             linetype="solid", color="grey")+
   theme_classic()
+#in bw
+ggplot()+
+  geom_line(data=ULB_water, aes(x=Datetime.1, y=Temperature_C_w_off, 
+                                color="water"),
+            color="black", size=1.2)+
+  geom_line(data=ULB_sealed, aes(x=Datetime.1, y=Temperature_C_w_off,
+                                  color="sealed"),
+            color="black")+
+  geom_line(data=ULB_vegetated, aes(x=Datetime.1, y=Temperature_C_w_off,
+                                     color="vegetated"),
+            color="grey")+
+  theme_classic()+
+  scale_color_manual(values=c("black", "grey", "black"))+
+  labs(color="Sites")
+ # scale_color_discrete(name="Sites", labels=c("water", "sealed", "vegetated"))
 #*****************************************************************************
 
 #Boxplot for all sealed, vegetated sites? Or overall air temp graph?
@@ -157,8 +162,7 @@ ggplot(d_air,aes(x = site, y = x, color=type)) +
                                    size = 6 ))+ #rotates the axix labels on x axis
   xlab("Sites")+ #adds title for x axis
   ylab("Temperature [°C]")+ #adds title for y axis
-  ggtitle("Temperature in July 2020")+ #adds plot title
-  theme(legend.position="right")
+  theme_classic()
 
 #general  
 hist(d_air$x)
@@ -214,16 +218,24 @@ ggplot(data=AUC_data_frame)+
 #plot  with temp diff and traffic
 Ehrenpark=list_iButton_corr_tidy_date_factor[["87"]]
 Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
+datafortraffic=cbind(Ehrenpark, Haus_Kump)
+#aggregate temp values by hour
+datafortraffic$datehour <- cut(as.POSIXct(datafortraffic$Datetime.1,
+                              format="%Y-%m-%d %H:%M:%S"), breaks="hour") 
+datafortraffic$diff=datafortraffic[,3]-datafortraffic[,9]
+
+temp_agg=aggregate(diff ~ datehour, datafortraffic, mean,na.action = "na.pass")
+temp_agg$datehour=as.POSIXct(temp_agg$datehour)
 
 ggplot()+
-  geom_line(aes(Ehrenpark$Datetime.1, 
-                Ehrenpark$Temperature_C_w_off-Haus_Kump$Temperature_C_w_off),
-            linetype="longdash")+
-  geom_line(aes(traffic_sub$datetime, traffic_sub$cars/1000))+
+  geom_line(aes(temp_agg$datehour, temp_agg$diff, linetype="Temperature"))+
+  geom_line(aes(traffic_sub$datetime, traffic_sub$cars/1000, linetype="Cars"), size=1)+
   theme_bw()+
   ylab(bquote("Difference" ~T[downwind]~ "-" ~T[upwind]~ "[°C]"))+
   xlab("Time")+
-  scale_y_continuous(sec.axis=sec_axis(trans = ~.*1000, name="Number of Cars passing"))
+  scale_y_continuous(sec.axis=sec_axis(trans = ~.*1000, name="Number of Cars passing"))+
+  scale_linetype_manual(values=c("solid","dotted"))+
+  labs(color="Legend")
 
 #*********************************************************************
 options(digits=10)
@@ -262,3 +274,42 @@ leaflet(data=metadata) %>%
   addCircles(color = "black")%>%
    addScaleBar()
 
+#*************************************************************************
+#plot AUC values for 2019
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots/AUC data")
+AUC=read.table(file = "AUC_merge_long.csv", sep=";", dec=",", header=T)
+colnames(AUC)[1]="Site"
+ggplot(data=AUC)+
+  geom_col(aes(x=Site, y=Value, group=Date, fill=Date), 
+           position="dodge")+
+  ylab("Ratio of Integral Warming/Cooling")+
+  theme(axis.text.x = element_text(angle = 45, #rotates the axix labels on x axis
+                                   vjust = 1, 
+                                   hjust=1, 
+                                   size = 6 ), 
+        axis.title.y=element_text(size=8),
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid",
+                                 colour = "black"))+
+  geom_hline(aes(yintercept=1))
+  
+#****************************************************************
+#calculate mean vector
+#CONTINUE HERE
+ggplot()+
+  geom_line(data=Aasee_WOLM_data, aes(X53.Datetime.1 , X53.Temperature_C_w_off,
+                                     color="Water Surface \n Temperature"))+
+  geom_line(data=Aasee_VLM_data, aes(X39.Datetime.1 , X39.Temperature_C_w_off,
+                                        color="Air Temperature"))+
+  theme_classic()+
+  scale_color_manual(values=c("darkgrey", "black"))+
+  labs(color="Site")+
+  ylab("Temperature [°C]")+
+  xlab("Date")
+
+Aasee_WOLM=metadata$Logger_ID[metadata$Standort_ID=="Muehlenhof_WOL"]
+Aasee_WOLM_data=data.frame(list_iButton_corr_tidy_date[names(list_iButton_corr_tidy_date)==Aasee_WOLM])
+
+Aasee_VLM=metadata$Logger_ID[metadata$Standort_ID=="Muehlenhof_VL"]
+Aasee_VLM_data=data.frame(list_iButton_corr_tidy_date[names(list_iButton_corr_tidy_date)==Aasee_VLM])

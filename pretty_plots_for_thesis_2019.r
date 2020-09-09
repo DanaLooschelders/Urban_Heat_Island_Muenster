@@ -83,3 +83,19 @@ AUC_long$intergal[1:5]=AUC_data_frame_t$`1`
 
 ggplot(data=AUC_data_frame)+
   geom_bar()
+
+#***********************************************************************
+#plot September Aasee temp
+#10 and 92
+Aasee_water=list_iButton_corr_tidy[["10"]]
+Aasee_veg=list_iButton_corr_tidy[["92"]]
+ggplot()+
+  geom_line(data=Aasee_water, aes(x=Datetime.1, y=Temperature_C_w_off, 
+                                 color="water"),  size=1.1)+
+  geom_line(data=Aasee_veg, aes(x=Datetime.1, y=Temperature_C_w_off, color="air"))+
+  labs(x="Date",
+       y="Temperature [°C]",
+       color="Site type")+
+  #theme_classic()+
+  scale_color_manual(values=c("black","grey"))+
+  theme_classic()
