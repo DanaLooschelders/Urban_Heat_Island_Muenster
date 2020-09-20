@@ -99,7 +99,7 @@ test=
   geom_point(aes(x=mean_aug_temp_ref, y=mean_aug_sd_ref), color="red", shape=15)+
   #ellipse for 5 times the sd for mean and sd of ref
 geom_ellipse(aes(a=sd_aug_sd_ref*5, x0=mean_aug_temp_ref, b=sd_aug_temp_ref*5, y0=mean_aug_sd_ref, angle=0))
-ggsave(filename = paste("Level_B_1_netatmo",month,".pdf"), width=14, height=7)
+#ggsave(filename = paste("Level_B_1_netatmo",month,".pdf"), width=14, height=7)
 
 #how to: geom_ellipse
 #x0 -> center coordinate on x axis
@@ -158,8 +158,8 @@ for (i in dat$ID){
   #bin numbers: 10
 #subset table to August values
 daily_min_ref_aug=daily_min_ref[strftime(daily_min_ref$date, "%B")=="Juli",]
-hist(daily_min_ref_aug$daily_min, breaks=10) #histogram of TNref
-hist(daily_min_ref_aug$SD, breaks=10) #histogram of SDref
+#hist(daily_min_ref_aug$daily_min, breaks=10) #histogram of TNref
+#hist(daily_min_ref_aug$SD, breaks=10) #histogram of SDref
 
 #2.compute relative frequency for every bin combination of histograms of TN/SD (2D)
 #create a subset list that includes only August values
@@ -180,7 +180,7 @@ hist=ggplot_build(n)
 #briefly check if any station is below 0.01
 any(hist$data[[1]]$density<0.001) #FALSE
 
-ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colour=df)) +
-  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
-  theme(legend.position="none")
-ggsave(filename = "overview_netatmo_levelA_B.pdf", width=14, height=7)
+#ggplot(bind_rows(list_netatmo_merge, .id="df"), aes(Datetime, temperature, colour=df)) +
+ # geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
+#  theme(legend.position="none")
+#ggsave(filename = "overview_netatmo_levelA_B.pdf", width=14, height=7)

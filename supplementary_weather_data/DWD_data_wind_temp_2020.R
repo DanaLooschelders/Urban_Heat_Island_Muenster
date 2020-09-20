@@ -19,13 +19,13 @@ names(wind)[5]="wind_direction"
 
 #QAQC
 wind$wind_speed[wind$wind_speed<0]=NA
-plot(wind$MESS_DATUM, wind$wind_speed, type="l")
-hist(wind$wind_speed)
-hist(wind$wind_direction)
+#plot(wind$MESS_DATUM, wind$wind_speed, type="l")
+#hist(wind$wind_speed)
+#hist(wind$wind_direction)
 
 #Messdatum to Posixlt
 wind$MESS_DATUM=strptime(wind$MESS_DATUM, format="%Y%m%d %H", tz="Europe/Paris")
-str(wind$MESS_DATUM)
+#str(wind$MESS_DATUM)
 #temperature data from DWD
 #downloaded via: https://www.dwd.de/DE/leistungen/klimadatendeutschland/klarchivstunden.html
 #for Muenster/Osnabrück 
@@ -42,4 +42,4 @@ meta_station_ID_temp=read.table("Metadaten_Stationsname_01766.txt", sep=";", dec
 temp=read.table("produkt_tu_stunde_20190226_20200828_01766.txt", sep=";", dec=".", header=T)
 temp=temp[temp$MESS_DATUM>=2020070700,]
 temp$MESS_DATUM=strptime(temp$MESS_DATUM, format="%Y%m%d%H")
-str(temp)
+#str(temp)

@@ -16,7 +16,7 @@ for (i in 1:length(files_traffic)) assign(files_traffic[i], read.csv(text=paste0
 files_traffic_date = sapply(strsplit(files_traffic, "\\_24mq.csv"), "[", 1)
 
 # all in list
-list_traffic <- mget(ls(pattern =  ".csv"))
+list_traffic <- mget(ls(pattern =  "q.csv"))
 
 #  new file names
 names(list_traffic) <- files_traffic_date
@@ -36,6 +36,7 @@ list_traffic_new=lapply(list_traffic_new,
                                               remove=T, sep="_",
                                               into=c("number", "lane", "direction"),
                                               convert=T))
+
 #keep only knot with number 01140
 for(i in 1:length(list_traffic_new)){
   dat=list_traffic_new[[i]]
@@ -75,8 +76,4 @@ traffic=data.frame("datetime"=seq(as.POSIXct("2020-07-01 00:00:00"),
                    "cars"=cbind(unlist(list_traffic_new2)))
 rownames(traffic)=NULL
 
-ggplot()+
-geom_line(aes(traffic$datetime, traffic$cars))+
-  xlab("Date")+
-  ylab("Number of cars")+
-  ggtitle("Numbers of cars passing the Aasee")
+traffic_sub=traffic[traffic$datetime>="2020-07-07 00:00:00"&traffic$datetime<"2020-07-30 00:00:00",]

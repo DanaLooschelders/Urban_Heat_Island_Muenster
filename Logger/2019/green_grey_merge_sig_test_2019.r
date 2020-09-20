@@ -10,7 +10,7 @@ Vegetation_Temp <-rowMeans(cbind(list_iButton_corr_tidy_Vegetation[[1]][,3],
                                     list_iButton_corr_tidy_Vegetation[[7]][,3], 
                                     list_iButton_corr_tidy_Vegetation[[8]][,3], 
                                     list_iButton_corr_tidy_Vegetation[[9]][,3], 
-                                    list_iButton_corr_tidy_Vegetation[[10]][,3], 
+                                    #list_iButton_corr_tidy_Vegetation[[10]][,3], 
                                     na.rm=T))
 
 Sealed_area_Temp <-rowMeans(cbind(list_iButton_corr_tidy_Sealed_area[[1]][,3],
@@ -26,12 +26,18 @@ Sealed_area_Temp <-rowMeans(cbind(list_iButton_corr_tidy_Sealed_area[[1]][,3],
                          #list_iButton_corr_tidy_Sealed_area[[11]][,3], 
                          #list_iButton_corr_tidy_Sealed_area[[12]][,3], 
                          na.rm=T))
-
+str(Vegetation_Temp)
+str(Sealed_area_Temp)
+shapiro.test(Vegetation_Temp)
+Sep_res=wilcox.test(Vegetation_Temp, Sealed_area_Temp)
+#02 Aug p-value = 3e-11
+p_value_wilcox=Sep_res[["p.value"]]
 
 #dataframe for results
 merge_Vegetation_Sealed_area=data.frame(Vegetation_Temp, Sealed_area_Temp, 
                        "date"=list_iButton_corr_tidy_Sealed_area[[1]][,2])
 
+str(merge_Vegetation_Sealed_area)
 ggplot(data=merge_Vegetation_Sealed_area)+
   geom_line(aes(x=date, y=Vegetation_Temp, col="vegetated"))+
   geom_line(aes(x=date, y=Sealed_area_Temp, col="sealed"))+
@@ -58,15 +64,17 @@ max_temp_diff=max(merge_Vegetation_Sealed_area$diff, na.rm=T)
 #for 14 Aug 5.7
 #for 20 Aug 4.4
 #for 01 Sep 4.1
+str(max_temp_diff)
 mean_temp_diff_Vegetation_Sealed_area=mean(merge_Vegetation_Sealed_area$diff, na.rm=T) #calculate mean difference
+str(mean_temp_diff_Vegetation_Sealed_area)
 #for 02.Aug 0.9
 #for 14 Aug 1.5
 #for 20 Aug 0.5
 #for 01 Sep 0.7 
-results=data.frame(max_temp_diff, mean_temp_diff_Vegetation_Sealed_area)
+results=data.frame(max_temp_diff, mean_temp_diff_Vegetation_Sealed_area, p_value_wilcox)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots/")
 write.csv2(results, 
-           "01_Sep_2019_result_mean_diff_Sealed_area_Vegetation.csv", 
+           "01_Sep_result_mean_diff_Sealed_area_Vegetation.csv", 
            row.names = F)
 
 shapiro.test(merge_Vegetation_Sealed_area$Vegetation_Temp)

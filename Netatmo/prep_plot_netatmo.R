@@ -12,7 +12,7 @@ setwd("F:/satellite_data_Muenster/MODIS_neu")
 MS_shape=readOGR("stadtgebiet.shp")
 
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
-crs(MS_shape) #get crs
+#crs(MS_shape) #get crs
 #transform coordinates to lat lon
 MS_shape=spTransform(x = MS_shape, CRSobj = "+proj=longlat +datum=WGS84")
 #crs(MS_shape) #check
@@ -38,10 +38,10 @@ points=SpatialPointsDataFrame(coords = metadata_7[2:3],
                               proj4string=CRS("+proj=longlat +datum=WGS84"),
                               data=metadata_7)
 #test: plotting points in shapefile
-leaflet(MS_shape) %>%
-  addPolygons() %>%
-  addTiles() %>%
-  addCircles(data=points)
+#leaflet(MS_shape) %>%
+#  addPolygons() %>%
+#  addTiles() %>%
+#  addCircles(data=points)
 
 #subset points by shapefile -> get only points within Muenster
 station_subset <- points[MS_shape, ]
@@ -71,9 +71,9 @@ list_netatmo_datetime=lapply(list_netatmo_datetime, function(x) ymd_hms(x$isoTim
 list_netatmo <- mapply(cbind, list_netatmo, "Datetime"=list_netatmo_datetime, SIMPLIFY=F)
 
 
-ggplot(bind_rows(list_netatmo, .id="df"), aes(Datetime, temperature, colour=df)) +
-  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS') 
-ggsave(filename = paste("overview_netatmo", startdate,".pdf"), width=14, height=7)
+#ggplot(bind_rows(list_netatmo, .id="df"), aes(Datetime, temperature, colour=df)) +
+#  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS') 
+#ggsave(filename = paste("overview_netatmo", startdate,".pdf"), width=14, height=7)
 
 return(list_netatmo)
 }

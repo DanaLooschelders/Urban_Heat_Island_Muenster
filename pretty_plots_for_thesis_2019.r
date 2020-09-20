@@ -32,9 +32,14 @@ ggplot(d_air,aes(x = site, y = x, color=type)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, size = 6 ))+ #rotates the axix labels on x axis
   xlab("Sites")+ #adds title for x axis
   ylab("Temperature [°C]")+ #adds title for y axis
-  ggtitle("Temperature in August 2019")+ #adds plot title
-  theme(legend.position="right")
+  theme(legend.position="right")+
+  theme_classic()+
+  scale_color_grey()
+d_air$site=rep("September 2019")
 
+setwd("~/Urban_Heat_Island_Muenster/Logger")
+
+write.table(d_air, file="data_comp_boxplot_sep_2019.csv", sep=";", dec=",", row.names=F)
 #general  
 hist(d_air$x)
 min(d_air$x, na.rm=T)
@@ -99,3 +104,5 @@ ggplot()+
   #theme_classic()+
   scale_color_manual(values=c("black","grey"))+
   theme_classic()
+
+

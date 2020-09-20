@@ -27,7 +27,8 @@ SL_Temp <-rowMeans(cbind(list_iButton_corr_tidy_SL[[1]][,3],
                          list_iButton_corr_tidy_SL[[12]][,3], 
                          na.rm=T))
 
-
+shapiro.test(SL_Temp)
+July_res=wilcox.test(SL_Temp, VL_Temp) #p-value < 2.2e-16
 #dataframe for results
 merge_VL_SL=data.frame(VL_Temp, SL_Temp, 
                        "date"=list_iButton_corr_tidy_SL[[1]][,2])
@@ -52,14 +53,15 @@ legend("topright", legend=c("vegetated", "sealed"))
 
 
 merge_VL_SL$diff=merge_VL_SL$SL_Temp-merge_VL_SL$VL_Temp #calculate difference
-
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Tables")
+write.table(merge_VL_SL, "GI_SI_dif_2020.csv", dec=".", sep=",",row.names = F)
 max_temp_diff=max(merge_VL_SL$diff, na.rm=T)
 mean_temp_diff_VL_SL=mean(merge_VL_SL$diff, na.rm=T) #calculate mean difference
-
-results=data.frame(max_temp_diff, mean_temp_diff_VL_SL)
+p_value_wilcox=July_res[["p.value"]]
+results=data.frame(max_temp_diff, mean_temp_diff_VL_SL, p_value_wilcox)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots/merge/")
 write.csv2(results, 
-           "result_mean_diff_SL_VL.csv", 
+           "July_2020_result_mean_diff_SL_VL.csv", 
            row.names = F)
 
 shapiro.test(merge_VL_SL$SL_Temp)

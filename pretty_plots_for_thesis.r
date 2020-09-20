@@ -74,7 +74,9 @@ ggplot(d,aes(x = site, y = x)) +
   xlab("Sites")+ #adds title for x axis
   ylab("Temperature [°C]")+ #adds title for y axis
   ggtitle("Temperature in July 2020") #adds plot title
+d_air$site=rep("July 2020")
 
+write.table(d_air, file="data_comp_boxplot_2020.csv", row.names=F, sep=";", dec=",")
 #****************************************************************************
 #boxplot for water sites
 list_for_boxplot <- lapply(list_iButton_corr_tidy_WL, `[`, 3)
@@ -162,8 +164,20 @@ ggplot(d_air,aes(x = site, y = x, color=type)) +
                                    size = 6 ))+ #rotates the axix labels on x axis
   xlab("Sites")+ #adds title for x axis
   ylab("Temperature [°C]")+ #adds title for y axis
-  theme_classic()
+  theme_classic()+
+  scale_color_grey()
 
+#boxplot air temp
+ggplot(d_air,aes(x = site, y = x, color=type)) +
+  geom_boxplot(notch=TRUE)+
+  theme(axis.text.x = element_text(angle = 45, 
+                                   vjust = 1, 
+                                   hjust=1, 
+                                   size = 6 ),
+        panel.background = element_rect("white"))+ #rotates the axix labels on x axis
+  xlab("Sites")+ #adds title for x axis
+  ylab("Temperature [°C]")+ #adds title for y axis
+  scale_color_grey()
 #general  
 hist(d_air$x)
 min(d_air$x, na.rm=T)
@@ -216,13 +230,13 @@ ggplot(data=AUC_data_frame)+
   geom_bar()
 #*********************************************************************
 #plot  with temp diff and traffic
-Ehrenpark=list_iButton_corr_tidy_date_factor[["87"]]
-Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
+Ehrenpark=list_iButton_corr_tidy[["87"]]
+Haus_Kump=list_iButton_corr_tidy[["64"]]
 datafortraffic=cbind(Ehrenpark, Haus_Kump)
 #aggregate temp values by hour
 datafortraffic$datehour <- cut(as.POSIXct(datafortraffic$Datetime.1,
                               format="%Y-%m-%d %H:%M:%S"), breaks="hour") 
-datafortraffic$diff=datafortraffic[,3]-datafortraffic[,9]
+datafortraffic$diff=datafortraffic[,3]-datafortraffic[,7]
 
 temp_agg=aggregate(diff ~ datehour, datafortraffic, mean,na.action = "na.pass")
 temp_agg$datehour=as.POSIXct(temp_agg$datehour)
@@ -256,7 +270,7 @@ leaflet(data=meta_map) %>%
   addTiles() %>%
   #setView()%>% #set screen
   addProviderTiles("Esri.WorldGrayCanvas")%>%
-   addCircles(color = "black")%>%
+   addCircles(color = "black", opacity = 1)%>%
   addLabelOnlyMarkers(data=meta_map, label=~meta_map$popup_text,
                       labelOptions=labelOptions(noHide=T,
                                                 direction="right", textOnly=T))%>%
@@ -264,7 +278,7 @@ leaflet(data=meta_map) %>%
 #************************************************************************
 #overall map with logger sites
 #plot in black/white
-metadata$Lat=metadata$Lat/100000
+metadata$Lat=metadata$Lat/1000000
 metadata$Lon=metadata$Lon/1000000
 
 leaflet(data=metadata) %>%
@@ -272,7 +286,11 @@ leaflet(data=metadata) %>%
   setView(lat = 51.957900, lng=	7.623341, zoom=12.5	)%>% #set screen
   addProviderTiles("Esri.WorldGrayCanvas")%>%
   addCircles(color = "black")%>%
-   addScaleBar()
+   addScaleBar()%>%
+  addMiniMap()%>%
+  addLegend(position="topright", colors="black", 
+            labels="iButton")
+
 
 #*************************************************************************
 #plot AUC values for 2019
@@ -295,8 +313,7 @@ ggplot(data=AUC)+
   geom_hline(aes(yintercept=1))
   
 #****************************************************************
-#calculate mean vector
-#CONTINUE HERE
+#Aasee WOL
 ggplot()+
   geom_line(data=Aasee_WOLM_data, aes(X53.Datetime.1 , X53.Temperature_C_w_off,
                                      color="Water Surface \n Temperature"))+
@@ -313,3 +330,8 @@ Aasee_WOLM_data=data.frame(list_iButton_corr_tidy_date[names(list_iButton_corr_t
 
 Aasee_VLM=metadata$Logger_ID[metadata$Standort_ID=="Muehlenhof_VL"]
 Aasee_VLM_data=data.frame(list_iButton_corr_tidy_date[names(list_iButton_corr_tidy_date)==Aasee_VLM])
+
+#table for GI SI diff
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots")
+Aug_2019=read.table(file="merge/02_Aug_2019_result_mean_diff_Sealed_area_Vegetation.csv", sep=";", dec=",", header=T)
+Sep_2019=read.table(file="01_Sep_2019_result_mean_diff_Sealed_area_Vegetation.csv", sep=";", dec=",", header=T)

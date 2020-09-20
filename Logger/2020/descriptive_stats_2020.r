@@ -3,6 +3,8 @@
 #mean, median, standard deviation (mms)
 options(digits=2)
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/stats_plot_mms/merge")
+library(tidyverse)
+library(dplyr)
 
 #*************************************************************************
 #prep data
@@ -54,8 +56,8 @@ for (i in 1:length(list_iButton_corr_tidy_date_factor)){
     mms.overall$sd[mms.overall$logger==name]=sd(data[,3], na.rm=T) #calculate standard deviation for every logger
 }
 mms.overall[,2:4]=round(mms.overall[2:4], digits = 1)
-write.table(file = paste(substr(list_iButton_corr_tidy_date_factor[[1]][1,2],1,10), 
-                         "overall_stats.csv"), x = mms.overall, row.names=F,sep=";", dec=",")
+#write.table(file = paste(substr(list_iButton_corr_tidy_date_factor[[1]][1,2],1,10), 
+ #                        "overall_stats.csv"), x = mms.overall, row.names=F,sep=";", dec=",")
 
 
 #****************************************************************
@@ -116,21 +118,21 @@ list_iButton_hourly=lapply(list_iButton_corr_tidy,
                                                                breaks="hour")),
                                                  mean, na.rm=T))
 #calculate overall mean (for all logger )
-list_for_stats <- lapply(list_iButton_corr_tidy, `[`, 3)
-dataframe_for_stats=do.call(cbind, list_for_stats)
-colnames(dataframe_for_stats)=names(list_for_stats)
-dataframe_for_stats=dataframe_for_stats%>%select(colnames(dataframe_for_stats))%>%
-  pivot_longer(.,cols=colnames(dataframe_for_stats), 
-               names_to="Site",values_to="Temperature [°C]")
+#list_for_stats <- lapply(list_iButton_corr_tidy, `[`, 3)
+#dataframe_for_stats=do.call(cbind, list_for_stats)
+#colnames(dataframe_for_stats)=names(list_for_stats)
+#dataframe_for_stats=dataframe_for_stats%>%select(colnames(dataframe_for_stats))%>%
+#  pivot_longer(.,cols=colnames(dataframe_for_stats), 
+               #names_to="Site",values_to="Temperature [°C]")
 #overall mean, median, sd, min, max values
-mean(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
-median(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
-sd(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
-min(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
-max(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
+#mean(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
+#median(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
+#sd(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
+#min(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
+#max(dataframe_for_stats$`Temperature [°C]`, na.rm=T)
 #overall histogramm
-hist(dataframe_for_stats$`Temperature [°C]`)
+#hist(dataframe_for_stats$`Temperature [°C]`)
 #normal distribution
-qqnorm(dataframe_for_stats$`Temperature [°C]`)
-qqline(dataframe_for_stats$`Temperature [°C]`, col="red")
-shapiro.test(dataframe_for_stats$`Temperature [°C]`)
+#qqnorm(dataframe_for_stats$`Temperature [°C]`)
+#qqline(dataframe_for_stats$`Temperature [°C]`, col="red")
+#shapiro.test(dataframe_for_stats$`Temperature [°C]`)

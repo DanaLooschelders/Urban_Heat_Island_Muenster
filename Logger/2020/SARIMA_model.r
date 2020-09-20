@@ -69,7 +69,7 @@ summary(model_VL3)
 model_VL=auto.arima(VL_Temp_clean, 
                     seasonal = TRUE)
 summary(model_VL)
-
+attributes(model_VL)
 #Series: VL_Temp_clean 
 ARIMA(1,0,3)(0,1,0)[144] 
 
@@ -236,6 +236,23 @@ summary(model_SL)
 model_SL=auto.arima(SL_Temp_clean, 
                     seasonal = TRUE, d=1,
                     lambda = lamd)
+summary(model_SL)
+#Series: SL_Temp_clean 
+#ARIMA(4,1,0)(0,1,0)[144] 
+#Box Cox transformation: lambda= -0.09575493 
+
+#Coefficients:
+#  ar1      ar2     ar3      ar4
+#-0.1761  -0.2211  0.0044  -0.0792
+#s.e.   0.0177   0.0180  0.0180   0.0177
+
+#sigma^2 estimated as 0.0007968:  log likelihood=6802.37
+#AIC=-13594.73   AICc=-13594.71   BIC=-13564.43
+
+#Training set error measures:
+ # ME      RMSE      MAE        MPE     MAPE      MASE        ACF1
+#Training set -0.006742451 0.7362798 0.417033 -0.0772455 2.172359 0.1878154 -0.03060148
+
 
 #test if resiudals are normally distributed
 qqnorm(model_SL[["residuals"]])

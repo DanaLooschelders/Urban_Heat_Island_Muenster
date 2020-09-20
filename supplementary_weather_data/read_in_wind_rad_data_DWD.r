@@ -4,7 +4,7 @@ wind=read.table("produkt_zehn_min_ff_20190130_20200801_01766.txt",
                 sep=";", dec=".",header=T)
 
 wind$MESS_DATUM=strptime(wind$MESS_DATUM, format="%Y%m%d%H%M")
-any(wind$QN>3) #quality control 
+#any(wind$QN>3) #quality control 
 #change names
 names(wind)[4:5]=c("wind_speed", "wind_dir")
 #subset to measuring time
@@ -26,12 +26,12 @@ wind_sw$wind_speed[wind_sw$wind_speed<0]=NA
 
 rad=read.table("produkt_zehn_min_sd_20190130_20200801_01766.txt", 
                 sep=";", dec=".",header=T)
-str(rad)
+#str(rad)
 rad$MESS_DATUM=strptime(rad$MESS_DATUM, format="%Y%m%d%H%M")
 #subset to measuring time
 rad=rad[rad$MESS_DATUM>=list_iButton_corr_tidy[[1]][1,2]&rad$MESS_DATUM<=list_iButton_corr_tidy[[1]][dim(list_iButton_corr_tidy[[1]])[1],2],]
 
-which(is.na(rad$GS_10)) #check
+#which(is.na(rad$GS_10)) #check
 rad=rad[-c(1:12),] #remove rows with only NAs
 rad$GS_10[rad$GS_10<0]=NA
 

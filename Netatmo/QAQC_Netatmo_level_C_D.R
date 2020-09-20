@@ -5,7 +5,7 @@ library(zoo)
 #*************************************************************************
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit")
 rad=read.table("GeoDach_Dana_2020.csv", sep=";", dec=",", header=T, na.strings = "-" )
-str(rad)
+#str(rad)
 names(rad)[1]="Datetime" #rename first column
 rad=data.frame("Datetime"=rad$Datetime, "SWrad"=rad$Shortwave.Radiation, "Temperature"=rad$Temperature) #create column with just two variables
 rad$Datetime=strptime(rad$Datetime, format="%d.%m.%Y %H:%M", tz="Europe/Berlin") #convert to Posixlt
@@ -14,7 +14,7 @@ rad=rad[complete.cases(rad),] #remove rows with all NAs
 
 #subset data to timeframe
 rad2=rad[rad$Datetime>="2020-07-07 02:00:00"&rad$Datetime<="2020-07-28 23:59:59",]
-str(rad2) #check
+#str(rad2) #check
 #aggregate data to hourly means
 rad2$Hour <- cut(as.POSIXct(rad2$Datetime, 
              format="%Y-%m-%Y %H:%M:%S"), breaks="hour",
@@ -94,10 +94,10 @@ for (i in 1:length(list_netatmo_level_C)){
     list_netatmo_level_C[[i]]$temperature=data$netatmo_Temperature 
   }
 
-ggplot(bind_rows(list_netatmo_level_C, .id="df"), aes(Hour, temperature, colour=df)) +
-  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
-  theme(legend.position="none")
-ggsave(filename = "overview_netatmo_level_C.pdf", width=14, height=7)
+#ggplot(bind_rows(list_netatmo_level_C, .id="df"), aes(Hour, temperature, colour=df)) +
+#  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')+
+#  theme(legend.position="none")
+#ggsave(filename = "overview_netatmo_level_C.pdf", width=14, height=7)
 
 
 #and create new output list
@@ -125,9 +125,9 @@ for (i in 1:length(list_netatmo_level_D)){
 list_netatmo_level_D=level_D(month="Juli")
 #list_netatmo_level_D_2=level_D(month="September")
 
-ggplot(bind_rows(list_netatmo_level_D, .id="df"), aes(Hour, temperature, colour=df)) +
-  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')
-ggsave(filename = "overview_netatmo_level_D.pdf", width=14, height=7)
+#ggplot(bind_rows(list_netatmo_level_D, .id="df"), aes(Hour, temperature, colour=df)) +
+#  geom_line()+theme_bw()+ylab("Temperature [°C]")+xlab("Date")+ labs(color='Netatmo devices in MS')
+#ggsave(filename = "overview_netatmo_level_D.pdf", width=14, height=7)
 
 #update metadata table
 #shorten metadatalist by excluding the IDs that had no data
@@ -137,18 +137,18 @@ metadata_merge=metadata_merge[ids_to_keep,] #subset metadata with ids from data
 
 #save metadata_merge to csv file
 setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Netatmo/")
-write.csv2(file="Netatmo_metadata.csv", metadata_merge)
+#write.csv2(file="Netatmo_metadata.csv", metadata_merge)
 
 rm(ids_to_keep, list_netatmo_hourly)
 
 #transform coordiantes to lat lon and create spatial points
-points=SpatialPointsDataFrame(coords = metadata_merge[2:3], 
-                              proj4string=CRS("+proj=longlat +datum=WGS84"),
-                              data=metadata_merge)
+#points=SpatialPointsDataFrame(coords = metadata_merge[2:3], 
+  #                            proj4string=CRS("+proj=longlat +datum=WGS84"),
+   #                           data=metadata_merge)
 
 #final test: plotting points in shapefile
-leaflet(MS_shape) %>%
-  addPolygons() %>%
-  addTiles() %>%
-  addCircles(data=points)
+#leaflet(MS_shape) %>%
+#  addPolygons() %>%
+#  addTiles() %>%
+#  addCircles(data=points)
 

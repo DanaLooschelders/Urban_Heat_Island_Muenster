@@ -66,7 +66,18 @@ for (i in unique(metadata$Standort)){
 }
 
 #do a seperate one for Muelenhof because there is only a vegetated logger
-write.table(AUC_data_frame, 
-            file=paste(substr(as.character(list_iButton_corr_tidy[[1]][1,2]), 
-                              1,10),"AUC2_data.csv"), sep = ";", dec=".", row.names=FALSE)
+#write.table(AUC_data_frame, 
+ #           file=paste(substr(as.character(list_iButton_corr_tidy[[1]][1,2]), 
+ #                             1,10),"AUC2_data.csv"), sep = ";", dec=".", row.names=FALSE)
+
+AUC_data_frame=AUC_data_frame[-3,]
+AUC_data_frame=data.frame(t(AUC_data_frame))
+names(AUC_data_frame)=c("cooling", "warming")
+AUC_data_frame=AUC_data_frame[-14,]
+AUC_data_frame=na.omit(AUC_data_frame)
+AUC_data_frame$warming=as.numeric(as.character(AUC_data_frame$warming))
+AUC_data_frame$cooling=as.numeric(as.character(AUC_data_frame$cooling))
+AUC_data_frame$Place=rownames(AUC_data_frame)
+AUC_data_frame$ratio=AUC_data_frame$warming/AUC_data_frame$cooling
+AUC_data_frame$ratio=round(as.numeric(AUC_data_frame$ratio), digits = 1)
 

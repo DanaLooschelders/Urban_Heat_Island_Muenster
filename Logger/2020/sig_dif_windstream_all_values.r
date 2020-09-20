@@ -7,7 +7,7 @@ temp_four=list_iButton_corr_tidy_Aegidii[[4]][,3]
 temp_five=list_iButton_corr_tidy_Aegidii[[5]][,3]
 date=list_iButton_corr_tidy_Aegidii[[1]][,2]
 factor=list_iButton_factor_Aegidii[[1]][,6]
-
+str(wind)
 #use wind
 temp_wind_all=data.frame(wind$MESS_DATUM, 
                      wind$wind_speed,
@@ -120,16 +120,16 @@ wilcox.test(temp_wind_all$temp_five[temp_wind_all$factor=="night"],
 temp_wind_all$diff=Ehrenpark$Temperature_C_w_off-Haus_Kump$Temperature_C_w_off
 temp_wind_all$diff_Ae=temp-Haus_Kump$Temperature_C_w_off
 #plot difference between Ehrenpark and Haus Kump with wind
-pdf(file=paste(substr(list_iButton_corr_tidy_Aegidii[[1]][1,2],1,10),
-               "diff_Ehrenpark_Haus_K.pdf"), 
-    paper = "a4r", height=7, width=14)
-plot(Ehrenpark$Datetime.1, diff, type="l",ylim=c(-5,10),
-     sub=">0: warmer in Ehrenpark, <0 warmer in Haus K")
-points(wind_sw$MESS_DATUM, wind_sw$wind_speed, col="red")
+#pdf(file=paste(substr(list_iButton_corr_tidy_Aegidii[[1]][1,2],1,10),
+              # "diff_Ehrenpark_Haus_K.pdf"), 
+   # paper = "a4r", height=7, width=14)
+#plot(Ehrenpark$Datetime.1, diff, type="l",ylim=c(-5,10),
+   #  sub=">0: warmer in Ehrenpark, <0 warmer in Haus K")
+#points(wind_sw$MESS_DATUM, wind_sw$wind_speed, col="red")
 
-abline(v=sun2$sunrise, col="green")
-abline(v=sun2$sunset, col="blue")
-dev.off()
+#abline(v=sun2$sunrise, col="green")
+#abline(v=sun2$sunset, col="blue")
+#dev.off()
 
 
 cor.test(diff, wind_sw$wind_speed, method="spearman")

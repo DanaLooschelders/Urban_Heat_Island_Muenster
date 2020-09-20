@@ -40,8 +40,8 @@ pdf(file="wind_dir_mean.pdf")
 polar.plot(as.numeric(rel_freq),polar.pos=deg,
            main="mean wind direction at \n FMO in July 2020", 
            rp.type="p", start=90, clockwise=TRUE, 
-           label.pos=deg,labels=directions, line.col="blue",
+           label.pos=deg,labels=directions, line.col="black",
            radial.lim=c(0,max(rel_freq)),
-           boxed.radial=TRUE)
+           boxed.radial=TRUE,)
 dev.off()
 

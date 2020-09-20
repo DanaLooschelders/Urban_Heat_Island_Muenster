@@ -103,15 +103,15 @@ mean(temp_wind$temp[temp_wind$factor=="night"], na.rm=T)
 diff=Ehrenpark$Temperature_C_w_off-Haus_Kump$Temperature_C_w_off
 
 #plot difference between Ehrenpark and Haus Kump with wind
-pdf(file=paste(substr(list_iButton_corr_tidy_Aegidii[[1]][1,2],1,10),
-               "diff_Ehrenpark_Haus_K.pdf"), 
-    paper = "a4r", height=7, width=14)
-plot(Ehrenpark$Datetime.1, diff, type="l",ylim=c(-5,10),
-     sub=">0: warmer in Ehrenpark, <0 warmer in Haus K")
-points(wind_sw$MESS_DATUM, wind_sw$wind_speed, col="red")
-abline(v=sun2$sunrise, col="green")
-abline(v=sun2$sunset, col="blue")
-dev.off()
+#pdf(file=paste(substr(list_iButton_corr_tidy_Aegidii[[1]][1,2],1,10),
+              # "diff_Ehrenpark_Haus_K.pdf"), 
+   # paper = "a4r", height=7, width=14)
+#plot(Ehrenpark$Datetime.1, diff, type="l",ylim=c(-5,10),
+    # sub=">0: warmer in Ehrenpark, <0 warmer in Haus K")
+#points(wind_sw$MESS_DATUM, wind_sw$wind_speed, col="red")
+#abline(v=sun2$sunrise, col="green")
+#abline(v=sun2$sunset, col="blue")
+#dev.off()
 
 cor.test(diff, wind_sw$wind_speed)
 
