@@ -1,0 +1,770 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+---
+title: |  
+    | ![](Pics/Logos){width=7in}  
+    | 
+    | \LARGE Bachelor Thesis 
+    |
+    |
+    | \LARGE Spatial and temporal characteristics of the Urban Heat Island in Münster: How does temperature differ with land use?
+    |
+    |
+    | \Large by Dana Looschelders
+    |
+    |
+    |
+    |
+    |
+    | Course: Landscape Ecology  
+    |
+    | Institute for Landscape Ecology   
+    |
+    | Westfälische Wilhelms-Universität Münster 
+    |
+    | Advisors: M.Sc. Laura Ehrnsperger, Dr. Benjamin Kupilas
+    |
+    | 
+    | September 2020
+    |
+---   
+
+\pagenumbering{gobble}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+library(knitr)
+library(ggplot2)
+library(leaflet)
+library(sp)
+library(htmltools)
+library(maptools)
+library(maps)
+library(GISTools)
+library(stargazer)
+library(tidyverse)
+library(dplyr)
+```
+\newpage
+
+
+# Keywords   
+Urban Heat Island, Blue Infrastructure, Green Infrastructure, Urban Geometry, Climate Change Mitigation, Nature-based Solutions 
+
+# Abstract
+The Urban Heat Island (UHI) effect describes the phenomenon of higher temperatures within city centres compared to surrounding rural areas. Blue (water bodies) and green (vegetation) infrastructure can potentially mitigate the UHI effect caused by sealed areas, urban architecture, and anthropogenic heating. To analyse the UHI in Münster a field study was conducted, in which water and air temperature were recorded with Thermochron iButton data loggers. The air temperature was measured in vegetated spots, over water and over nearby sealed surfaces to spatially and temporally characterise the UHI.  
+GI was found to significantly reduce air temperature on a microscale (mean distance between GI and SI measurements: 100 m) by 1 °C. The cooling effect of vegetation was positively correlated with air temperature, which is a promising finding regarding thermal comfort. 
+BI showed both a cooling influence during the day and a dominant, nocturnal warming influence. Urban geometry and traffic, along with wind speed and direction were found to strongly impact the air stream from water bodies and thus their effective mitigation. A major road, running downwind of and orthogonal to BI was found to impair the cooling efficiency of the lake at daytime.   
+This yields potential implications for planning and further research.
+
+\newpage
+
+\tableofcontents
+  
+\newpage
+
+\listoffigures
+
+\listoftables
+
+\newpage
+
+# List of Abbreviations
+
+UHI - Urban heat island  
+
+UHII - Urban heat island intensity  
+
+T~W~ - Water temperature  
+
+T~WS~ - Air temperature near the water surface  
+
+T~GI~ - Air temperature in green infrastructure  
+
+T~SI~ - Air temperature in grey infrastructure  
+
+GI - Green infrastructure  
+
+SI - Grey infrastructure  
+
+BI - Blue infrastructure  
+
+NRW - North Rhine Westphalia  
+
+```{r, echo=FALSE, results='asis'}
+cat("\\onecolumn")
+```
+\pagenumbering{arabic}
+
+# 1. Introduction
+
+More than half of the world population is currently living in urban areas and the projections indicate an increase in the near future (United Nations 2019). For example, in Germany, the United Nations (2019) predicted a shift of 33.5 % from rural towards the urban population numbers until 2050. 
+In comparison to rural regions, urban areas are spatially more heterogenous regarding land surface (Christen and Vogt 2004) and land use, which impacts the spatial distribution of air temperature and generates local temperature anomalies (Benz et al. 2017). The best-recorded case of temperature modifications due to human influence is the Urban Heat Island (UHI) effect (Oke 1973).  
+The UHI effect is defined based on the difference in urban and rural air temperature, with the urban temperature being significantly higher than the rural surroundings (Oke 2010). The temperature difference between urban and rural areas arises from multiple factors. Chow and Roth (2006) recognised that the surface characteristics of cities lead to both a reduction in losses of long-wave radiation and an increase in the absorption of short wavelengths. This is because surface characteristics such as aspect ratio, roughness, albedo, and moisture availability (Christen and Vogt 2004) typically differ between urban and rural areas. Urban areas consist of mostly impervious surfaces with a low albedo and little moisture availability (Christen and Vogt 2004). 
+Furthermore, anthropogenic heating (e.g. industrial sites, domestic heating) and less evapotranspiration (i.e. water vapour deriving from plants and soil) as a result of less vegetated areas also contributes to an increase in the warmth of cities (Chow and Roth 2006).
+
+Urban Heat Isles have a strong impact on the socio-ecosystem in cities (Grimm et al. 2008). Most notably, heat stress is proven to negatively affect health and thermal comfort in the human population. Studies also found a link between heat waves and an increase in human mortality (Benz et al. 2017; Chapman et al. 2017). UHIs also increase energy consumption, e.g. through the increased use of air-conditioning systems (Stewart and Oke 2012), can reduce air quality by increasing NO~2~, CO~2~ and CO (Lai and Cheng 2009), and may affect plant growth (Stewart and Oke 2012) as well as plant phenology (Benz et al. 2017).   
+The UHI can be spatially and temporally characterised:  
+(1) Spatially, the UHI occurs in the air, at the surface and in the subsurface (Oke 2010). The reciprocal impact of the different types is not yet sufficiently studied (Benz et al. 2017). Also, the intensity of the UHI varies with weather patterns (Venter et al. 2020), city size, and spatial attributes of the city (Zhou et al. 2017).  
+(2) Temporal characteristics in UHI intensity can occur both as seasonal (Benz et al. 2017) and as a daily pattern (Soltani and Sharifi 2017).  
+Whilst the UHI effect has been studied in a multitude of cities around the globe and in different climates (Stewart 2011) the genesis of daytime and nighttime UHI differ (Oke 2010) and therefore the effects are mostly studied separately. At daytime, the UHI is generally lower in magnitude and arises from the surface sensible heat flux (Oke 2010). Solar radiation is absorbed by the increased surface area of urban geometry. Nocturnal heat islands are then formed by long-wave radiative losses of heat after sunset, which are mostly trapped by the formation of an inversion layer (Oke 2010).  
+More recently, a connection between climate change and its consequences, such as the more frequently occurring heat waves (Chapman et al. 2017) has been made, since they increase the occurrence and magnitude of UHI (Chapman et al. 2017; Musco, Francesco 2016). There are indicators that cities will magnify the effect of global warming locally while the Urban Heat Island intensity (UHII) is likely to increase due to globally rising temperatures (Sachindra et al. 2016). In a study conducted in London, Wilby (2008) also found that higher temperatures intensified the UHI, particularly at nighttime during the summer months.   
+
+The intensity of the UHI effect is heavily related to land use (Benz et al. 2017). Cities consist largely of grey infrastructures, such as concrete buildings and impervious surfaces like pavement (Perini and Sabbion 2017). In contrast, Green and Blue Infrastructure (GBI) (Broadbent et al. 2019) may mitigate UHI intensity (Müller et al. 2014). Blue infrastructure (BI) are water surfaces within cities (Žuvela-Aloise et al. 2016), whereas green infrastructure (GI) are described by Mayer and Schiller (2017) as natural or semi-natural areas characterised by vegetation. GI cools the environment by increasing the evapotranspiration of plants and shading effect of the canopy (Gago et al. 2013). Even artificially created green spaces such as green roofs or vegetated bridges over streets can be classified as GI (Mayer and Schiller 2017). It is important to note that the effectiveness of different types of GI differs. In a metastudy by Bowler et al. (2010) larger areas of GI and higher vegetation, such as trees, were found to be more efficient in cooling.  
+
+BI, such as urban lakes, also provides a cooling effect (Wu and Zhang 2019). The cooling effect of BI is driven by two processes: evaporation, which cools the air by latent heat absorption, and the sensible heat transfer between air and water (Kim et al. 2008). Recently, evaporation was found to increase humidity under stable atmospheric conditions and, as a result, decrease thermal comfort (Ampatzidis and Kershaw 2020).
+Keeping these complex interactions in mind, there is necessity to study the effects of increased heat in cities arising from the UHI effect and the benefits and effectiveness of GBI to reverse harmful impacts.
+Simultaneously, cities need to act in mitigating climate change. GBI is not only used to lessen the effects of UHI but is also effective in alleviating climate change and its consequences (Müller et al. 2014). Besides the planning of GBI for a larger area, there are numerous ways to integrate BGI in cities on a small scale, such as the installation of fountains or green roofs. More recently the manipulation of surfaces to improve their thermal properties and/or permeability, such as cool roofs and cool pavements, were found to be a cheap mitigation strategy but were not yet studied on a large scale (Kleerekoper et al. 2012).  
+
+Within this context, the city of Münster is a particularly interesting place to study the UHI effect and mitigation possibilities by GBI for multiple reasons. Firstly, there is abundant GBI within and close to the city centre, such as the Aa stream running through the centre, which is fed by the “Aasee” lake. As the main wind axis aligns with the “Aasee” (Stadt Münster 2015), potential wind corridors in the city centre can be studied as well. Wind corridors were found to have an important mitigation potential to lessen the UHI effect (Hsieh and Huang 2016). Furthermore, Münster has a large GI, considering the vegetated areas and small green spaces distributed throughout the city itself.
+Secondly, in Münster, the UHI effect has first been described in 1992 and has intensified since then (Stadt Münster 2015).   
+The UHI in Münster, measured as the temperature difference between the Münster-Osnabrück airport (FMO) and the Station “STI Stadthaus 1” in the city centre, has a mean magnitude of 1.8 °C. The highest value that has been observed on a daily basis is 2.6 °C during evenings and nighttime. The previous measurements on the UHI effect in Münster were based on only two temperature measurements (Stadt Münster 2015) and did not account for local processes and the spatial heterogeneity that may influence the UHI itself (Burgess 2016). The spatial and temporal characteristics of the UHI cannot be captured by macro-scale studies. Thus, there is a need for a higher measuring density to be able to characterise the spatial attributes of the UHI and determine how its impacts are distributed in Münster on a meso- (few hundred metres) and microscale (few metres).  
+Considering this, the main objectives of this study were to quantify the microscale influences of green, blue, and grey infrastructure on air temperature and to characterise the effect of the “Aasee” as a fresh air corridor. The following two hypotheses were tested:  
+
+(1)	Because of the cooling effects of green areas that were described extensively in studies performed before (Doick et al. 2014), GI is expected to significantly reduce the air temperature on a micro-scale compared with SI.
+Besides the microscale cooling effect, water bodies were also found to provide a downwind cooling effect over the scale of several hundred meters, depending on the city’s building density, waterbody size, and distribution (Manteghi et al. 2015). 
+
+(2)	Therefore, the “Aasee” lake is expected to act as a fresh air corridor that cools the air streaming into the city. Specifically, a significantly cooler temperature in the air masses moving downwind from the “Aasee” in comparison to the temperature upwind of the “Aasee” is anticipated.
+
+# 2. Methods and Material
+
+*Study Area*  
+
+Münster is situated in the west of Germany, in the Federal State of North-Rhine Westphalia (NRW) (7°37’40,2” East, 51°57’42,0” North). It has a flat landscape with almost no elevated areas or depressions (between 99 m NN at “Vorbergshügel” and 39 m NN at the “Ems”) (Stadt Münster 2018) which makes it a particularly well-suited area for research since orographic influences can superimpose the UHI effect (Bernhofer 1984). With an area of around 300 km^2^ (Stadt Münster 2015) and a population density of 1024.75 inhabitants m^2^ in 2018 (Stadt Münster – Informationsmanagement und Statistikdienststelle 2019), it is representative for a medium city in Germany. 
+
+*Temperature measurements/sensors*  
+
+Button sized temperature loggers (Thermochron iButtons model DS1921G-F5) (Maxim Integrated 2015) with an accuracy of ± 1 °C from -30 °C to +70 °C were used to collect high spatial resolution air temperature data. Solar radiation shields made of two funnels as described in Hubbart (2011) were utilised to prevent the radiative warming of sensors and protect the iButton from precipitation. Four to five holes with a diameter of one centimetre were drilled into the radiation shields to ensure adequate ventilation and thus prevent the accumulation of warm air under the shields (Cheung et al. 2010). The plastic-covered water iButtons (Thermochron iButtons model MF1921G) are waterproof in compliance with IPX8 (Moritz Fuchs Elektronik 2018) (Fig. 1).  
+
+```{r, out.width="200px", out.height= "150px",fig.cap="Set up of iButton with radiation shield mounted on a tree (left panel) and waterproof iButton with protective cover (right panel).", fig.show="hold", fig.align="center", echo=F}
+knitr::include_graphics(c("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/logger_sample.png","C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/water_looger_bw_align.png"))
+```
+
+*Calibration of iButtons*  
+
+To calibrate the iButton before deploying them in the field the devices were tested for six days under laboratory conditions, as suggested by Hubbart et al. (2005), with Campbell Scientific CR3000 Data Logger (Campbell Scientific Technical Communications 2020) and two Campbell Scientific HC2-S3 (Campbell Scientific Technical Communications) as reference thermometers. The calibration was performed from the 04/07/2019 to the 08/07/2019 at 20.22 °C, as measured by the reference thermometers. The iButtons were placed on an insulation plate of approximately 1.5 cm thickness and the blinds in the laboratory were closed to avoid any influence by solar radiation.  
+After the field period, the iButtons were tested again for two days (21/08/2020 – 23/08/2020) under the same laboratory conditions with one reference thermometer of the same brand to check for temperature drift. Previous studies suggested that iButtons should be calibrated every six months (Shiflett et al. 2017).  
+The results of the first calibration showed that all the iButtons measured within their uncertainty range and none were on average further than 0.5 °C off the reference thermometer. The second calibration displayed that the iButtons did not drift during the field duration, as again all the measurements were within the uncertainty range of the iButtons. The differences between the two calibrations were between -0.3 °C and 0.3 °C. The calibration results are listed in App. 4.
+
+*Sensor employment and data collection*  
+
+The iButtons were distributed across the city centre in pairs of two or three, with one measuring the air temperature in an area with SI(T~SI~) and a second iButton measuring the air temperature within GI(T~GI~). The iButtons transected Münster from southwest to northeast (Fig. 2). The air temperature iButtons were mounted at a height of approximately 2.50 m (Doick et al. 2014) – facing south to avoid shadowing. The height above the standard measuring height of 2 m (Verein Deutscher Ingenieure 2012) was chosen to ensure that the iButtons were accessible with suitable equipment to collect the data, while being out of reach for possible vandals. 
+Since the rate of sensible heat transfer depends on the temperature difference between the water body and the air (Kim et al. 2008), the water temperature (T~W~) close to the air temperature iButton was measured, if a water body was present at the site.  
+
+```{r, fig.cap="Map with 2020 setup. Each dot represents an iButton.",  echo=F, warning=FALSE, message=FALSE, out.width="400px"}
+
+#source neccessary scripts
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_03.07.2020.r")
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2019/start_time_correction.R") 
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.r") 
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_17.07.2020_as_2nd_list.r")
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2020/start_time_correction_for_2nd_list.R") 
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2020/merge_july_2020_data.R")
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2020/QAQC_Logger_2020.r")
+source("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Logger/2020/plot_site_type_together_2020.r")
+
+knitr::include_graphics(c("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/leaflet_map_legend_bw_na.png"))
+
+```
+
+The data was collected in two periods with a high temporal resolution (10 min) in August to September 2019 and from June to July 2020. When recording in 10 min intervals, the iButtons were able to record in two-week-long time series after which the data was collected. They were then reset. The Thermodata Viewer Software © was used to configure the iButtons and to download the data (Thermodata Pty. 2008). For an intermediary period in autumn 2019 (September to November), the iButtons were set to a lower (30 min) temporal resolution and recorded for a 6-week long time series. The lower resolution was chosen to record the temperature for a longer time period.  
+
+In 2020 additional air temperature measurements were carried out approximately ten to fifteen centimetres above the water surface, to detect changes at the water-atmosphere boundary. The iButtons measuring the air above the water surface were deployed within two meters from the shore to ensure accessibility. The air temperature over the water surface will henceforth be abbreviated T~WS~. To analyse the potential wind corridor from the “Aasee” into the city centre, five iButtons were placed in the “Aegidiistraße”. The "Aegidiistraße" is a street opposite the "Aasee" in which the fresh air moving over the "Aasee" is expected to stream.  
+Multiple iButtons were lost due to vandalism or unable to readout and therefore were replaced in between the measuring periods. Consequently, some weeks did not provide enough data for a representative spatial analysis. The time spans with adequate data cover (>25 iButtons) were chosen for the analysis of the GI (Tab. 1). In July 2020 no iButton was lost and the time series were joined for the analysis, excluding the day when the iButtons were reset.  
+
+```{r results='asis', echo=FALSE, error=F, message=F, warning=F}
+SetupTable=data.frame("Timespan"= c("","Aug 2019", "Sep 2019", "July 2020 (merged)"),
+                "iButtons"=c("[No.]","32",
+                                        "28",
+                                        "32"),
+                "Resolution"=c("[min]","10","10","10"))
+stargazer(SetupTable, rownames = F, title = "Number of iButtons used in analysis", summary=FALSE, digits=0, header=F)
+```
+
+*Quality Assessment and Quality Control (QAQC) and statistical analysis*
+
+Different start times between the iButtons of one measuring period were adjusted by performing a spline interpolation on the raw data. The measured temperatures of every iButton were corrected with the offset calculated in the laboratory test, as suggested by Cheung et al. (2010). A suitable reference thermometer was used instead of a reference iButton to increase the accuracy of the calibration. Spikes in the data were defined for T~W~ and air temperature (T~WS~, T~GI~ and T~SI~). For T~W~, the threshold of change in temperature considered a spike was set to 2.5 °C in 10 mins. Spike values and the two hours of data that followed the spike were set to Not Available (NA). Because of the high thermal inertia of water (Gunawardena et al. 2017), a quicker increase would be very unlikely. For air temperature, a spike was defined as an increase of more than 5 °C in 10 mins and the value together with the subsequent two values (30 mins of data) were set to NA. Single outlier values, classified as more than two and a half interquartile ranges above the third or below the first quartile (Shiflett et al. 2017), were filtered out.  The data was analysed using open-source software R © (R Studio Team 2019). The packages that were used are listed in the R-scripts (Appendix 1). Statistical analysis was performed applying a significance level of P = 0.05. As the values were not normally distributed, non-parametric tests were used for all statistical analyses, unless stated otherwise. The data was split into daytime and nighttime data to analyse temporal characteristics of the UHI effect and potential differences between day and night (Soltani and Sharifi 2017). The data was split at the time sunrise and sunset occurred on that day, excluding an hour around both dawn and dusk (Deutscher Wetterdienst 2019a).  
+
+Wilcoxon-signed-rank-Tests and Student’s-t-tests were used to analyse the significance of the difference in the median of the time series. iButtons in SI were compared with iButtons GI (Völker et al. 2013). Both the station pairs and the averaged time series for the two site types were tested (Völker et al. 2013).  
+A SARIMA (Seasonal autoregressive integrated moving average) model was fitted to the time series, as the temperature time series were strongly autocorrelated and the decomposition of the data showed a daily seasonality (Hyndman and Athanasopoulos 2018). Post and Kärner (2013) also suggested the use of an ARIMA model to analyse air temperature time series. The time series was prepared for modelling with the `tsclean` function from the forecast package by removing outliers, missing observations, and applying an automated Box-Cox transformation. The `auto.arima` function was used to estimate a model, then model diagnostics were checked and parameters were refitted manually to achieve normally distributed residuals and low AIC and BIC values (Hyndman and Athanasopoulos 2018).  
+
+The potential cooling of BI was calculated as the difference between T~W~ and the next air temperature iButton. To estimate total cooling and warming potential, the integral was calculated. Wilcoxon-signed-rank-Tests and Student’s-t-tests were used to analyse whether there was a significant difference between T~WS~ and T~GI~ (Hathway and Sharples 2012). The vegetated site was chosen as a reference to control for the effect of shading by trees, which were used to mount the iButton above the water surface. In addition, the influence of the air stream from the “Aasee” was investigated by comparing the median air temperatures upwind and downwind of the “Aasee”. This method was used by several studies, according to Manteghi et al. (2015).  
+In Münster, the main wind direction is southwest (Stadt Münster 2015) and therefore the greatest influence is expected northeast of the “Aasee”. The main wind axis aligns with the iButton transect through Münster. To investigate the hypothesised air stream effect on a spatial scale, a site upwind of the “Aasee” (“Haus Kump”) and two sites downwind of the “Aasee” (“Ehrenpark” and “Aegidiistraße”) were assessed. The mean daytime and nighttime temperatures at the sites were compared under the assumption that any differences in temperature are caused by the “Aasee”. This is a valid assumption to make, as the sites are similar regarding landcover, and no other majorly confounding influences on any of the sites are known.
+
+*Supplementary data from citizen science weather stations*
+
+Additionally, crowdsourced weather data provided by Netatmo from citizen science weather stations were used to identify background temperature variation on a spatial scale for the area of Münster. The Netatmo data was downloaded with a JavaScript request via the Application Programming Interface (API) on the Netatmo website (Netatmo 2020) using a publicly available module (Bell 2019) using node.js. The protocol for a Netatmo data quality control routine developed by Meier et al. (2017) was used to validate the crowdsourced temperature data. The mean, median, and variance were calculated.  
+For the quality control of the Netatmo temperature data, the radiation data recorded at the weather station GeoDach was used (AG Klimatologie 2020). The radiation data was used, because improper set-up of the measuring devices can lead to radiative errors due to solar heating (Meier et al. 2017). The air temperature data of the FMO (Münster airport) weather station from the German Weather Service (DWD) was used as a reference value to validate the crowdsourced data (Meier et al. 2017). In addition, data on wind speed and direction provided by the DWD were used (Deutscher Wetterdienst 2020a). These were the meteorological parameters that were found to impact the development of the heat island the most (Alexander and Mills 2014). The number of cars passing the “Aasee” in any direction was extracted from traffic movement data in Münster, which was provided by the City of Münster, Department for Mobility and Geotechnical Engineering (Renkhoff 2020). 
+
+# 3. Results
+
+## 3.1. Temperature difference between green and grey infrastructure
+
+In August 2019 the mean air temperature over all land use types was 21 °C ($\pm$ 4.2 °C). Minimum values of 11 °C and maximum values of 36 °C were recorded (Fig.3 and Appendix 5).  In NRW there was less precipitation than usual, with 55 l/m^2, but with more hours of sunshine (225 h) (Deutscher Wetterdienst 2019b).  
+The average air temperature (T~GI~ and T~SI~) in September 2019 was 16 °C ($\pm$ 3.8 °C). The temperature range was 4 °C to 31 °C (Fig. 3 and Appendix 5). In September the amount of precipitation (67 l/m^2^) was only slightly less than expected from long term averages while the amount of sunshine was also above average, with 150 h (Deutscher Wetterdienst 2019c).  
+In the study period during July 2020, the values ranged between 7°C and 35 °C, with an average of 19 °C ($\pm$ 4.1 °C). The highest temperature was recorded at the sealed site at “Renaturierung” and the lowest temperature at the vegetated site of the “Promenade” (Fig. 3 and Appendix 3). In NRW 55 l/m^2^ precipitation fell, which is less than average and there were 190 h of sunshine, which is usual for July.
+All descriptive statistics calculated can be found in (Appendix 3 and 5).  
+
+```{r echo=FALSE, fig.height=2.5, fig.width=3.5, fig.cap="Boxplot for the air temperature for the measuring periods August 2019, September 2019 and July 2020. July 2020 contains the merged data of four weeks. The dot inside the box displays the mean. The line within the box denotes the median and the boundaries display the interquartile range. Dots outside the box represent outlier values.", message=FALSE, error=FALSE, warning=FALSE}
+
+July=read.table(file = "Logger/data_comp_boxplot_2020.csv", sep=";", dec=",", header=T)
+Aug=read.table(file = "Logger/data_comp_boxplot_aug_2019.csv", sep=";", dec=",", header=T)
+Sep=read.table(file = "Logger/data_comp_boxplot_sep_2019.csv", sep=";", dec=",", header=T)
+
+complete_box=rbind(July, Aug, Sep)
+
+ggplot(complete_box,aes(x = site, y = x)) +
+  geom_boxplot(notch=TRUE)+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, size = 6 ))+ #rotates the axix labels on x axis
+  xlab("Sites")+ #adds title for x axis
+  ylab("Temperature [°C]")+ #adds title for y axis
+  theme(legend.position="right")+
+  theme_classic()
+```
+
+The median air temperature for all individual sites for all periods was significantly higher in SI than in GI (Fig. 4). The difference was largest when the air temperature peaked during midday. The mean difference in temperature between the averaged time series of all GI and SI sites was approximately 1 °C for all time spans studied (Tab. 2). The maximal difference was similar across the periods. The mean difference was lowest in September 2019 (0.7 °C).  
+
+
+```{r echo=FALSE, fig.height=3.5, fig.width=6.5, fig.cap="Averaged temperature of iButtons in vegetated (T~GI~) and sealed sites (T~SI~) for the measuring period of July 2020.", message=FALSE, error=FALSE, warning=FALSE}
+
+VLSL2020=read.table(file="C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Tables/GI_SI_dif_2020.csv", sep=",", dec=".", header=T)
+#plot vegetated and sealed areas as line graph
+ggplot(data=VLSL2020)+
+  geom_line(aes(x=as.POSIXct(date), y=VL_Temp, color="vegetated"))+
+  geom_line(aes(x=as.POSIXct(date), y=SL_Temp, color="sealed"))+
+  theme(legend.position="right")+
+  labs(x="Date",
+       y="Temperature [°C]",
+       color="Site type")+
+  theme_classic()
+```
+
+```{r results='asis', echo=FALSE, warning=F, message=F, error=F}
+#table for GI SI diff
+setwd("C:/00_Dana/Uni/6. Semester/Bachelorarbeit/Plots/difference_plots")
+Aug_2019=read.table(file="02_Aug_result_mean_diff_Sealed_area_Vegetation.csv", sep=";", dec=",", header=T)
+Sep_2019=read.table(file="01_Sep_result_mean_diff_Sealed_area_Vegetation.csv", sep=";", dec=",", header=T)
+Jul_2020=read.table(file="merge/July_2020_result_mean_diff_SL_VL.csv", sep=";", dec=",", header=T)
+names(Aug_2019)=c("Max", "Mean", "p-value")
+names(Sep_2019)=c("Max", "Mean", "p-value")
+names(Jul_2020)=c("Max", "Mean", "p-value")
+all_dif=rbind(Aug_2019, Sep_2019, Jul_2020)
+all_dif$Max=round(all_dif$Max, 1)
+all_dif$Mean=round(all_dif$Mean, 1)
+#all pvalues are <0.001
+all_dif$'p-value'=rep("***", 3) 
+rownames(all_dif)=c("Aug 2019", "Sep 2019", "Jul 2020")
+stargazer(all_dif, rownames=T, title = "Difference between the air temperature in GI and SI for the average of all sites", summary=FALSE, notes = c("+ p<0.1; * p<0.05; ** p<0.01; *** p<0.001"), notes.append = F, header=F)
+
+r_sq=lm(SL_Temp~diff,VLSL2020 )
+```
+
+Fig. 5 shows the results of the analysis of the relationship between cooling efficiency (T~SI~ - T~GI~) and air temperature in sealed areas in July 2020. The temperature difference between the averaged time series of sealed and vegetated sites was significantly correlated with air temperature T~SI~ (R^2^: `r summary(r_sq)$r.squared`).  
+
+```{r echo=FALSE, fig.cap="Linear Regression of Temperature vs. Temperature difference for the average of all sites.", message=F, error=FALSE, warning=FALSE, fig.height=2, fig.width=3}
+
+ggplot(data=VLSL2020, aes(SL_Temp,diff))+
+  geom_point(col="darkgrey")+
+  geom_smooth(method="lm", formula=y~x, col="black")+
+  theme_classic()+
+  ylab("Difference" ~T[SI]~ "-" ~T[GI]~ "[°C]")+
+  xlab(bquote("Temperature" ~T[SI]~ "[°C]"))
+
+```
+
+From the 76 Netatmo stations found within the area of Münster, half did not make it through the quality control standard developed by Meier et al. (2017). The 37 Netatmo stations that provided enough and accurate data were spread regularly over the city of Muenster (Fig. 7). The mean temperature of the Netatmo weather stations was 19.1 °C ($\pm$ 4.0 °C) and measurements ranged from 7 °C to 39 °C. The interquartile range was similar between the stations, but the median differed between 17.8 °C and 20.7 °C. There were more stations with higher mean temperatures within the city centre than in the surrounding area. The lowest temperatures are found further out of the city centre. There are, however, also stations with a higher mean in the surrounding area and stations with a lower mean in the city centre. Therefore, the presence of the UHI effect is suggested, cannot be distinguished with certainty, based on only the Netatmo measurements.  
+
+```{r echo=FALSE, fig.height=4, fig.width=7, fig.cap="Boxplot for all Netatmo devices for July 2020 with the dot representing the mean. The line within the box denotes the median and the boundaries display the interquartile range. Dots outside the box represent outlier values.", error=FALSE, warning=FALSE, message=FALSE, results='hide'}
+source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/DWD_data_wind_temp_2020.R")
+#netatmo data
+source("~/Urban_Heat_Island_Muenster/Netatmo/prep_plot_netatmo.R")
+source("~/Urban_Heat_Island_Muenster/Netatmo/merge_netatmo.R")
+source("~/Urban_Heat_Island_Muenster/Netatmo/QAQC_Netatmo_level_A_B.r") #need to execute supp weather data
+source("~/Urban_Heat_Island_Muenster/Netatmo/QAQC_Netatmo_level_C_D.R") #need to execute supp weather data
+
+#boxplot
+Netatmo_col=lapply(list_netatmo_level_D, `[`, 2)
+names(Netatmo_col)=as.character(seq(1, length(Netatmo_col)))
+names_netatmo=names(Netatmo_col)
+netatmo_d <- data.frame(x = unlist(Netatmo_col), 
+                   site = as.integer(rep(names(Netatmo_col)),
+                              times = sapply(Netatmo_col,length)))
+means <- aggregate(x ~  site, netatmo_d, median)
+means=round(means, 1)
+#add column with mean for August to metadata_merge
+for (i in names(list_netatmo_level_D)){
+  data=list_netatmo_level_D[[i]]
+  metadata_merge$mean_temp[metadata_merge$device_id==i]=mean(data$temperature, na.rm=T)
+  metadata_merge$meadian_temp[metadata_merge$device_id==i]=median(data$temperature, na.rm=T)
+  metadata_merge$max_temp[metadata_merge$device_id==i]=max(data$temperature, na.rm=T)
+  metadata_merge$min_temp[metadata_merge$device_id==i]=min(data$temperature, na.rm=T)
+  metadata_merge$sd_temp[metadata_merge$device_id==i]=sd(data$temperature, na.rm=T)
+  
+}
+metadata_merge$mean_temp=round(metadata_merge$mean_temp,digits = 1)
+ggplot(data=netatmo_d, aes(x = as.factor(site), y = x)) +
+  geom_boxplot()+
+  #theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+ #rotates the axix labels on x axis
+  xlab("Netatmo stations")+ #adds title for x axis
+  ylab("Temperature [°C]")+ #adds title for y axis
+  stat_summary(fun="mean", geom="point", size=1, col="black")+
+  theme_classic()
+  #geom_text(data=metadata_merge, aes(label=mean_temp, y=mean_temp+1), size=2)
+
+```
+
+```{r, out.width="350px",fig.cap="Map with distribution and mean temperatures for Netatmo stations", fig.show="hold", fig.align="center", echo=F}
+knitr::include_graphics("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/netatmo_map_na.png")
+```
+
+For the averaged time series of the vegetated sites a SARIMA (2,1,3) (0,1,0) [144] was fitted with a lambda of 0.274. The model parameters for the non-seasonal part denote that two autoregressive lags are included in the model and three moving average lags. The series was differenced once to achieve stationary. One seasonal integration was required to remove seasonality from the time series. The length of the season was calculated to be 144, which represents a daily seasonality for a time series with a ten-minute resolution. The residuals of the model were not normally distributed, which means that there is still information in the time series, which could not be captured by the model. No better fitting model could be found.  
+For the sealed sites, the time series was corrected with a lambda of -0.096. A SARIMA (4,1,0) (0,1,0) [144] was found to be the best fit to the data. This means that four autoregressive lags were included in the non-seasonal part of model and no moving average lags. The series was also differenced once and required one seasonal integration. The length of the season is the same as for the vegetated sites. For this model, the residuals were also not normally distributed, but no better model was found.
+
+
+## 3.2. Impact of blue infrastructure
+
+The water temperature T~W~ for the measuring points in the “Aasee” lake and the Aa stream are relatively high for July 2020. The iButton in the urban pond “Breul” stopped working at the end of July and was thus excluded from the analysis.
+The measuring site in the Aa stream after the stream passed city centre is the warmest, depicting the influence of the city on T~W~. The Aa stream runs in a concrete bed through the city centre. At the site "Renaturierung", after the city centre, it has a sandy river bed.
+The iButtons at "ULB" and "Georgskommende" were both shaded and displayed lower temperatures than the iButton at "Renaturierung" which was less shaded. The mean T~W~ does not differ between stagnant ("Aasee") and streaming water bodies ("Aa stream").  
+
+```{r echo=FALSE, fig.height=3, fig.width=5, fig.cap= "Boxplot of water temperatures in Münster. The dot displays the mean. The line within the box denotes the median and the boundaries display the interquartile range. Dots outside the box represent outlier values. The notch shows the confidence interval for the median.", message=FALSE, error=FALSE, warning=FALSE}
+
+#boxplot for water sites
+list_for_boxplot <- lapply(list_iButton_corr_tidy_WL, `[`, 3)
+#remove Muehlenhof and Aaseeanleger
+list_for_boxplot[[3]]=NULL
+#change names for label to indicate water bodies
+names(list_for_boxplot)=c("Aa stream (Georgskommende)", 
+                          "Aa stream (ULB)",
+                          "Aasee (Anleger)",
+                          "Aa stream (Renaturierung)",
+                          "Aasee (Muehlenhof)")
+dataframe_for_boxplot=do.call(cbind, list_for_boxplot)
+colnames(dataframe_for_boxplot)=names(list_for_boxplot)
+dataframe_for_boxplot=dataframe_for_boxplot%>%
+  pivot_longer(.,cols=colnames(dataframe_for_boxplot), 
+               names_to="Sites",values_to="Temperature [°C]")
+#plot
+ggplot(data=dataframe_for_boxplot, aes(y=`Temperature [°C]`, x=Sites))+
+  geom_boxplot(notch = TRUE, na.rm=T, show.legend = T)+
+  stat_summary(fun.y="mean", na.rm=T)+
+  coord_flip()+
+  theme_bw()
+
+```
+
+Furthermore, the integral of the difference between water and air temperature showed that for all sites in July 2020 the overall warming potential is larger than the cooling potential, which can be seen in Tab. 3. This means that water bodies tend to increase the UHI effect rather than acting as a cooling influence. The magnitude of the cooling to warming ratio differed between sites. Most notably, the potential warming influence at the “Aaseeanleger” outweighs the cooling influence by a factor of nearly 50. In July and August 2019, the results were ambiguous. Considering the overall potential, for some water bodies, the potential cooling predominated the warming, while for others the warming potential was larger. Larger, stagnent water bodies such as the "Aasee" ("Aaseeanleger" and "Muehlenhof") showed a greater warming influence than the Aa stream.  
+
+```{r results='asis', echo=FALSE, message=F, error=F, warning=FALSE}
+
+source("~/Urban_Heat_Island_Muenster/Logger/2020/integrate_differences_green_blue.r") 
+AUC_data_frame_short=AUC_data_frame[,3:4]
+stargazer(AUC_data_frame_short, rownames = F, title = "Ratio of the intergral of total warming to total cooling potential", summary=FALSE, digits=1, header = F)
+
+
+Aasee_WOLM=metadata$Logger_ID[metadata$Standort_ID=="Muehlenhof_WOL"]
+Aasee_WOLM_data=data.frame(list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Aasee_WOLM])
+
+Aasee_VLM=metadata$Logger_ID[metadata$Standort_ID=="Muehlenhof_VL"]
+Aasee_VLM_data=data.frame(list_iButton_corr_tidy[names(list_iButton_corr_tidy)==Aasee_VLM])
+
+source("~/Urban_Heat_Island_Muenster/Logger/2020/split_day_night_2020.r") 
+source("~/Urban_Heat_Island_Muenster/Logger/2020/water_air_split_significance_tests.r") 
+```
+
+Large water bodies had a negative effect for the UHI intensity in Münster, as all measuring sites at the "Aasee" showed an overall warming potential. Similar results were obtained for the air temperature above the water surface.  T~WS~ (`r Aasee_WOL_mean_day` °C) at daytime was slightly, but significantly cooler than T~GI~ (`r median(Aasee_VL_data_day[,1], na.rm=T)` °C) upwind of the “Aasee” (p-value: `r Aasee_wil_day[["p.value"]]`). During nighttime, the opposite effect was found, with a higher TWS of `r Aasee_WOL_mean_night` °C than the T~GI~ of `r median(Aasee_VL_data_night[,1], na.rm=T)` °C (p-value: `r Aasee_wil_night[["p.value"]]`). This means that the "Aasee" significantly warms the air over its surface during the night, but cools it only very slightly during the day.  
+
+```{r echo=FALSE, fig.height=2.5, fig.width=6, fig.cap="Measurements of T~GI~ and T~WS~ with the diverging day-night pattern. During nighttime T~WS~ is greater than T~GI~ while the contrary can be observed during the day.", message=FALSE, error=FALSE, warning=FALSE}
+
+ggplot()+
+  geom_line(data=Aasee_WOLM_data, aes(X53.Datetime.1 , X53.Temperature_C_w_off,
+                                     color="Water Surface \n Temperature"))+
+  geom_line(data=Aasee_VLM_data, aes(X39.Datetime.1 , X39.Temperature_C_w_off,
+                                        color="Air Temperature"))+
+  theme_classic()+
+  #scale_color_manual(values=c("darkgrey", "black"))+
+  labs(color="Site")+
+  ylab("Temperature [°C]")+
+  xlab("Date")
+```
+
+
+
+```{r, echo=F, message=F, warning=F, error=F}
+
+#use list_iButton_corr_tidy_date and create new column for factor
+time_factor=rep(NA, length(list_iButton_corr_tidy_date))
+list_iButton_corr_tidy_date_factor=mapply(cbind, list_iButton_corr_tidy_date, "Time_factor"=time_factor, SIMPLIFY=F)
+
+#create times for sunriseplusdawn, sunriseminusdawn etx
+sun2$sunrise_plusDawn=sun2$sunrise+0.5*60*60 #add 30 min dawn
+sun2$sunset_minusDusk=sun2$sunset-0.5*60*60 #substract 30min dawn
+sun2$sunrise_minusDawn=sun2$sunrise-0.5*60*60 #substract 30 min dawn
+sun2$sunset_plusDusk=sun2$sunset+0.5*60*60 #add 30min dawn
+
+#for loop to go through loggers 
+#use sunrise/sunset data
+#add day/night/dawn/dusk as factor to list
+for(x in 1:length(list_iButton_corr_tidy_date_factor)){
+  dat=list_iButton_corr_tidy_date_factor[[x]]
+  for(i in 1:length(sun2$date)){
+    sun=sun2$date[i] #get date 
+    dat_day=dat[dat$Date==sun,] #subset the day that matches i from sun from dataframe
+    #add factor "day" to time from sunrise to sunset (without dawn)
+    dat_day$Time_factor[dat_day$Datetime.1>=sun2$sunrise_plusDawn[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunset_minusDusk[sun2$date==sun]]="day" 
+    #add factor "night" to time from sunset to sunrise (without dawn)
+    dat_day$Time_factor[dat_day$Datetime.1<=sun2$sunrise_minusDawn[sun2$date==sun]|dat_day$Datetime.1>=sun2$sunset_plusDusk[sun2$date==sun]]="night" 
+    #add factor "dawn" to the hour of sunrise
+    dat_day$Time_factor[dat_day$Datetime.1>=sun2$sunrise_minusDawn[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunrise_plusDawn[sun2$date==sun]]="dawn"
+    #add factor "dusk" to hour of sunset
+    dat_day$Time_factor[dat_day$Datetime.1>=sun2$sunset_minusDusk[sun2$date==sun]&dat_day$Datetime.1<=sun2$sunset_plusDusk[sun2$date==sun]]="dusk"
+    #replace ????
+    dat[dat$Date==sun2$date[i],]=dat_day 
+  }
+  list_iButton_corr_tidy_date_factor[[x]]=dat
+}
+
+Ehrenpark=list_iButton_corr_tidy_date_factor[["87"]]
+Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
+
+
+#traffic data
+
+source("~/Urban_Heat_Island_Muenster/Logger/2020/descriptive_stats_2020.r")
+source("~/Urban_Heat_Island_Muenster/Logger/2020/prep_data_for_wind_stream.R")
+source("~/Urban_Heat_Island_Muenster/supplementary_weather_data/read_in_wind_rad_data_DWD.r") 
+
+temp=list_iButton_corr_tidy_Aegidii[[1]][,3]
+temp_two=list_iButton_corr_tidy_Aegidii[[2]][,3]
+temp_three=list_iButton_corr_tidy_Aegidii[[3]][,3]
+temp_four=list_iButton_corr_tidy_Aegidii[[4]][,3]
+temp_five=list_iButton_corr_tidy_Aegidii[[5]][,3]
+date=list_iButton_corr_tidy_Aegidii[[1]][,2]
+factor=list_iButton_factor_Aegidii[[1]][,6]
+
+#use wind
+temp_wind=data.frame(wind$MESS_DATUM, 
+                     wind$wind_speed,
+                     temp,
+                     temp_two,
+                     temp_three,
+                     temp_four,
+                     temp_five,
+                     date,
+                     factor)
+
+source("~/Urban_Heat_Island_Muenster/traffic_data.r")
+source("~/Urban_Heat_Island_Muenster/traffic_air_stream_analysis.r")
+
+#plot  with temp diff and traffic
+Ehrenpark=list_iButton_corr_tidy[["87"]]
+Haus_Kump=list_iButton_corr_tidy[["64"]]
+datafortraffic=cbind(Ehrenpark, Haus_Kump)
+#aggregate temp values by hour
+datafortraffic$datehour <- cut(as.POSIXct(datafortraffic$Datetime.1,
+                              format="%Y-%m-%d %H:%M:%S"), breaks="hour") 
+datafortraffic$diff=datafortraffic[,3]-datafortraffic[,7]
+
+temp_agg=aggregate(diff ~ datehour, datafortraffic, mean,na.action = "na.pass")
+temp_agg$datehour=as.POSIXct(temp_agg$datehour)
+cor_traffic=cor.test(hourly_diff, traffic_sub$cars, method="spearman")
+
+#for wind
+#prep data
+temp=list_iButton_corr_tidy_Aegidii[[1]][,3]
+temp_ref=list_iButton_corr_tidy_Aegidii[[5]][,3]
+temp_two=list_iButton_corr_tidy_Aegidii[[2]][,3]
+date=list_iButton_corr_tidy_Aegidii[[1]][,2]
+factor=list_iButton_factor_Aegidii[[1]][,6]
+
+Ehrenpark=list_iButton_corr_tidy_date_factor[["87"]]
+Haus_Kump=list_iButton_corr_tidy_date_factor[["64"]]
+
+#compare only temperatures with windspeeds >0 and wind dir from SW
+temp_wind=data.frame(wind_sw$MESS_DATUM, 
+                     wind_sw$wind_speed,
+                     temp,
+                     temp_two,
+                     temp_ref,
+                     Ehrenpark,
+                     Haus_Kump,
+                     date,
+                     factor)
+temp_wind$diff_HK_EP=Haus_Kump$Temperature_C_w_off-Ehrenpark$Temperature_C_w_off
+temp_wind$diff_HK_AE=Haus_Kump$Temperature_C_w_off-temp_wind$temp
+#for Ehrenpark
+cor_wind_EP_day=cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="day"],
+    temp_wind$diff_HK_EP[temp_wind$factor=="day"],
+    use = "na.or.complete",method = "spearman")
+
+cor_wind_EP_night=cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="night"],
+    temp_wind$diff_HK_EP[temp_wind$factor=="night"],
+    use = "na.or.complete", method = "spearman")
+#for first Aegidii
+cor_wind_AE_day=cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="day"],
+         temp_wind$diff_HK_AE[temp_wind$factor=="day"],
+         use = "na.or.complete",method = "spearman")
+
+cor_wind_AE_night=cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="night"],
+         temp_wind$diff_HK_AE[temp_wind$factor=="night"],
+         use = "na.or.complete", method = "spearman")
+```
+
+The mean daytime air temperature (`r mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="day"],na.rm=T)` °C) leeward of the “Aasee” at "Ehrenpark" is significantly cooler than the temperature windward of the “Aasee” (`r mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"],na.rm=T)` °C) (Fig. 10). The measurements were made 0.14 km (“Ehrenpark”) and 0.18 km (“Aegidiistraße”) from the shore of the “Aasee” (Google Inc. 2020). Opposingly the mean nighttime temperature downwind of the “Aasee” (`r mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="night"],na.rm=T)` °C) is significantly warmer than the upwind air temperature (`r mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="night"],na.rm=T)` °C). Further than the 0.18 km distance to the “Aasee”, no impact was found.  
+
+The amount of traffic on the street orthogonal to the “Aasee” is significantly negatively correlated with the difference in temperature “Haus Kump” and “Ehrenpark/Aegidiistraße” (the stations upwind and downwind of the “Aasee”) (Spearmann correlation: `r cor_traffic[["estimate"]]`, p-value: `r cor_traffic[["p.value"]]`) (Fig. 11).  This means that less vehicles are associated with less temperature difference between the sites.
+During the night, results from the Spearman correlation indicated, that there is a significant negative association between the temperature difference of “Haus Kump” and “Ehrenpark/Aegidiistraße” as well as wind speed from southwest winds (Ehrenpark: Spearmann correlation: `r cor_wind_EP_night[["estimate"]]`, p-value: `r cor_wind_EP_night[["p.value"]]` /Aegidiistraße: (Spearmann correlation: `r cor_wind_AE_night[["estimate"]]`, p-value: `r cor_wind_AE_night[["p.value"]]`). At daytime, the difference in air temperature is still significantly correlated with wind speed from the southwest, but the strength of the relationship is weaker than at night (Ehrenpark: Spearmann correlation: `r cor_wind_EP_day[["estimate"]]`, p-value: `r cor_wind_EP_day[["p.value"]]` /Aegidiistraße: (Spearmann correlation: `r cor_wind_AE_day[["estimate"]]`, p-value: `r cor_wind_AE_day[["p.value"]]`).
+For the iButtons further up the “Aegidiistraße”, no significant difference was found. This indicates that the influence of the "Aasee" lake is spatially very restricted.  
+
+```{r, out.width="430px",fig.cap="The measuring sites used to determine the influence of the “Aasee”. The inset panel shows the average wind direction for the study period in July 2020. The iButtons were placed upwind and downwind of the \"Aasee\". For clarity, only the sites where the \"Aasee\" had a measurable effect are shown on the map.", fig.show="hold", fig.align="left", echo=F, message=F, warning=F, error=F}
+knitr::include_graphics("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/BI_map_bw_na.png")
+```
+
+```{r echo=FALSE, fig.height=2.5, fig.width=7, fig.cap="Temperature difference between upwind iButton (Haus Kump) and downwind iButton (Ehrenpark). The temperature data is denoted by the solid line while the number of cars passing is displayed as dotted lines on the second axis.", message=FALSE, error=FALSE, warning=FALSE}
+
+#plot
+ggplot()+
+  geom_line(aes(temp_agg$datehour, temp_agg$diff, linetype="Temperature"))+
+  geom_line(aes(traffic_sub$datetime, traffic_sub$cars/1000, linetype="Cars"), size=1)+
+  theme_bw()+
+  ylab(bquote("Difference" ~T[downwind]~ "-" ~T[upwind]~ "[°C]"))+
+  xlab("Time")+
+  scale_y_continuous(sec.axis=sec_axis(trans = ~.*1000, name="Number of Cars passing"))+
+  scale_linetype_manual(values=c("solid","dotted"))+
+  labs(color="Legend")
+
+cor_wind_day=cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="day"],
+    temp_wind$diff_HK_EP[temp_wind$factor=="day"],
+    use = "na.or.complete",method = "spearman")
+
+cor_wind_night=cor.test(temp_wind$wind_sw.wind_speed[temp_wind$factor=="night"],
+    temp_wind$diff_HK_EP[temp_wind$factor=="night"],
+    use = "na.or.complete", method = "spearman")
+
+```
+
+# 4. Discussion
+
+## 4.1. Influence of green infrastructure on the magnitude of the UHI effect
+
+The significant difference in air temperature between GI and SI suggests that vegetated areas significantly reduce the air temperature in comparison to sealed areas. As the physical processes of the effects of shading and evapotranspiration on air temperature are well understood (Kappas 2009) it is reasonable to assume a causal relation. This assumption is also supported by Ferrini et al. (2020) who concluded in his recent metastudy, that vegetation cover reduces air temperature at both a micro and macro scale. The magnitude of potential cooling that was observed in Münster ties well with results from previous studies. A metaanalysis performed by Manteghi et al. (2015) also found that the mean air temperature in parks was 1 °C cooler than in surrounding areas. These findings support the idea of Yu and Hien (2006) that vegetated areas inside the city centre are an effective mean of cooling the ambient air temperature and thus improving the thermal comfort of the residents. 
+The correlation of T~SI~ with T~GI~-T~SI~ indicates that the magnitude of potential cooling from vegetation increases with air temperature. Shiflett et al. (2017) also found that the effect of vegetation was strongest during heat waves.  A possible explanation is presented by Gunawardena et al. (2017) who found that the ambient air temperature, among other variables, controls the sensible heat flux from the vegetated areas. Regarding urban planning, this implies that green areas are especially relevant during periods with high air temperature. Watkins et al. (2007) found that air temperature is the most common factor in determining thermal comfort. Sites with abundant vegetation thus have the potential to improve thermal comfort when it is needed most.  
+With climate change, heat waves will become more frequent and the air temperature will most probably increase (Chapman et al. 2017). Therefore, GI in cities will become even more important in the future to mitigate these effects. 
+
+Both SARIMA models need to be interpreted with caution, as the residuals were not normally distributed. Non-normal residuals indicate that there is still information in the data that was not captured by the model. Therefore, an analysis of the model coefficients for the two time series would be unreliable. Unfortunately, a more accurate model could not be found. The SARIMA models fitted to the time series hint towards a difference between the time series. Both the model parameters and the coefficients partially differed between the sites with GI and SI, indicating that the sites are behaving differently over time. For a more in depth and accurate interpretation, a better model would be needed.
+
+Limitations of the present study naturally include possibly confounding variables influencing the local air temperature, which cannot be mapped or controlled. Anthropogenic heat sources in direct proximity to the iButton, such as parking cars and frequent busses are a possibly confounding influence (Doick et al. 2014). Observed sources were noted at every location and are listed in the metadata table (App. 1), but their exact influence could not be determined. For the study, it was presumed, that the effect is approximately the same at every study location. It is important to stress that this study only quantified the effect of vegetation on a microscale. While it was proven that green areas decreased the air temperature, the extent of cooling could not be quantified from the existing data. Previous studies found that the cooling influence of a greenspace extends beyond its boundaries, such as Žuvela-Aloise et al. (2016) and Doick et al. (2014). The spatial extent of the cooling influence is impacted by both meteorological and topographical parameters (Žuvela-Aloise et al. 2016). The cool air can be transported to areas nearby, depending on wind conditions such as wind speed and direction (Žuvela-Aloise et al. 2016). Topographical parameters, such as elevation, also influence how well neighbouring areas can interact (Žuvela-Aloise et al. 2016). Münster has a flat relief and multiple open, vegetated spaces upwind of the city centre. Therefore, it is very likely that cooler air from vegetated areas will be transported through open spaces. Further research should be undertaken to investigate the transport from and the larger scale impact of green spaces in Münster and their effect on air temperature. 
+
+
+*Reasonability of citizen science data from Netatmo weather stations*
+
+Data collected from Netatmo devices provided valuable information about the background variability of the air temperature. The mean/median air temperature and its standard deviation as well as minimum/maximum temperatur were very similar to the temperature recorded by the iButtons. Netatmo stations, showing a similar spread of temperature, but they are more abundant with a larger spatial spread over the city. This indicates that the iButtons denote a representative cross-section of the situation in Münster, despite being spatially less abundant. The visual interpretation of the spatial distribution of the mean temperatures suggests that most Netatmo stations that are close to larger green spaces display cooler air temperatures (Fig. 7).  However, as there is no information available about the landcover and surroundings of the place where the device is mounted, the influence of the large green spaces could not be quantified. Another limitation of the data is, that the set-up of the devices is not known. While there are guidelines regarding height and distance to buildings, one cannot be sure that the devices were mounted correctly. Further, the surface albedo of the site is unkown so that differences in temperature might also be cause by the surface the device is mounted on. 
+A spatial analysis with remotely sensed data might provide enough background information to use the Netatmo stations as individual providers of temperature data. This was also suggested by Ampatzidis and Kershaw (2020) who advocated the combined use of multiple methods to compare and verify the results obtained through against each other. Nevertheless, the citizen science data of the Netatmo weather stations are a promising data source to study the spatial distribution of the UHI on a microscale, especially in residential areas.
+
+## 4.2. Influence of blue infrastructure on the magnitude of the UHI effect
+
+*Warming vs. cooling potential of water bodies*
+
+The most striking finding is that the BI has a significant warming potential at night. This is probably due to the flat profile of all the water bodies studied. A shallow depth causes the water to heat up quickly with the rising air temperature in early summer (Gunawardena et al. 2017) which can be seen by the relatively high T~W~ in Fig. 8. Because of the high thermal inertia of water (Gunawardena et al. 2017), the temperature stays high at night, while the air temperature drops below the water temperature. The integrals of the difference between air and water temperature clearly show that the potential warming effect outweighs the potential cooling effect for all the water body sites studied. A similar conclusion was reached by Manteghi et al. (2015), who inferred from a metaanalysis, that for a water body with temperatures around 20 °C the warming effect at night outweighs the cooling effect during the day. Nonetheless, the results of this study should be interpreted with caution, as they only depict a potential impact. One should bear in mind that the actual impact might be neglectable, even if the water could have a potentially large warming impact. To estimate the actual impact, further analysis of the water surface temperature was carried out.
+
+The results of TWS support the theory of the diverging impact of the “Aasee”. During nighttime, the averaged T~WS~ (`r Aasee_WOL_mean_night` °C) measured at the “Aasee” was significantly higher than T~GI~ (`r median(Aasee_VL_data_night[,1], na.rm=T)` °C), recorded at the beginning of the lake at “Haus Kump”. It can conceivably be hypothesised that during nighttime, the warm water heats the air over the water surface. During the daytime, however, the T¬WS (`r Aasee_WOL_mean_day` °C) drops slightly, but significantly below T~GI~ (`r median(Aasee_VL_data_day[,1], na.rm=T)` °C) and thus a cooling influence can be assumed. An important consideration regarding this result is, that a GI site was used. The comparison with a site in SI would have been more appropriate because cities consist mostly of SI, but there was no SI site at the beginning of the "Aasee". As the average temperature in SI was found to be about 1 °C higher than in GI, the daytime cooling influence on Si sites is probably larger.   
+Measuring the near-surface air temperature together with the water temperature and the air temperature over land instead of only studying the latter is essential, because of the processes happening at the air-water interface (Ampatzidis and Kershaw 2020). Wind and humidity both influence the evaporative flux and thus the thermal impact of the water body (Ampatzidis and Kershaw 2020). In contrast to the potential impact calculated from T~SI~-T~W~, measuring T~WS~ also accounts for those variables and thus depicts the actual impact the water body has on air the air temperature on a microscale.  
+Overall, water bodies are not an effective mean of mitigating the UHI impact. Quite the opposite is true, both the potential and actual impact are dominantly warming during nighttime. The little cooling effect the "Aasee" has during the day is outweighed by the nighttime warming and thus the UHI effect is amplified by large stagnant water bodies, rather than mitigated.
+
+*Large water bodies as fresh air corridor*
+
+The measurements of T~WS~ revealed a strong influence of the water on ambient air temperature. Therefore, it is valid to presume that the observed difference in air temperature upwind and downwind of the “Aasee” is due to the influence of the lake. The extent of the spatial scale on which the impact of the cooling (warming) of the “Aasee” is measurable, is mostly determined by how well the cooler (warmer) air is transported. Previous studies showed a strong impact of wind speed and direction on the extent of the influence of a water body on its environment (Völker et al. 2013). Based on studies with similar geometry and topography, an influence from the “Aasee” was expected for up to 100 to 300 meters leeward of the lake (Völker et al. 2013).  
+In this study, the influence could only be proven until the beginning of the “Aegidiistraße”. As there was no iButton deployed in SI upwind of the “Aasee”, a reference iButton downwind of the “Aasee” was chosen based on the topological similarity to the locations of the iButtons placed in the “Aegidiistraße”. Even though the chosen site is outside the proximity in which influences by water bodies were found in previous studies, (Manteghi et al. 2015), the possible confounding factors of this approach are apparent and therefore the results were interpreted with caution. The effect of the “Aasee” that could be observed for the first iButton in the “Aegidiistraße” could not be proven for the subsequent iButtons in the “Aegidiistraße”, which were closer to the city centre. It remains unclear whether the air stream effect is simply not present further up the “Aegidiistraße” or could not be measured with the existing setup. Nevertheless, the effect was apparently so weak that the street canyon did not act as a fresh air corridor for the city centre of Münster.
+The same temporal pattern that was found for T~WS~ in comparison to the reference site upwind of the “Aasee” could be observed for two sites 0.14 km and 0.18 km downwind of the “Aasee” (Google Inc. 2020). The difference in daytime and nighttime temperatures supports the hypothesis of the air stream effect. As discussed, this is due to the high thermal capacity of water bodies that causes both a cooling and a warming effect, depending on the time of day and season (Gunawardena et al. 2017).
+
+What is curious about this result is the difference in magnitude. For daytime the difference between the T~GI~ of “Haus Kump” and T~GI~ of “Ehrenpark” (`r mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="day"],na.rm=T)-mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="day"],na.rm=T)` °C) is lower than nocturnal differences (`r mean(Ehrenpark$Temperature_C_w_off[Ehrenpark$Time_factor=="night"],na.rm=T)
+mean(Haus_Kump$Temperature_C_w_off[Haus_Kump$Time_factor=="night"],na.rm=T)` °C). The daytime cooling is also slightly lower than those found by previous studies. The metaanalysis by Manteghi et al. (2015) reported cooling effects between 2 and 6 °C.  
+A similar day-night difference was found in the results of the correlation of air temperature and wind speeds from southwestern winds. As only the times when southwestern wind occurred were used for the correlation, one would expect the relationship to be similar for day and night. The data, however, displayed the same diverging day-night pattern of the comparison of the T~WS~ to T~GI~ downwind of the “Aasee”. At night the relationship between wind speed and temperature difference (Spearmann correlation: `r cor_wind_night[["estimate"]]` p-value: `r cor_wind_night[["p.value"]]`) was much stronger than during the day (Spearmann correlarion: `r cor_wind_day[["estimate"]]` p-value: `r cor_wind_day[["p.value"]]`). 
+
+*Influence of traffic on warming/cooling potential*
+
+Several potential explanations exist for this result. Possibly, the chosen reference station was too close to the Aa stream that feeds the “Aasee” at the upwind side and therefore may have been influenced by the effects of the water despite being upwind of the “Aasee”. Thus, the actual effect might be even larger than the T~WS~ indicated.  
+Another, more plausible, explanation is, that the heavily used street B54, which runs orthogonally to the “Aasee” and the “Aegidiistraße” mixes the air masses so that the effect is weakened. This theory aims to explain both the effect of the differing wind correlations and the different magnitudes relative to T~WS~.  
+As the wind correlation is stronger at night (Spearmann correlation: `r cor_wind_EP_night[["estimate"]]`, p-value: `r cor_wind_EP_night[["p.value"]]`) when there is less traffic and almost non-existent during the day (Spearmann correlation: `r cor_wind_EP_day[["estimate"]]`, p-value: `r cor_wind_EP_day[["p.value"]]`) when the street is highly used. Hence, the mixing of air masses by the street probably superimposes the wind effect. Another contributing factor might be the heating effect by the vehicles themselves, which could warm the air coming from the "Aasee".  
+Therefore, it seems plausible that the B54 impairs the expected cooling effect during daytime, which is a somewhat troubling finding. As the “Aasee” was found to act as a warming element during the night, little traffic enables the warm air to stream into the city unimpeded. During daytime, however, when the “Aasee” could potentially act as a cooling element, the traffic is highest and impairs the horizontal airstream the most. Thus, the importance of urban geometry regarding the intensity of the UHI and possible mitigation is evident.  
+Potentially, this pattern could impact the thermal comfort of local residents at both day- and nighttime. During days with high temperature, there is little cooling effect of the “Aasee” while at night the UHI effect is amplified by the warm air streaming from the lake. This supposition, however, would need to be investigated further. A possible approach would be to map the spatial extent of the effect more accurately and simultaneously access the thermal sensation of residents by interviewing them, as suggested by Steeneveld et al. (2014).
+	
+*Small Water Bodies*
+
+Münster has multiple small water bodies, as previously mentioned. All of them displayed a cooling and warming potential like that of the “Aasee”. The actual impact, however, is more difficult to quantify. It is thus important to emphasise that the size of the water body also impacts the spatial extent of its influence (Manteghi et al. 2015) simply due to the amount of water that determines the overall thermal capacity of a water body. Because of the abundance of small water bodies and the Aa stream in Münster, the actual effect of a single water body is difficult to study, as measuring points might be influenced by more than one water body. Multiple small water bodies considered together, however, proved to be effective in daytime cooling (Manteghi et al. 2015). Therefore, it is a plausible consideration that they are also contributing to nocturnal warming.  
+All in all, small stagnant water bodies don't seem to be a suitable mitigation strategy for the UHI effect. The Aa stream however, even though it contributed to the nocturnal warming, might have a trench effect by canalizing the fresh air stream. Compared to a street canyon canalizing the air, the Aa stream might be more effective. As the T~W~ during the day is mostly cooler than the air temperature, it would not warm the fresh air as much as an impervious street canyon would. 
+
+*Seasonality*
+
+Regarding the overall effect of water bodies on the UHI, different studies came to very ambiguous results. While some researchers found that water bodies did not contribute to mitigating the UHI effect (Steeneveld et al. 2014), multiple other studies proposed that even though BI warms the environment at nighttime, they still are the most effective mean of cooling the urban environment (Manteghi et al. 2015). Another experimental study found only a cooling effect (Syafii et al. 2016). Therefore, an essential consideration is the seasonality of the results, as both the UHI effect itself and the effects on the environment vary over the year. The highest UHI-values are found in summer, while UHI intensities are commonly lower in winter (van Hove et al. 2015). Especially water bodies behave differently over the year (Manteghi et al. 2015) and thus it is important to stress that the impact that was observed for June cannot be translated to other months of the year. In their metastudy, Ampatzidis and Kershaw (2020) also stressed, that the thermal impact is highly dependent on diurnal and seasonal variation in the evaporative flux between the water and the atmosphere. Previous studies found that the cooling influence of BI weakens from June on (Hathway and Sharples 2012), which corresponds with the findings from this study, that overall the warming effect outweighed the cooling effect.  
+
+The results of the difference between T~W~ and T~GI~ for the “Aasee” in August and September 2019 are particularly interesting regarding the seasonal aspect. While the air temperature increased in the second half of August 2019 and dropped again at the beginning of September, the water temperature of the “Aasee” decreases much slower than the air temperature, due to the high thermal inertia of water (Gunawardena et al. 2017). As a result, the “Aasee” has a great warming potential during September (Fig. 12). The water temperature T~W~ is notably larger than T~GI~, not only during nighttime but also at daytime, particularly after a sharp drop in temperature.  
+Even though the potential warming by water bodies during autumn probably does not negatively affect thermal comfort, other aspects of the socio-ecosystem mentioned in the introduction come into focus more when studying the UHI in cooler seasons. While research such as of van Hove et al. (2015) mostly focused on UHI during summer and its impacts on the thermal comfort of residents, recently the changes in plant phenology due to the UHI effect are increasingly brought to the force. Georg Wohlfahrt et al. (2019) found in their study that warmer temperatures and a high degree of urbanisation were related to later leaf senescence in autumn. Therefore, the warming potential by water bodies is an extremely interesting parameter to study in ecological regard.  
+For  further research, it would be extremely interesting to assess the BI over the whole year to determine their overall influence on the UHI and resulting consequences.  
+
+```{r, out.width="400px",fig.cap="Temperature measured at the \"Aasee\" (Mühlenhof) in September, after a period of high temperatures in late August. The water temperature is notably higher than air temperature in GI during a considerable amount of time.", fig.show="hold", fig.align="center", echo=F, }
+knitr::include_graphics("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/Aasee_muehlenhof_bw_sep_2019.png")
+```
+For further research, it would be extremely interesting to assess the BI over the whole year to determine their overall influence on the UHI and resulting consequences.
+
+## 4.3. Conclusion
+
+This study aimed to examine the temporal and spatial characteristics of the UHI in Münster. Two main goals were to explore the influences of GI and BI on air temperature. For GI the results indicate that vegetated areas significantly reduce the local air temperature, especially with increasing temperature.  
+For BI, the results were less distinct: For all water bodies that were studied, a daytime cooling potential and a nocturnal warming potential were found. The potential influence could be verified by the water surface measurements, which the results also highlighted the importance of urban geometry regarding the effectivity of BI. The “Aasee” was found to transport air into the city and to therefore influence the ambient air temperature on a larger scale. However, due to the heavily frequented street B54 that is running orthogonally to the wind corridor, the transport is likely impaired during the day. Consequently, less cool air is transported into the city centre during the day, but the nocturnal transport of warm air is much less affected, due to the reduced nocturnal traffic volume. The influence of the “Aasee” could only be proven until 0.18 km away from the shore. Together, the present findings confirm the importance of GBI in cities to mitigate the UHI effect. At the same time, key questions regarding the spatial extent of greenspace cooling and the overall impact of BI over the year were raised. These fascinating questions provide a lot of research potential to be addressed in future studies.
+
+
+# 5. Acknowledgements
+
+I would like to express my sincere gratitude to my primary supervisor, M.Sc. Laura Ehrnsperger, and my secondary supervisor, Dr Benjamin Kupilas for their tremendously helpful advice and suggestions, and many constructive discussions. I really appreciated your support and guidance at every stage of the project. Additionally, I would like to thank Dr Mauricio Cruz Mantoani and Hilary Redmond for their insightful comments and constructive criticism, as well as Pia Löttert for her expertise in graphic design.  
+Many thanks to my flatmates, family and friends who offered both unwavering encouragement and useful criticism.  
+I would also like to thank the Climatology Group and the Department for Mobility and Geotechnical Engineering for kindly providing the supplementary data used. My thanks extend to the German Weather Service (DWD) and Netatmo as well the individual owners of Netatmo stations for making their data available online. 
+
+\newpage
+# 6. Originality statement
+
+Hiermit versichere ich, dass die vorliegende Arbeit mit dem Titel "Spatial and temporal characteristics of the Urban Heat Island in Münster: How does temperature differ with land use?" selbstständig verfasst worden ist, dass keine anderen Quellen und Hilfsmittel als die angegebenen benutzt worden sind und dass die Stellen der Arbeit, die anderen Werken – auch elektronischen Medien – dem Wortlaut oder Sinn nach entnommenen wurden, auf jeden Fall unter Angabe der Quelle als Entlehnung kenntlich gemacht worden sind.  
+
+Ich erkläre mich mit einem Abgleich der Arbeit mit anderen Texten zwecks Auffindung von Übereinstimmungen sowie mit einer zu diesem Zweck vorzunehmenden Speicherung der Arbeit in eine Datenbank einverstanden. 
+
+
+
+
+\newpage
+
+```{r, echo=FALSE, results='asis'}
+cat("\\onecolumn")
+```
+
+# 7. References
+
+
++ AG Klimatologie (2020) Primärdaten Wetterstation GeoDach 2020
++ Alexander P, Mills G (2014) Local Climate Classification and Dublin’s Urban Heat Island. Atmosphere, 5(4):755–774
++ Ampatzidis P, Kershaw T (2020) A review of the impact of blue space on the urban microclimate. The Science of the total environment(730)
++ Bell S (2019). Available from https://github.com/SiBell/netatmo-data-downloader (accessed September 2020)
++ Benz SA, Bayer P, Blum P (2017) Identifying anthropogenic anomalies in air, surface and groundwater temperatures in Germany. The Science of the total environment, 584-585:145–153
++ Bernhofer C (1984): Jahreszeitliche und tägliche Variationen einer städtischen Wärmeinsel auf Grund von Topographie und Windverhältnissen. Archives for Meteorology, Geophysics and Bioclimatology, 34(1):121–139
++ Bowler DE, Buyung-Ali L, Knight TM, Pullin AS (2010) Urban greening to cool towns and cities: A systematic review of the empirical evidence. Landscape and Urban Planning, 97(3):147–155
++ Broadbent AM, Coutts AM, Nice KA, Demuzere M, Krayenhoff ES, Tapper NJ, Wouters H (2019) The Air-temperature Response to Green/blue-infrastructure Evaluation Tool (TARGET v1.0): an efficient and user-friendly model of city cooling. Geosci. Model Dev., 12(2):785–803
++ Burgess C (2016) Characterizing air and soil temperatures along an urban gradient. Master Thesis, Syracuse
++ Campbell Scientific Technical Communications Product Manual: HC2S3: Temperature and Relative Humidity Probe
++ Campbell Scientific Technical Communications (2020) CR300 Product Manual
++ Chapman L, Bell C, Bell S (2017) Can the crowdsourcing data paradigm take atmospheric science to a new level? A case study of the urban heat island of London quantified using Netatmo weather stations. Int. J. Climatol., 37(9):3597–3605
++ Cheung HKW, Levermore GJ, Watkins R (2010) A low cost, easily fabricated radiation shield for temperature measurements to monitor dry bulb air temperature in built up urban areas. Building Services Engineering Research and Technology, 31(4):371–380
++ Chow WTL, Roth M (2006) Temporal dynamics of the urban heat island of Singapore. Int. J. Climatol., 26(15):2243–2260
++ Christen A, Vogt R (2004) Energy and radiation balance of a central European city. Int. J. Climatol., 24(11):1395–1421 
++ Deutscher Wetterdienst (2019a) Dämmerungszeiten EDDG Münster. Available from https://www.dwd.de/DE/fachnutzer/luftfahrt/teaser/luftsportberichte/eddg/node.html (accessed August 2020)
++ Deutscher Wetterdienst (2019b) Deutschlandwetter im August 2019
++ Deutscher Wetterdienst (2019c) Deutschlandwetter in September 2019
++ Deutscher Wetterdienst (2020a) Klimadaten Deutschland - Stundenwerte (Archiv). Münster/Osnabrück. Available from https://www.dwd.de/DE/leistungen/klimadatendeutschland/klarchivstunden.html (accessed August 2020)
++ Deutscher Wetterdienst (2020b) Deutschlandwetter im Juli 2020
++ Doick KJ, Peace A, Hutchings TR (2014) The role of one large greenspace in mitigating London's nocturnal urban heat island. The Science of the total environment(493):662–671
++ Ferrini F, Fini A, Mori J, Gori A (2020) Role of Vegetation as a Mitigating Factor in the Urban Context. Sustainability, 12(10):4247
++ Gago EJ, Roldan J, Pacheco-Torres R, Ordóñez J (2013) The city and urban heat islands: A review of strategies to mitigate adverse effects. Renewable and Sustainable Energy Reviews(25):749–758
++ Google Inc. (2020). Available from https://www.google.com/maps/@51.9549372,7.6170464,13.75z (accessed August 2020)
++  Grimm NB, Faeth SH, Golubiewski NE, Redman CL, Wu J, Bai X, Briggs JM (2008) Global Change and the Ecology of Cities. Science, New Series, 319(5864):756–760
++ Gunawardena KR, Wells MJ, Kershaw T (2017) Utilising green and bluespace to mitigate urban heat island intensity. The Science of the total environment, 584-585:1040–1055
++ Hathway EA, Sharples S (2012) The interaction of rivers and urban form in mitigating the Urban Heat Island effect: A UK case study. Building and Environmen: the international journal of building science and its applications, 58:14–22
++ Hsieh C-M, Huang H-C (2016) Mitigating urban heat islands: A method to identify potential wind corridor for cooling and ventilation. Computers, Environment and Urban Systems, 57:130–143
++ Hubbart J, Link T, Campbell C, Cobos D (2005) Evaluation of a low-cost temperature measurement system for environmental applications. Hydrol. Process., 19(7):1517–1523
++ Hubbart JA (2011) An Inexpensive Alternative Solar Radiation Shield for Ambient Air Temperature Micro-Sensors. Journal of Natural & Environmental Sciences, 2(2):9–14
++ Hyndman RJ, Athanasopoulos G (2018) Forecasting: Principles and Practice. OText, Melbourne, Australia 
++ Kappas M (2009) Klimatologie: Klimaforschung im 21. Jahrhundert - Herausforderung für Natur- und Sozialwissenschaften. Spektrum Akademischer Verlag, Heidelberg
++ Kim Y-H, Ryoo S-B, Baik J-J, Park I-S, Koo H-J, Nam J-C (2008) Does the restoration of an inner-city stream in Seoul affect local thermal environment? Theor Appl Climatol, 92(3-4):239–248
++ Kleerekoper L, van Esch M, Salcedo TB (2012) How to make a city climate-proof, addressing the urban heat island effect. Resources, Conservation and Recycling, 64:30–38
++ Lai L-W, Cheng W-L (2009) Air quality influenced by urban heat island coupled with synoptic weather patterns. The Science of the total environment, 407(8):2724–2733
++ Manteghi G, Limit HB, Remaz D (2015) Water Bodies an Urban Microclimate: A Review. MAS, 9(6)
++ Maxim Integrated (2015) Thermochron iButton Device. DS1921G. Reference Manual
++ Mayer F, Schiller J (2017) Bundeskonzept Grüne Infrastruktur; Grundlagen des Naturschutzes zu Planungen des Bundes, Bonn
++ Meier F, Fenner D, Grassmann T, Otto M, Scherer D (2017) Crowdsourcing air temperature from citizen weather stations for urban climate research. Urban Climate, 19:170–191
++ Moritz Fuchs Elektronik (2018) Datenblatt MF1921G/H/Z: iButton TemperaturiButton wasserfest nach IPX8, Weingarten
++ Müller N, Kuttler W, Barlag A-B (2014) Counteracting urban climate change: adaptation measures and their effect on thermal comfort. Theor Appl Climatol, 115(1-2):243–257
++ Musco, Francesco (Ed) (2016) Counteracting Urban Heat Island Effects in a Global Climate Change Scenario. Springer International Publishing, Cham
++ Netatmo (2020). Available from https://dev.netatmo.com/apidocumentation/weather#getpublicdata (accessed September 2020)
++ Oke TR (1973) City size and the urban heat island. Atmospheric Environment, 7(8):769–779
++ Oke TR (ed) (2010) The Heat Island of the Urban Boundary Layer: Characteristics, Causes and Effects
++ Perini K, Sabbion P (2017) Urban Sustainability and River Restoration: Green and Blue Infrastructure. John Wiley & Sons, Incorporated
++ Post P, Kärner O (2013) Time Series Analysis: A New Methodology for Comparing the Temporal Variability of Air Temperature. Journal of Climatology, 2013:1–6
++ R Studio Team (2019) RStudio: Integrated Development Environment for R, Boston, MA
++ Renkhoff R (2020) Primärdaten Verkehr Stundenwerte Zählung KFZ/FG Stadt Münster 2019/2020 Kontenpunkt 01140 Aegidiitor, Münster
++ Sachindra DA, Ng AWM, Muthukumaran S, Perera BJC (2016) Impact of climate change on urban heat island effect and extreme temperatures: a case-study. Q.J.R. Meteorol. Soc., 142(694):172–186
++ Shiflett SA, Liang LL, Crum SM, Feyisa GL, Wang J, Jenerette GD (2017) Variation in the urban vegetation, surface temperature, air temperature nexus. The Science of the total environment, 579:495–505
++ Soltani A, Sharifi E (2017) Daily variation of urban heat island effect and its correlations to urban greenery: A case study of Adelaide. Frontiers of Architectural Research, 6(4):529–538
++ Stadt Münster (2015) Klimaanpassungskonzept
++ Stadt Münster (2018) Münster im Spiegel der Zahlen - 2018
++ Stadt Münster – Informationsmanagement und Statistikdienststelle (2019) Jahres-Statistik 2018 der Stadt Münster - Kapitel Bevölkerung
++ Steeneveld GJ, Koopmans S, Heusinkveld BG, Theeuwes NE (2014) Refreshing the role of open water surfaces on mitigating the maximum urban heat island effect. Landscape and Urban Planning, 121:92–96
++ Stewart ID (2011) A systematic review and scientific critique of methodology in modern urban heat island literature. Int. J. Climatol., 31(2):200–217
++ Stewart ID, Oke TR (2012) Local Climate Zones for Urban Temperature Studies. Bull. Amer. Meteor. Soc., 93(12):1879–1900
++ Syafii NI, Ichinose M, Wong NH, Kumakura E, Jusuf SK, Chigusa K (2016) Experimental Study on the Influence of Urban Water Body on Thermal Environment at Outdoor Scale Model. Procedia Engineering, 169:191–198
++ Thermodata Pty. (2008) Thermodata installation and user manual
++ United Nations (2019) World Urbanization Prospects: The 2018 Revision (ST/ESA/SER.A/420): The 2018 Revision, New York
++ van Hove LWA, Jacobs CMJ, Heusinkveld BG, Elbers JA, van Driel BL, Holtslag AAM (2015) Temporal and spatial variability of urban heat island and thermal comfort within the Rotterdam agglomeration. Building and Environment, 83:91–103
++ Venter ZS, Brousse O, Esau I, Meier F (2020) Hyperlocal mapping of urban air temperature using remote sensing and crowdsourced weather data. Remote Sensing of Environment, 242:1–14
++ Verein Deutscher Ingenieure (2012) Umweltmeteorologie - Meteorologische Messungen - Lufttemperatur
++ Völker S, Baumeister H, Claßen T, Hornberg C, Kistemann T (2013) Evidence for the temperature-mitigating capacity of urban blue space – a health geographic perspective. Erdkunde, 67(4):355–371
++ Watkins R, Palmer J, Kolokotroni M (2007) Increased Temperature and Intensification of the Urban Heat Island: Implications for Human Comfort and Urban Design. Built Environment, 33(1):85–96
++ Wilby RL (2008) Constructing climate change scenarios of urban heat island intensity and air quality. Environ. Plann. B, 35(5):902–919
++ Wohlfahrt G, Tomelleri E, Hammerle A (2019) The urban imprint on plant phenology. Nature Ecology & Evolution, 12(3):1668–1674
++ Wu Z, Zhang Y (2019) Water Bodies’ Cooling Effects on Urban Land Daytime Surface Temperature: Ecosystem Service Reducing Heat Island Effect. Sustainability, 11(3):787
++ Yu C, Hien WN (2006) Thermal benefits of city parks. Energy and Buildings, 38(2):105–120
++ Zhou B, Rybski D, Kropp JP (2017) The role of city size and urban form in the surface urban heat island. Scientific reports, 7(1):4791
++ Žuvela-Aloise M, Koch R, Buchholz S, Früh B (2016) Modelling the potential of green and blue infrastructure to reduce urban heat load in the city of Vienna. Climatic Change, 135(3-4):425–438
+
+\newpage 
+
+ 
+
+# 8. Appendices
+##  8.1. Link to R-scripts
+The R-Scripts and the RMarkdown file that were used to create the thesis can be found under the link:  
+
+https://github.com/DanaLooschelders/Urban_Heat_Island_Muenster
+
+##  8.2. Metadata Table
+```{r results='asis', echo=FALSE}
+options(digits=8)
+metadata_append=read.table(file="tables/metadata_short.csv", sep=";", dec=",", header=T)
+metadata_append$Latitude=metadata_append$Latitude/1000000
+metadata_append$Longitude=metadata_append$Longitude/100000
+
+knitr::kable(metadata_append,
+             col.names=c("ID", "Type", "Height [m]", "Place" , "Latitude","Longitude", "Heat sources" ),
+             caption="Metadata 2020")
+```
+\newpage
+##  8.3. Descriptive Statistics of July 2020
+```{r results='asis', echo=FALSE}
+logger_2020=read.table(file="tables/2020-07-07 overall_stats.csv", sep=";", dec=",", header=T)
+knitr::kable(logger_2020,
+             col.names=c("ID", "Mean", "Median", "Standard Deviation"),
+             caption="Descriptive Statistics July 2020")
+```
+
+```{r, out.width="350px",fig.cap="Boxplot for air temperature in July 2020", fig.show="hold", fig.align="center", echo=F}
+knitr::include_graphics("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/boxplot_jul_2020.png")
+```
+
+
+\newpage
+##  8.4. Calibration Results
+
+```{r results='asis', echo=FALSE}
+calibr=read.table(file="tables/Calibration_results.csv", sep=";", dec=",", header=T)
+knitr::kable(calibr,
+             col.names=c("ID", "First Offset", "Second Offset", "Difference"),
+             caption="Data from Intercalibration and Drift Test")
+```
+\newpage
+## 8.5 Boxplots for air temperature of the 2019 measuring periods
+```{r, out.width="350px",fig.cap="Boxplot for air temperature in August 2019", fig.show="hold", fig.align="center", echo=F}
+knitr::include_graphics("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/Aug_2019_boxplot.png")
+```
+
+```{r, out.width="350px",fig.cap="Boxplot for air temperature in September 2019", fig.show="hold", fig.align="center", echo=F}
+knitr::include_graphics("C:/Users/danan/Documents/Urban_Heat_Island_Muenster/Pics/boxplot_sep_2019.png")
+```
+
