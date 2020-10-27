@@ -625,10 +625,11 @@ I would also like to thank the Climatology Group and the Department for Mobility
 \newpage
 # 6. Originality statement
 
-Hiermit versichere ich, dass die vorliegende Arbeit mit dem Titel "Spatial and temporal characteristics of the Urban Heat Island in Münster: How does temperature differ with land use?" selbstständig verfasst worden ist, dass keine anderen Quellen und Hilfsmittel als die angegebenen benutzt worden sind und dass die Stellen der Arbeit, die anderen Werken – auch elektronischen Medien – dem Wortlaut oder Sinn nach entnommenen wurden, auf jeden Fall unter Angabe der Quelle als Entlehnung kenntlich gemacht worden sind.  
+I declare herewith, that the thesis "Spatial and temporal characteristics of the Urban Heat Island in Münster: How does temperature differ with land use?" is my own original work. I have clearly  referenced, in  both the text and the  bibliography  or references, all sources (either from a printed  source, internet or any other source) used in the work.
 
-Ich erkläre mich mit einem Abgleich der Arbeit mit anderen Texten zwecks Auffindung von Übereinstimmungen sowie mit einer zu diesem Zweck vorzunehmenden Speicherung der Arbeit in eine Datenbank einverstanden. 
+I confirm that I understand that my work may be electronically checked for plagiarism by the use  of  plagiarism  detection  software  and  stored  on a  third party’s  server  for  eventual  future comparison.   
 
+Münster, 21 Sepetmber 2020  
 
 
 
@@ -720,10 +721,11 @@ cat("\\onecolumn")
 
 # 8. Appendices
 ##  8.1. Link to R-scripts
-The R-Scripts and the RMarkdown file that were used to create the thesis can be found under the link:  
+The R-scripts and the RMarkdown file that were used to create the thesis can be found under the following link:  
 
 https://github.com/DanaLooschelders/Urban_Heat_Island_Muenster
 
+\newpage
 ##  8.2. Metadata Table
 ```{r results='asis', echo=FALSE}
 options(digits=8)
