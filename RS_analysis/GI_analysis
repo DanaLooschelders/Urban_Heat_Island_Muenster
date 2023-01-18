@@ -1,0 +1,663 @@
+#Author: Dana Looschelders
+#This Script executes the following tasks
+  #Prep Logger Data for 2020
+  #prep tree cover density 
+  #prep NDVI data
+  #extract values for 20 m and 100 m Buffer around point measurements
+  #calculate linear regression between temperature and green infrastructure characteristics
+  #loess plot (Locally weighted smoothing) to detect change in relationship
+  #test, which threshold of tree cover density leads to effective cooling
+
+library(readxl)
+library(reshape2)
+library(dplyr)
+library(tidyverse)
+#library(vegan)
+library(ggbiplot)
+library(gridExtra)
+library(RColorBrewer)
+#library(ggfortify)
+library(broom)
+library(data.table)
+library(cluster)
+
+library(ggpubr)
+library(raster)
+library(sp)
+library(rgdal)
+library(mapview)
+library(readxl)
+
+####prep logger data####
+setwd("C:/00_Dana/Uni/2. Mastersemester/Fernerkungsprojekt/Urban_Heat_Island_Muenster")
+#to map all July 2020 data together execute the following scripts
+source("C:/00_Dana/Uni/2. Mastersemester/Fernerkungsprojekt/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_03.07.2020.r",echo = TRUE)
+source("C:/00_Dana/Uni/2. Mastersemester/Fernerkungsprojekt/Urban_Heat_Island_Muenster/Logger/2020/start_time_correction.R",echo = TRUE) #sets all logger to same starting point
+source("C:/00_Dana/Uni/2. Mastersemester/Fernerkungsprojekt/Urban_Heat_Island_Muenster/Logger/2020/subset_use_only_for_03.07_data.r",echo = TRUE) 
+source("C:/00_Dana/Uni/2. Mastersemester/Fernerkungsprojekt/Urban_Heat_Island_Muenster/Logger/2020/iButtons-Check_total_DL_from_17.07.2020_as_2nd_list.r",echo = TRUE)
+source("C:/00_Dana/Uni/2. Mastersemester/Fernerkungsprojekt/Urban_Heat_Island_Muenster/Logger/2020/start_time_correction_for_2nd_list.R",echo = TRUE) #sets all logger to same starting point
+source("C:/00_Dana/Uni/2. Mastersemester/Fernerkungsprojekt/Urban_Heat_Island_Muenster/Logger/2020/merge_july_2020_data.R",echo = TRUE)
+
+
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island/Data/Data_kartierung_vegetation")
+meta<-read_excel(path="Sensortabelle_Kartierung_Stand.27.11_korrigiert.xlsx")
+meta<-meta[-1,]
+meta$FVC<-as.numeric(meta$Krautschicht)+as.numeric(meta$Straeucher)+as.numeric(meta$Baeume)
+FVC<-meta[,c("FVC", "Logger_ID")]
+
+####prep remote sensing data####
+###Planet scope 
+setwd("D:/ms2020new_psscene_analytic_sr_udm2/files/")
+
+#load file names
+files<-list.files(pattern="harmonized_clip.tif")
+files_list<-vector(mode='list', length=length(files))
+names(files_list)<-files
+
+#read files into list
+for(i in files){
+  tryCatch({
+    print(i)
+    #read in files and set crs
+    files_list[[i]]<-stack(i)
+  }, error=function(e){message("Caught an error")})
+}
+#merge
+#ugly, but it works (no clue why do.call didnt work)
+mos<-raster::mosaic(files_list[[1]], files_list[[2]], files_list[[3]], files_list[[4]],
+                    files_list[[5]], files_list[[6]], files_list[[7]], files_list[[8]],  fun="mean")
+spplot(mos) #plot
+#crop to study area
+crs(mos) # +proj=utm +zone=32 +datum=WGS84 +units=m +no_defs
+
+
+#calculate NDVI Index
+NDVI<-(mos[[4]]-mos[[3]])/(mos[[4]]+mos[[3]])
+mapview(NDVI)+mapview(SPpoints)
+
+#load points
+setwd("C:/Users/Dana/sciebo/UHI_Projekt_Fernerkundung/Trainingsdaten/Logger/Rohdaten/")
+points=read_excel(path = "Sensortabelle_Kartierung_Stand_22.07.2020_DL_ohne_meta.xlsx", 
+                  col_names = T, na = "NA")
+gadm<-readRDS("gadm36_DEU_2_sp.rds")
+crs(gadm)
+plot(points$Lat, points$Lon)
+
+#points<-points[-1,]
+points$Lat<-points$Lat/1000000
+points$Lon<-points$Lon/1000000
+
+SPpoints <- SpatialPointsDataFrame(coords = c(points[,c( "Lon", "Lat")]),
+                                   proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 "),
+                                   data = points)
+mapview(SPpoints)
+#extract NDVI
+NDVI_points_16<-raster::extract(x = NDVI, y = SPpoints,   # SPDF with centroids for buffer
+                                buffer = 16,     # buffer size, units depend on CRS
+                                fun=mean,         # what to value to extract
+                                df=TRUE)
+
+NDVI_points_20<-raster::extract(x = NDVI, y = SPpoints,   # SPDF with centroids for buffer
+                                buffer = 20,     # buffer size, units depend on CRS
+                                fun=mean,         # what to value to extract
+                                df=TRUE)
+
+
+#####load tree cover density
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island (2)/Data/Data_remote_sensing/")
+tree_density<-raster("copernicus_tree_cover_crop_MS.tif")
+mapview(tree_density)
+
+#extract tree density
+tree_points_20<-raster::extract(x = tree_density, y = SPpoints,   # SPDF with centroids for buffer
+                                buffer = 20,     # buffer size, units depend on CRS
+                                fun=mean,         # what to value to extract
+                                df=TRUE)
+
+
+#####load imperviousness density
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island (2)/Data/Data_remote_sensing/Imperviousness/")
+imp_density<-raster("copernicus_imperviousness_crop_MS_10m.tif")
+#plot
+mapview(imp_density)
+#calculate non-sealed fraction
+imp_density<-100-imp_density
+
+#extract imp density
+imp_points_20<-raster::extract(x = imp_density, y = SPpoints,   # SPDF with centroids for buffer
+                                buffer = 20,     # buffer size, units depend on CRS
+                                fun=mean,         # what to value to extract
+                                df=TRUE)
+
+
+SPpoints
+both_points<-data.frame("Logger_ID"=points$Logger_ID, "Standort_ID"=points$Standort_ID,
+                        "tree_density_20"=tree_points_20$copernicus_tree_cover_crop_MS,
+                        "NDVI_16"=NDVI_points_16$layer,
+                        "NDVI_20"=NDVI_points_20$layer,
+                        "imp_density_20"=imp_points_20$copernicus_imperviousness_crop_MS_10m)
+
+
+#write to csv
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island/Data/Data_remote_sensing")
+write.csv(both_points, file = "tree_density_NDVI_imp_points_buffer_20_50_100.csv", row.names = F)
+
+####read in extracted rs data####
+#read in csv with tree density and NDVI data
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island/Data/Data_remote_sensing")
+tree<-read.csv("tree_density_NDVI_imp_points_buffer_20_50_100.csv")
+#read in logger metadata
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island/Data/Data_kartierung_vegetation")
+meta<-read_xlsx("Sensortabelle_Kartierung_Stand.27.11_korrigiert.xlsx", trim_ws = TRUE)
+meta<-meta[,c(2,32)]
+
+#extract nly column with temperature
+just_temp<-lapply(list_iButton_corr_set, `[`, 1)
+#convert to dataframe
+temp_dataframe<-data.frame(sapply(just_temp,c))
+#rename columns
+colnames(temp_dataframe)<-names(just_temp)
+#transpose
+temp_trans<-data.frame(t(temp_dataframe))
+#add ID as column
+temp_trans$Logger_ID<-as.numeric(rownames(temp_trans))
+
+#save logger data as csv
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island/Data")
+write.csv(temp_trans, file="logger_2020_data.csv")
+temp_trans<-read.csv("logger_2020_data.csv")
+#join to add column with tree cover density
+temp_trans<-full_join(temp_trans, tree)
+#add column with fractional vegetation cover
+temp_trans<-full_join(temp_trans, FVC)
+colnames(temp_trans)[3310:3319]
+
+#calculate mean Temp for every logger
+temp_trans$mean_temp<-rowMeans(temp_trans[,1:3312], na.rm=T)
+#calculate median temp for every logger
+temp_trans$median_temp <- apply(temp_trans[,1:3312], 1, median, na.rm = TRUE) 
+#calculate sd for every logger
+temp_trans$sd <- apply(temp_trans[,1:3312], 1, sd, na.rm = TRUE) 
+#add logger type
+temp_trans<-full_join(temp_trans, meta)
+#shorten dataframe
+temp_short<-temp_trans[1:32,3313:3323]
+colnames(temp_short)[11]<-"type"
+
+####(Non-)Linear Relationships ####
+#####test relationship between NDVI and FVC####
+ggplot(data=temp_short, aes(y=NDVI_16, x=FVC))+
+  geom_point() +
+  geom_smooth(method='lm')+
+  theme_bw()
+
+summary(lm(FVC~NDVI_16, data=temp_short))
+
+#regression curve: FVC=-36.9+NDVI*133.8
+
+temp_short$est_FVC<--36.9 +temp_short$NDVI_20*133.8
+
+ggplot(data=temp_short, aes(y=est_FVC, x=FVC))+
+  geom_point() +
+  geom_smooth(method='lm')+
+  theme_bw()
+
+#linear regression
+summary(lm(data=temp_short, est_FVC~FVC))
+
+FVC<--36.9+NDVI*133.8
+#save Raster with FVC
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island/Data/Data_remote_sensing")
+writeRaster(FVC, filename="FVC")
+#####Tree density green and grey infrastructure####
+#mean temp vs Tree density 20 m
+lmTree<-ggplot(data=temp_short[temp_short$type=="green"|temp_short$type=="grey",], 
+       aes(x=mean_temp, tree_density_20))+
+  geom_point() +
+  ggtitle(label="c)")+
+  ylab(label="Tree density [%]")+
+  xlab(label=bquote("Temperature [°C]"))+
+  geom_smooth(method='lm')+ #or loess method='loess'
+  theme_bw()+
+  scale_x_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  theme(axis.title = element_text(size = 8))   
+
+
+lmsumTree<-summary(lm(mean_temp~tree_density_20,data=temp_short[temp_short$type=="green"|temp_short$type=="grey",]))
+
+
+#####Non-Imp density green and grey infrastructure####
+#mean temp vs Imp density 20 m
+lmImp<-ggplot(data=temp_short[temp_short$type=="green"|temp_short$type=="grey",], 
+       aes(x=mean_temp, imp_density_20))+
+  geom_point() +
+  ggtitle(label="b)")+
+  ylab(label="Non-impervious surface [%]")+
+  xlab(label=bquote("Temperature [°C]"))+
+  geom_smooth(method='lm')+ #or loess method='loess'
+  theme_bw()+
+  scale_x_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  theme(axis.title = element_text(size = 8))   
+
+summary(lm(mean_temp~imp_density_20,data=temp_short[temp_short$type=="green"|temp_short$type=="grey",]))
+
+
+#####NDVI green and grey infrastructure####
+#mean temp vs FVC 20 m
+#linear model
+summary(lm(mean_temp~est_FVC,data=temp_short[temp_short$type=="green"|temp_short$type=="grey",]))
+
+lmFVC<-ggplot(data=temp_short[temp_short$type=="green"|temp_short$type=="grey",], 
+       aes(x=mean_temp, y=est_FVC))+
+  geom_point()+
+  ggtitle(label="a)")+
+  ylab(label="Fractional vegetative cover [%]")+
+  xlab(label=bquote("Temperature [°C]"))+
+  geom_smooth(method='lm')+ #or loess method='loess'
+  theme_bw()+
+  scale_y_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  scale_x_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  theme(axis.title = element_text(size = 8))   
+
+grid_lm<-grid.arrange(lmFVC, lmImp, lmTree, ncol=3)
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island (2)/Data_analysis/Plots_RS_analysis/")
+ggsave(grid_lm, filename="lm.jpg", width=210, height=50, units="mm")
+
+#####multiple linear regression^####
+mmodel<-lm(data=temp_gg, formula=mean_temp~est_FVC+imp_density_20+tree_density_20)
+summary(mmodel)
+#extract coefficients
+intercept<-round(coef(mmodel)[1], 2) 
+coef1<-round(coef(mmodel)[2], 3) 
+coef2<-round(coef(mmodel)[3], 3)
+coef3<-round(coef(mmodel)[4], 3)
+adjrsqu<-round(summary(mmodel)$adj.r.squared, 2)
+#build equation for plot
+eqn <- bquote(italic(y) == .(intercept) + .(coef1) + .(coef2) + .(coef3))
+#build r2 for plot
+rsqu <- bquote( ~~ r^2 == .(adjrsqu))
+
+ggplot(data=temp_gg) +
+  geom_smooth(aes(x = est_FVC, y = mean_temp), 
+              method = "lm", se = FALSE, color = "red") + 
+  geom_smooth(aes(x = imp_density_20, y = mean_temp), 
+              method = "lm", se = FALSE, color = "blue") + 
+  geom_point(aes(x = est_FVC, y = mean_temp, shape="FVC"),  color = "red") + 
+  geom_point(aes(x = imp_density_20, y = mean_temp, shape="NID"),  color = "blue")+
+  geom_point(aes(x = tree_density_20, y = mean_temp, shape="TCD"),  color = "black")+
+  theme_bw()+
+  geom_text(x = 65, y = 19.5, label = eqn)+
+  geom_text(x=65, y=19.3, label=rsqu)
+
+#test with classes
+#subset dataframe to only green+grey points
+temp_gg<-temp_short[temp_short$type=="green"|temp_short$type=="grey",]
+colnames(temp_gg)
+#tree cover density 20 m : range: #0 84 : split at 50
+shapiro.test(temp_gg$tree_density_20)
+#not normal -> non-parametric test
+
+####brute force tree density 20 m #####
+# calculate p-value for every threshold 
+#find threshold for significant difference
+res.treeden.20<-data.frame("threshold"=seq(1,99, by=1), 
+                           "pvalue"=NA, "over_thres"=NA, "under_thres"=NA)
+for(i in 1:99){
+  tryCatch({
+    print(i)
+  #if res already exists -> delete 
+  if(exists("res.w")){
+    rm(res.w)
+  }else{}
+  #split into groups
+  temp_gg$factor<-"green"
+  temp_gg$factor[temp_gg$tree_density_20<=i]<-"no_green"
+  #count how many plots are over/under threshold
+  res.treeden.20$over_thres[res.treeden.20$threshold==i]<-length(which(temp_gg$factor=="green"))
+  res.treeden.20$under_thres[res.treeden.20$threshold==i]<-length(which(temp_gg$factor=="no_green"))
+  #wilcox test for difference
+  res.w<-wilcox.test(temp_gg$mean_temp[temp_gg$factor=="no_green"], temp_gg$mean_temp[temp_gg$factor=="green"],
+                   mu=0, alt="two.sided", conf.int=T, conf.level=0.95,
+                   paired=FALSE, exact=T, correct=T)
+  #write into result dataframe
+  res.treeden.20$pvalue[res.treeden.20$threshold==i]<-res.w$p.value},
+  error = function(e) {print("error")},
+  warning=function(w) {res.treeden.20$pvalue[res.treeden.20$threshold==i]<-NA})
+  }
+
+#plot pvalue
+ggplot(data=res.treeden.20)+
+  geom_line(aes(x=threshold, y=pvalue))+
+  theme_bw()+
+  geom_hline(yintercept=0.05, col="red")
+
+res.treeden.20$threshold[which.min(res.treeden.20$pvalue)] #73
+
+res.treeden.20$threshold[res.treeden.20$pvalue<0.05]
+
+####brute force NDVI 20 m #####
+# calculate p-value for every threshold 
+res.NDVI.20<-data.frame("threshold"=seq(0.1,0.99, by=0.01), "pvalue"=NA,
+                        "over_thres"=NA, "under_thres"=NA)
+for(i in seq(0.1:0.99, by=0.01)){
+  tryCatch({
+    print(i)
+    #if res already exists -> delete 
+    if(exists("res.w")){
+      rm(res.w)
+    }else{}
+    #split into groups
+    temp_gg$factor<-"green"
+    temp_gg$factor[temp_gg$NDVI_20<=i]<-"no_green"
+    #count how many plots are over/under threshold
+    res.NDVI.20$over_thres[res.NDVI.20$threshold==i]<-length(which(temp_gg$factor=="green"))
+    res.NDVI.20$under_thres[res.NDVI.20$threshold==i]<-length(which(temp_gg$factor=="no_green"))
+    
+    #wilcox test for difference
+    res.w<-wilcox.test(temp_gg$mean_temp[temp_gg$factor=="no_green"], temp_gg$mean_temp[temp_gg$factor=="green"],
+                     mu=0, alt="two.sided", conf.int=T, conf.level=0.95,
+                     paired=FALSE, exact=T, correct=T)
+    #write into result dataframe
+    res.NDVI.20$pvalue[res.NDVI.20$threshold==i]<-res.w$p.value},
+    error = function(e) {print("error")},
+    warning=function(w) {res.NDVI.20$pvalue[res.NDVI.20$threshold==i]<-NA})
+}
+
+?wilcox.test
+#plot pvalue
+ggplot(data=res.NDVI.20)+
+  geom_line(aes(x=threshold, y=pvalue))+
+  theme_bw()+
+  geom_hline(yintercept=0.05, col="red")
+
+res.NDVI.20$threshold[which.min(res.NDVI.20$pvalue)] #0.73
+
+res.NDVI.20$threshold[res.NDVI.20$pvalue<0.05]
+
+####brute force FVC 20 m #####
+# calculate p-value for every threshold 
+res.FVC.20<-data.frame("threshold"=seq(1,99, by=1), "pvalue"=NA, 
+                       "over_thres"=NA, "under_thres"=NA)
+
+for(i in seq(1,99, by=1)){
+  tryCatch({
+    print(i)
+    #if res already exists -> delete 
+    if(exists("res.w")){
+      rm(res.w)
+    }else{}
+    #split into groups
+    temp_gg$factor<-"green"
+    temp_gg$factor[temp_gg$est_FVC<=i]<-"no_green"
+    #count how many plots are over/under threshold
+    res.FVC.20$over_thres[res.FVC.20$threshold==i]<-length(which(temp_gg$factor=="green"))
+    res.FVC.20$under_thres[res.FVC.20$threshold==i]<-length(which(temp_gg$factor=="no_green"))
+    #wilcox test for difference
+    res.w<-wilcox.test(temp_gg$mean_temp[temp_gg$factor=="no_green"], temp_gg$mean_temp[temp_gg$factor=="green"],
+                     mu=0, alt="two.sided", conf.int=T, conf.level=0.95,
+                     paired=FALSE, exact=T, correct=T)
+    #write into result dataframe
+    res.FVC.20$pvalue[res.FVC.20$threshold==i]<-res.w$p.value},
+    error = function(e) {print("error")},
+    warning=function(w) {res.FVC.20$pvalue[res.FVC.20$threshold==i]<-NA})
+}
+
+#plot pvalue
+thres_FVC<-ggplot(data=res.FVC.20)+
+  geom_line(aes(x=threshold, y=pvalue))+
+  theme_bw()+
+  ggtitle(label="b)")+
+  ylab(label="p-value")+
+  xlab(label="Threshold FVC [%]")+
+  geom_hline(yintercept=0.05, col="red")
+
+res.FVC.20$threshold[which.min(res.FVC.20$pvalue)] #0.73
+
+res.FVC.20$threshold[res.FVC.20$pvalue<0.05] #7
+
+res.FVC.20$threshold[!is.na(res.FVC.20$pvalue)] #1 to 73
+
+####brute force Non-Imp 20 m #####
+# calculate p-value for every threshold 
+res.imp.20<-data.frame("threshold"=seq(1, 99, by=1), "pvalue"=NA, 
+                       "over_thres"=NA, "under_thres"=NA)
+for(i in seq(1,99, by=1)){
+  tryCatch({
+    print(i)
+    #if res already exists -> delete 
+    if(exists("res.w")){
+      rm(res.w)
+    }else{}
+    #split into groups
+    temp_gg$factor<-"green"
+    temp_gg$factor[temp_gg$imp_density_20<=i]<-"no_green"
+    #count how many plots are over/under threshold
+    res.imp.20$over_thres[res.imp.20$threshold==i]<-length(which(temp_gg$factor=="green"))
+    res.imp.20$under_thres[res.imp.20$threshold==i]<-length(which(temp_gg$factor=="no_green"))
+    #wilcox test for difference
+    res.w<-wilcox.test(temp_gg$mean_temp[temp_gg$factor=="no_green"], temp_gg$mean_temp[temp_gg$factor=="green"],
+                     mu=0, alt="two.sided", conf.int=T, conf.level=0.95,
+                     paired=FALSE, exact=T, correct=T)
+    #write into result dataframe
+    res.imp.20$pvalue[res.imp.20$threshold==i]<-res.w$p.value},
+    error = function(e) {print("error")},
+    warning=function(w) {res.imp.20$pvalue[res.imp.20$threshold==i]<-NA})
+}
+
+#plot pvalue
+thres_NID<-ggplot(data=res.imp.20)+
+  geom_line(aes(x=threshold, y=pvalue))+
+  theme_bw()+
+  ggtitle(label="a)")+
+  ylab(label="p-value")+
+  xlab(label="Threshold NID [%]")+
+  geom_hline(yintercept=0.05, col="red")
+
+res.imp.20$threshold[which.min(res.imp.20$pvalue)] #80
+res.imp.20$threshold[res.imp.20$pvalue<0.05] #8
+
+res.imp.20$threshold[!is.na(res.imp.20$pvalue)] #1 to 97
+
+#plot
+thres_sig<-grid.arrange(thres_NID, thres_FVC, ncol=2)
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island (2)/Data_analysis/Plots_RS_analysis/")
+ggsave(thres_sig, filename="thres.jpg", width=210, height=50, units="mm")
+
+####unsupervised classification green and grey####
+colnames(temp_gg)
+temp_uc<-temp_gg[,c(3,6,8,12)] #use FVC, tree density, imp density and mean temp
+colnames(temp_uc)
+rownames(temp_uc)<-temp_gg$Standort_ID #set rownames
+head(temp_uc)
+
+# Calculate distance between each plot --> Euclidean distance = sqrt(sum((x_i - y_i)^2)
+d <- dist(temp_uc)
+
+# Use the distance matrix for hierarchical clustering
+c <- hclust(d)
+
+# Plot dendrogram of clusters
+plot(c)
+
+# We might want to try 3 clusters
+# need to specify either k = # of groups
+groups <- cutree(c, k = 2) # "g3" = "groups 3"
+?cutree
+#write into dataframe
+groups_df = as.data.frame(t(data.frame(as.list(groups))))
+groups_df$Standort_ID<-rownames(groups_df)
+colnames(groups_df)[1]<-"class"
+temp_class<-left_join(temp_gg, groups_df)
+
+#FVC plot with new classes
+class_fvc<-ggplot(data=temp_class, 
+       aes(x=mean_temp, est_FVC))+
+  geom_point(aes(shape=as.factor(class)), show.legend=F) +
+  theme_bw()+
+  ggtitle(label="b)")+
+  scale_y_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  scale_x_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  ylab(label="Fractional Vegetation Cover [%]")+
+  xlab(label=bquote("Temperature [°C]"))+
+  theme(axis.title = element_text(size = 8))   
+
+#Tree density plot with new classes
+class_tree<-ggplot(data=temp_class, 
+       aes(x=mean_temp, tree_density_20))+
+  geom_point(aes(shape=as.factor(class))) +
+  theme_bw()+
+  ggtitle(label="c)")+
+  scale_y_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  scale_x_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  scale_shape_discrete("Class")+
+  ylab(label="Tree Cover Density [%]")+
+  xlab(label=bquote("Temperature [°C]"))+
+  theme(axis.title = element_text(size = 8))   
+
+#Non-Imp density plot with new classes
+class_imp<-ggplot(data=temp_class, 
+       aes(x=mean_temp, imp_density_20))+
+  geom_point(aes(shape=as.factor(class)), show.legend = F) +
+  theme_bw()+
+  ggtitle(label="a)")+
+  scale_y_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  scale_x_continuous(
+    labels = scales::number_format(accuracy = 0.1,
+                                   decimal.mark = '.'))+
+  ylab(label="Non-impervious Density [%]")+
+  xlab(label=bquote("Temperature [°C]"))+
+  theme(axis.title = element_text(size = 8))   
+#save all plots
+#plot
+class_split<-grid.arrange(class_imp, class_fvc, class_tree, ncol=3, widths=c(10.9,10.9,13.3))
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island (2)/Data_analysis/Plots_RS_analysis/")
+ggsave(class_split, filename="new_classes.jpg", width=210, height=50, units="mm")
+#significance test for 2 groups for temp
+wilcox.test(temp_class$mean_temp[temp_class$class==1], temp_class$mean_temp[temp_class$class==2],
+                        mu=0, alt="two.sided", conf.int=T, conf.level=0.95,
+                        paired=FALSE, exact=T, correct=T)
+##p-value 2e-04
+
+#significance test for more than 2 groups
+summary(aov(mean_temp~class, data=temp_class)) #not significant
+
+#calculate mean per group
+colnames(temp_class)
+df<-setDT(temp_class[,c(3,6,8,12,14)])
+data_mean <- df[, lapply(.SD, mean), by = class] 
+data_mean
+
+#standard deviation
+data_sd <- df[, lapply(.SD, sd), by = class] 
+data_sd
+#calculate range per group 
+data_range <- df[, lapply(.SD, range), by = class] 
+data_range
+
+#Boxplot new classes
+ggplot(data=temp_class, aes(y=mean_temp, x=as.factor(class)))+
+  geom_boxplot()+
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1)+
+  stat_summary(fun=mean, geom="point", shape=8, size=4)+
+  theme_bw()+
+  xlab("Class")
+
+####test, until which distance vegetation variables significantly influence temperature
+#read csv with temp data
+only_temp<-temp_short[, c("mean_temp", "Logger_ID", "type")]
+
+veg_scale<-function(raster){
+  #write output data frame
+output=data.frame("distance"=seq(20, 3000, by=10),
+                  "rsquared"=NA,
+                  "pvalue"=NA)
+#loop through all distances
+  for(i in seq(20, 3000, by=10)){
+    print(i) #print distance
+  points_dist<-raster::extract(x = raster, y = SPpoints,   # SPDF with centroids for buffer
+                                  buffer = i,     # buffer size, units depend on CRS
+                                  fun=mean,         # what to value to extract
+                                  df=TRUE) 
+  #add column with points
+  points_dist$Logger_ID<-points$Logger_ID
+  #merge with temp data
+  temp_dist<-full_join(only_temp, points_dist)
+  #use only green and grey logger
+  temp_dist<-temp_dist[temp_dist$type=="green"|temp_dist$type=="grey",]
+  colnames(temp_dist)[5]<-"veg_dat"
+  #calculate lm
+  lm_sum<-summary(lm(data=temp_dist, formula = mean_temp~veg_dat))
+  #write into output dataframe
+  output$rsquared[output$distance==i]<-lm_sum$adj.r.squared
+  output$pvalue[output$distance==i]<-lm_sum$coefficients[2,4]
+}
+return(output)
+}
+
+#calculate significant distances for tree density
+tree_dist<-veg_scale(raster=tree_density)
+#plot
+distTree<-ggplot(tree_dist, aes(x=distance, y=pvalue))+
+  geom_line()+
+  geom_line(aes(y=rsquared/3), col="blue")+
+  scale_y_continuous(sec.axis = sec_axis(~.*3, name = bquote(R^2~"-value")))+
+  theme_bw()+
+  ylab(label="p-value")+
+  xlab("Radius of buffer [m]")+
+  ggtitle(label="c)")+
+  geom_hline(yintercept = 0.05, col="red")
+
+tree_dist$distance[tree_dist$pvalue>0.05] #650
+imp_dist$distance[imp_dist$pvalue>0.05] #2880
+which.max(imp_dist$pvalue)
+FVC_dist$distance[FVC_dist$pvalue>0.05] #910
+#for impervious density
+imp_dist<-veg_scale(raster=imp_density)
+getwd()
+#plot
+distImp<-ggplot(imp_dist, aes(x=distance, y=pvalue))+
+  geom_line()+
+  geom_line(aes(y=rsquared/3), col="blue")+
+  scale_y_continuous(sec.axis = sec_axis(~.*3, name = bquote(R^2~"-value")))+
+  theme_bw()+
+  ylab(label="p-value")+
+  xlab("Radius of buffer [m]")+
+  ggtitle(label="a)")+
+  geom_hline(yintercept = 0.05, col="red")
+
+#for NDVI
+FVC_dist<-veg_scale(raster=FVC)
+#plot
+distFVC<-ggplot(FVC_dist, aes(x=distance, y=pvalue))+
+  geom_line()+
+  geom_line(aes(y=rsquared/3), col="blue")+
+  scale_y_continuous(sec.axis = sec_axis(~.*3, name = bquote(R^2~"-value")))+
+  theme_bw()+
+  ylab(label="p-value")+
+  xlab("Radius of buffer [m]")+
+  ggtitle(label="b)")+
+  geom_hline(yintercept = 0.05, col="red")
+
+grid_dist<-grid.arrange(distImp, distFVC,  distTree, ncol=3)
+setwd("C:/Users/Dana/sciebo/2019-Urban_Heat_Island (2)/Data_analysis/Plots_RS_analysis/")
+ggsave(grid_dist, filename="bufferdist_rsquared.jpg", width=210, height=50, units="mm")
+
+#maybe add r squared to plot?
